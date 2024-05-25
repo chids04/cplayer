@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/resource">
+        <file>ui/assets/pika.png</file>
+        <file>ui/assets/next.png</file>
+        <file>ui/assets/play.png</file>
+        <file>ui/assets/pause.png</file>
+        <file>ui/assets/previous.png</file>
+        <file>ui/assets/repeat.png</file>
+        <file>ui/assets/repeat_individual.png</file>
+        <file>ui/assets/repeat_playlist.png</file>
+        <file>ui/assets/shuffle.png</file>
+        <file>ui/assets/mute.png</file>
+        <file>ui/assets/volume.png</file>
+        <file>ui/assets/musicIcon.png</file>
+        <file>ui/assets/albumIcon.png</file>
+        <file>ui/assets/unknownCover.png</file>
+    </qresource>
+</RCC>
