@@ -8,13 +8,20 @@ set(CMAKE_AUTORCC ON)
 find_package(Qt6 6.7 REQUIRED COMPONENTS Multimedia Quick Widgets Core)
 # find_package(TagLib 2.0.1 REQUIRED)
 
-set(TAGLIB_ROOT "C:/pkg_mingw")
 
-find_path(TAGLIB_INCLUDE_DIR taglib/tag.h
-    PATHS ${TAGLIB_ROOT}/include)
+if(WIN32)
+        set(TAGLIB_ROOT "C:/pkg_mingw")
 
-find_library(TAGLIB_LIBRARY NAMES tag taglib
-    PATHS ${TAGLIB_ROOT}/lib)
+        find_path(TAGLIB_INCLUDE_DIR taglib/tag.h
+                        PATHS ${TAGLIB_ROOT}/include)
+
+        find_library(TAGLIB_LIBRARY NAMES tag taglib
+                        PATHS ${TAGLIB_ROOT}/lib)
+elseif(UNIX)
+    find_package(ZLIB)
+    find_package(TagLib)
+
+endif()
 
 qt_standard_project_setup()
 
@@ -62,15 +69,20 @@ set_target_properties(appcplayer PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
-target_link_directories(appcplayer PUBLIC ${TAGLIB_LIBRARY})
-#target_link_directories(appcplayer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/cpp/taglib/lib ${TAGLIB_LIBRARY})
+if(WIN32)
+        target_link_directories(appcplayer PUBLIC ${TAGLIB_LIBRARY})
+        #target_link_directories(appcplayer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/cpp/taglib/lib ${TAGLIB_LIBRARY})
 
-target_link_libraries(appcplayer
-    PRIVATE Qt6::Quick Qt6::Multimedia Qt6::Widgets Qt6::Core ${TAGLIB_LIBRARY}
-)
+        target_link_libraries(appcplayer
+                PRIVATE Qt6::Quick Qt6::Multimedia Qt6::Widgets Qt6::Core ${TAGLIB_LIBRARY}
+        )
 
-#target_include_directories(appcplayer PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cpp/taglib/include ${TAGLIB_INCLUDE_DIR})
-target_include_directories(appcplayer PRIVATE  ${TAGLIB_INCLUDE_DIR})
+        #target_include_directories(appcplayer PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cpp/taglib/include ${TAGLIB_INCLUDE_DIR})
+        target_include_directories(appcplayer PRIVATE  ${TAGLIB_INCLUDE_DIR})
+elseif(UNIX)
+    #target_include_directories(appcplayer PRIVATE)
+    target_link_libraries(appcplayer PRIVATE Qt6::Quick Qt6::Multimedia Qt6::Widgets Qt6::Core TagLib::tag)
+endif()
 
 include(GNUInstallDirs)
 install(TARGETS appcplayer
