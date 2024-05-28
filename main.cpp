@@ -1,5 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QFontDatabase>
 
 #include "cpp/mediaplayercontroller.h"
 #include "cpp/mediaimageprovider.h"
@@ -15,6 +16,14 @@
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
+
+    int fontId = QFontDatabase::addApplicationFont(":/resource/ui/fonts/Satoshi-Medium.otf");
+
+    if (fontId != -1) {
+        QString fontFamily = QFontDatabase::applicationFontFamilies(fontId).at(0);
+        // Set the application-wide font
+        QGuiApplication::setFont(QFont(fontFamily));
+    }
 
     QQmlApplicationEngine engine;
 

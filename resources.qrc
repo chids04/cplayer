@@ -14,5 +14,7 @@
         <file>ui/assets/musicIcon.png</file>
         <file>ui/assets/albumIcon.png</file>
         <file>ui/assets/unknownCover.png</file>
+        <file>ui/assets/Roboto-Black.ttf</file>
+        <file>ui/fonts/Satoshi-Medium.otf</file>
     </qresource>
 </RCC>

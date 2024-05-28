@@ -245,8 +245,7 @@ Item{
                                 implicitWidth: 16
                                 implicitHeight: 16
                                 radius: 8
-                                color: control.pressed ? "#f0f0f0" : "#f6f6f6"
-                                border.color: "#bdbebf"
+                                color: "#606060"
                             }
 
                         }
@@ -315,8 +314,7 @@ Item{
                             implicitWidth: 10
                             implicitHeight: 10
                             radius: 5
-                            color: volumeSlider.pressed ? "#f0f0f0" : "#f6f6f6"
-                            border.color: "#bdbebf"
+                            color: "#606060"
                         }
 
                         onValueChanged: {

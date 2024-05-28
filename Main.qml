@@ -15,6 +15,7 @@ Window {
     visible: true
     title: qsTr("c")
 
+
     onVisibleChanged: {
         folderDialog.open()
     }

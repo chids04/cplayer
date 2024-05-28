@@ -47,6 +47,7 @@ qt_add_qml_module(appcplayer
         QML_FILES qml/AlbumSongs.qml
         SOURCES cpp/albumfilterproxymodel.h cpp/albumfilterproxymodel.cpp
         SOURCES cpp/albumview.h cpp/albumview.cpp
+        SOURCES cpp/playlistmanager.h cpp/playlistmanager.cpp
 )
 
 
