@@ -33,9 +33,11 @@ struct Song {
     QString artist;
     QString album;
     QStringList featuringArtists;
+    int length;
+    int trackNum;
 
     Song(const QString &filePath, const QString &title, const QString &artist, const QString &album,
-         const QStringList &featuringArtists);
+         const QStringList &featuringArtists, int length, int trackNum);
 };
 
 #endif // SONG_H

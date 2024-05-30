@@ -24,6 +24,11 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
+    QString getSongTitle(const QString &filePath) const;
+    QString getSongArtist(const QString &filePath) const;
+    QString getSongAlbum(const QString &filePath) const;
+    QStringList getSongFeatures(const QString &filePath) const;
+
 
 private:
     QList<Song> m_songs;

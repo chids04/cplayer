@@ -1,14 +1,20 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+
 import com.c.AlbumFilterProxyModel
 import com.c.AlbumViewController
 import com.c.MediaController
+import com.c.PlaylistManager
+
+import "./components"
 
 
 Item {
     anchors.fill: parent
     anchors.topMargin: 20
+
+
 
 
     ColumnLayout{
@@ -82,10 +88,27 @@ Item {
             }
         }
 
+        Item{
+            id: albumControls
+
+            CButton{
+                id: playAlbumBtn
+                buttonText: "Play Album"
+
+                onButtonClicked: {
+                    PlaylistManager.playAlbum(AlbumController.albumName, AlbumController.albumArtists);
+                }
+
+            }
+
+
+        }
+
         Rectangle{
             id: songList
             Layout.fillHeight: true
             Layout.fillWidth: true
+            Layout.topMargin: playAlbumBtn.height
 
             color: "transparent"
             ListView {

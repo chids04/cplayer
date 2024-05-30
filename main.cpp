@@ -12,6 +12,7 @@
 #include "cpp/viewcontroller.h"
 #include "cpp/albumfilterproxymodel.h"
 #include "cpp/albumview.h"
+#include "cpp/playlistmanager.h"
 
 int main(int argc, char *argv[])
 {
@@ -33,6 +34,9 @@ int main(int argc, char *argv[])
     AlbumHolder *albumHolder = new AlbumHolder(albumListModel);
     qmlRegisterSingletonInstance("com.c.AlbumListModel", 1, 0, "AlbumModel", albumListModel);
 
+    PlaylistManager *playlistManager = new PlaylistManager(albumHolder);
+    qmlRegisterSingletonInstance("com.c.PlaylistManager", 1, 0, "PlaylistManager", playlistManager);
+
     SongListModel *songModel = new SongListModel;
     qmlRegisterSingletonInstance("com.c.SongModel", 1, 0, "SongModel", songModel);
 
@@ -42,7 +46,7 @@ int main(int argc, char *argv[])
     albumFilterProxyModel->setDynamicSortFilter(true);
 
 
-    MediaPlayerController *controller = new MediaPlayerController(coverArtHolder);
+    MediaPlayerController *controller = new MediaPlayerController(coverArtHolder, playlistManager, songModel);
     qmlRegisterSingletonInstance("com.c.MediaController", 1, 0,"MediaPlayerController", controller);
 
     MusicLibrary *musicLibrary = new MusicLibrary(songModel, coverArtHolder, albumHolder);

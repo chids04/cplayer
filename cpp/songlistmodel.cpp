@@ -50,3 +50,49 @@ QHash<int, QByteArray> SongListModel::roleNames() const {
 
     return roles;
 }
+
+QString SongListModel::getSongTitle(const QString &filePath) const
+{
+    //add error checking here
+
+    for(const Song &song : m_songs){
+        if(song.filePath == filePath){
+            return song.title;
+        }
+    }
+
+    return QString();
+}
+
+QString SongListModel::getSongArtist(const QString &filePath) const
+{
+    for(const Song &song : m_songs){
+        if(song.filePath == filePath){
+            return song.artist;
+        }
+    }
+
+    return QString();
+}
+
+QString SongListModel::getSongAlbum(const QString &filePath) const
+{
+    for(const Song &song : m_songs){
+        if(song.filePath == filePath){
+            return song.album;
+        }
+    }
+
+    return QString();
+}
+
+QStringList SongListModel::getSongFeatures(const QString &filePath) const
+{
+    for(const Song &song : m_songs){
+        if(song.filePath == filePath){
+            return song.featuringArtists;
+        }
+    }
+
+    return QStringList();
+}

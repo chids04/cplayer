@@ -24,6 +24,17 @@ void AlbumHolder::addSongToAlbum(QString &url, QString &name, QStringList &artis
     }
 }
 
+QStringList AlbumHolder::getSongsInAlbum(const QStringList &artist, const QString &name) const
+{
+    for(const Album &album : albums){
+        if(album.getName() == name && album.getArtist() == artist){
+            return album.getSongs();
+        }
+    }
+
+    return QStringList();
+}
+
 void AlbumHolder::addToModel()
 {
     for(Album &album : albums){
