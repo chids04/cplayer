@@ -2,108 +2,136 @@
 #include <QFileDialog>
 #include <QUrl>
 
-MediaPlayerController::MediaPlayerController(const CoverArtHolder *coverArtHolder, QObject *parent) : coverArtHolder(coverArtHolder), QObject(parent) {
+// Constructor and Destructor
+MediaPlayerController::MediaPlayerController(const CoverArtHolder *coverArtHolder, PlaylistManager *playlistManager, SongListModel *songModel, QObject *parent)
+    : coverArtHolder(coverArtHolder), playlistManager(playlistManager), songModel(songModel), QObject(parent) {
     player = new QMediaPlayer;
     output = new QAudioOutput;
 
     connect(player, &QMediaPlayer::positionChanged, this, &MediaPlayerController::onPositionChanged);
     connect(player, &QMediaPlayer::durationChanged, this, &MediaPlayerController::durationChanged);
-
     connect(this, &MediaPlayerController::playingChanged, this, &MediaPlayerController::onPlayingChanged);
+
+    connect(playlistManager, &PlaylistManager::playlistQueued, this, &MediaPlayerController::queueNext);
+    connect(player, &QMediaPlayer::mediaStatusChanged, this, &MediaPlayerController::onMediaStatusChanged);
 
     m_volume = 0.2;
     output->setVolume(m_volume);
-    //emit volumeChanged();
-
     player->setAudioOutput(output);
 }
 
-
-
-int MediaPlayerController::currentSongIndex() const
-{
-    return m_currentSongIndex;
+// Playback Control
+void MediaPlayerController::playPause(bool newPlaying) {
+    m_playing = !m_playing;
+    emit playingChanged();
+    emit updateUI();
 }
 
-
-void MediaPlayerController::nextSong()
-{
-    m_currentSongIndex++;
-    emit currentSongIndexChanged();
+void MediaPlayerController::togglePlayState() {
+    playPause(true);
 }
 
-QString MediaPlayerController::leadingArtist() const
-{
+void MediaPlayerController::onMediaStatusChanged(QMediaPlayer::MediaStatus status){
+    switch(status){
+
+        case QMediaPlayer::EndOfMedia:
+            //getNext song
+            queueNext();
+            break;
+    }
+}
+
+void MediaPlayerController::onPlayingChanged() {
+    if (m_playing) {
+        player->play();
+    } else {
+        player->pause();
+    }
+}
+
+bool MediaPlayerController::playing() const {
+    return m_playing;
+}
+
+// Track Information
+QString MediaPlayerController::leadingArtist() const {
     return m_leadingArtist;
 }
 
-QString MediaPlayerController::trackTitle() const
-{
+QString MediaPlayerController::trackTitle() const {
     return m_trackTitle;
 }
 
-
-QPixmap MediaPlayerController::coverArt() const
-{
-    return m_coverArt;
-}
-
-void MediaPlayerController::setTrackTitle(QString &title){
-    if(m_trackTitle != title){
+void MediaPlayerController::setTrackTitle(QString &title) {
+    if (m_trackTitle != title) {
         m_trackTitle = title;
         emit trackTitleChanged();
     }
 }
 
-void MediaPlayerController::setCoverArt(QPixmap coverArt){
-    m_coverArt = coverArt;
-    emit coverArtChanged();
-}
-
-void MediaPlayerController::setLeadingArtist(QString &leadingArtist){
-    if(m_leadingArtist != leadingArtist){
+void MediaPlayerController::setLeadingArtist(QString &leadingArtist) {
+    if (m_leadingArtist != leadingArtist) {
         m_leadingArtist = leadingArtist;
         emit leadingArtistChanged();
     }
 }
 
-qint64 MediaPlayerController::position() const
-{
+
+
+// Player Position and Duration
+qint64 MediaPlayerController::position() const {
     return player->position();
 }
 
-void MediaPlayerController::setPosition(qint64 newPosition)
-{
-    if(player->position() != newPosition){
+void MediaPlayerController::setPosition(qint64 newPosition) {
+    if (player->position() != newPosition) {
         player->setPosition(newPosition);
     }
 }
 
-qint64 MediaPlayerController::duration() const
-{
+qint64 MediaPlayerController::duration() const {
     return player->duration();
 }
 
-void MediaPlayerController::onPositionChanged(){
+void MediaPlayerController::onPositionChanged() {
     emit positionChanged();
 }
 
-
-QString MediaPlayerController::filePath() const
-{
+// File and Album Management
+QString MediaPlayerController::filePath() const {
     return m_filePath;
 }
 
-void MediaPlayerController::setFilePath(const QString &newFilePath)
-{
+void MediaPlayerController::setFilePath(const QString &newFilePath) {
     if (m_filePath == newFilePath)
         return;
     m_filePath = newFilePath;
     emit filePathChanged();
 }
 
-void MediaPlayerController::setSong(QString filePath, QString title, QString artist, QString album, QStringList features)
-{
+QString MediaPlayerController::album() const {
+    return m_album;
+}
+
+void MediaPlayerController::setAlbum(const QString &newAlbum) {
+    if (m_album == newAlbum)
+        return;
+    m_album = newAlbum;
+    emit albumChanged();
+}
+
+QStringList MediaPlayerController::features() const {
+    return m_features;
+}
+
+void MediaPlayerController::setFeatures(const QStringList &newFeatures) {
+    if (m_features != newFeatures) {
+        m_features = newFeatures;
+        emit featuresChanged();
+    }
+}
+
+void MediaPlayerController::setSong(QString filePath, QString title, QString artist, QString album, QStringList features) {
     player->stop();
 
     player->setSource(QUrl::fromLocalFile(filePath));
@@ -118,121 +146,74 @@ void MediaPlayerController::setSong(QString filePath, QString title, QString art
     m_playing = true;
     emit updateUI();
     player->play();
-
 }
 
-QPixmap MediaPlayerController::getCoverFromUrl(const char *filePath) const{
-    TagLib::FileRef f(filePath);
-    QPixmap loadedCover;
 
-
-    if(!f.isNull() && f.tag()){
-        TagLib::Tag *tag = f.tag();
-
-        QStringList features;
-        QString leadingArtist;
-
-        QString title = QString::fromStdWString(tag->title().toWString());
-        QString album = QString::fromStdWString(tag->album().toWString());
-
-        TagLib::PropertyMap props = f.properties();
-        TagLib::StringList artistList = props["ARTIST"];
-        bool firstIter = true;
-
-        for (const auto &artist : artistList){
-            QString feature = QString::fromStdWString(artist.toWString());
-
-            if(firstIter){
-                leadingArtist = feature;
-                firstIter = false;
-            }
-            else{
-                qDebug() << "Featuring Artist:" << feature;
-                features << feature;
-            }
-        }
-
-        TagLib::StringList names = f.complexPropertyKeys();
-        for(const auto &name : names){
-            const auto& properties = f.complexProperties(name);
-            for(const auto &property : properties){
-                for(const auto &[key, value] : property){
-                    if(value.type() == TagLib::Variant::ByteVector){
-                        loadedCover.loadFromData(QByteArray::fromRawData(value.value<TagLib::ByteVector>().data(),value.value<TagLib::ByteVector>().size()));
-                        loadedCover = loadedCover.scaled(80, 80, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-                    }
-                }
-            }
-        }
-    }
-
-    return loadedCover;
-}
-
-void MediaPlayerController::playPause(bool newPlaying)
+void MediaPlayerController::queueNext()
 {
-    m_playing = !m_playing;
-    qDebug() << m_playing;
-    emit playingChanged();
-    emit updateUI();
+    QString nextSongFilePath = playlistManager->getNextSong();
+
+    if(nextSongFilePath != QString()){
+        setSong(nextSongFilePath, songModel->getSongTitle(nextSongFilePath), songModel->getSongArtist(nextSongFilePath), songModel->getSongAlbum(nextSongFilePath), songModel->getSongFeatures(nextSongFilePath));
+    }
 }
 
-void MediaPlayerController::onPlayingChanged(){
-    qDebug() << "hello";
-    if(m_playing){
-        player->play();
+void MediaPlayerController::queuePrevious()
+{
+    qDebug() << player->position();
+    if(player->position() <= 4000){
+        QString previousSongFilePath = playlistManager->getPreviousSong();
+
+        if(previousSongFilePath != QString()){
+            setSong(previousSongFilePath, songModel->getSongTitle(previousSongFilePath), songModel->getSongArtist(previousSongFilePath), songModel->getSongAlbum(previousSongFilePath), songModel->getSongFeatures(previousSongFilePath));
+        }
     }
     else{
-        player->pause();
+        player->setPosition(0);
     }
 }
 
-void MediaPlayerController::togglePlayState()
-{
-    playPause(true);
-}
 
-bool MediaPlayerController::playing() const{
-    return m_playing;
-}
-
-QString MediaPlayerController::album() const
-{
-    return m_album;
-}
-
-void MediaPlayerController::setAlbum(const QString &newAlbum)
-{
-    if (m_album == newAlbum)
-        return;
-    m_album = newAlbum;
-    emit albumChanged();
-}
-
-float MediaPlayerController::volume() const
-{
+// Volume Control
+float MediaPlayerController::volume() const {
     return m_volume;
 }
 
-void MediaPlayerController::setVolume(float newVolume)
-{
-    if (m_volume != newVolume){
+void MediaPlayerController::setVolume(float newVolume) {
+    if (m_volume != newVolume) {
         m_volume = newVolume;
-        qDebug() << m_volume;
         output->setVolume(newVolume);
         emit volumeChanged();
     }
 }
 
-QStringList MediaPlayerController::features() const
+// Utility Methods
+QString MediaPlayerController::genTime(qint64 currentTime)
 {
-    return m_features;
+    int seconds = (currentTime / 1000) % 60;
+    int minutes = (currentTime / (1000 * 60)) % 60;
+
+    //formatting the result
+    QString formattedTime;
+    QTextStream stream(&formattedTime);
+
+    if(minutes < 10){
+        stream.setFieldWidth(2);
+        stream.setPadChar('0');
+        stream << minutes;
+    }
+    else if(minutes > 10){
+        stream << minutes;
+    }
+
+    stream.setFieldWidth(0);
+    stream << ":";
+    stream.setFieldWidth(2);
+    stream.setPadChar('0');
+    stream << seconds;
+
+
+    return formattedTime;
 }
 
-void MediaPlayerController::setFeatures(const QStringList &newFeatures)
-{
-    if (m_features == newFeatures)
-        return;
-    m_features = newFeatures;
-    emit featuresChanged();
-}
+

@@ -49,7 +49,10 @@ void MusicLibrary::onMusicPathChanged(const QUrl &dirPath){
             QString genre = QString::fromStdWString(f.ID3v2Tag()->genre().toWString());
             QString albumName = QString::fromStdWString(f.ID3v2Tag()->album().toWString());
             int year = f.ID3v2Tag()->year();
+            int length = f.audioProperties()->lengthInSeconds();
+            int trackNum = f.ID3v2Tag()->track();
 
+            qDebug() << "Length of" << title << "is" << length << "seconds";
             //loadedCover.loadFromData(QByteArray::fromRawData(l.front().data(), l.front()->size()))
             // QString title = QString::fromStdWString(tag->title().toWString());
             // QString albumName = QString::fromStdWString(tag->album().toWString());
@@ -116,7 +119,7 @@ void MusicLibrary::onMusicPathChanged(const QUrl &dirPath){
             qDebug() << title << leadingArtist << "feat" << features << "on" << albumName;
             qDebug() << filePath;
 
-            Song song(filePath, title, leadingArtist, albumName, features);
+            Song song(filePath, title, leadingArtist, albumName, features, length, trackNum);
             songModel->addSong(song);
 
             if(hasCover){

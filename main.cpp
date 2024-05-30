@@ -1,5 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QFontDatabase>
 
 #include "cpp/mediaplayercontroller.h"
 #include "cpp/mediaimageprovider.h"
@@ -11,10 +12,19 @@
 #include "cpp/viewcontroller.h"
 #include "cpp/albumfilterproxymodel.h"
 #include "cpp/albumview.h"
+#include "cpp/playlistmanager.h"
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
+
+    int fontId = QFontDatabase::addApplicationFont(":/resource/ui/fonts/Satoshi-Medium.otf");
+
+    if (fontId != -1) {
+        QString fontFamily = QFontDatabase::applicationFontFamilies(fontId).at(0);
+        // Set the application-wide font
+        QGuiApplication::setFont(QFont(fontFamily));
+    }
 
     QQmlApplicationEngine engine;
 
@@ -23,6 +33,9 @@ int main(int argc, char *argv[])
     AlbumListModel *albumListModel = new AlbumListModel;
     AlbumHolder *albumHolder = new AlbumHolder(albumListModel);
     qmlRegisterSingletonInstance("com.c.AlbumListModel", 1, 0, "AlbumModel", albumListModel);
+
+    PlaylistManager *playlistManager = new PlaylistManager(albumHolder);
+    qmlRegisterSingletonInstance("com.c.PlaylistManager", 1, 0, "PlaylistManager", playlistManager);
 
     SongListModel *songModel = new SongListModel;
     qmlRegisterSingletonInstance("com.c.SongModel", 1, 0, "SongModel", songModel);
@@ -33,7 +46,7 @@ int main(int argc, char *argv[])
     albumFilterProxyModel->setDynamicSortFilter(true);
 
 
-    MediaPlayerController *controller = new MediaPlayerController(coverArtHolder);
+    MediaPlayerController *controller = new MediaPlayerController(coverArtHolder, playlistManager, songModel);
     qmlRegisterSingletonInstance("com.c.MediaController", 1, 0,"MediaPlayerController", controller);
 
     MusicLibrary *musicLibrary = new MusicLibrary(songModel, coverArtHolder, albumHolder);

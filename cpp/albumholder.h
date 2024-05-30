@@ -16,6 +16,7 @@ public:
     void addAlbum(Album &album);
     bool isExists(QString &name, QStringList &artist) const;
     void addSongToAlbum(QString &url, QString &name, QStringList &artist) ;
+    QStringList getSongsInAlbum(const QStringList &artists, const QString &title) const;
     void addToModel();
     void printAlbums();
 
