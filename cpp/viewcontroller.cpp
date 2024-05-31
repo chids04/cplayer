@@ -4,7 +4,6 @@ ViewController::ViewController(QObject *parent) : QObject(parent) {}
 
 void ViewController::songView()
 {
-    qDebug() << "song selected";
     emit songViewSelected();
 }
 
@@ -16,4 +15,9 @@ void ViewController::albumView()
 void ViewController::selectAlbum()
 {
     emit albumSelected();
+}
+
+void ViewController::foldersView()
+{
+    emit foldersViewSelected();
 }

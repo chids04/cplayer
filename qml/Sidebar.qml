@@ -147,6 +147,61 @@ Item{
 
                 }
             }
+
+            Rectangle{
+                id: foldersWindow
+                Layout.fillWidth: true
+                height: 60
+                color: "transparent"
+                bottomRightRadius: 40
+                topRightRadius: 40
+
+                RowLayout{
+                    anchors.leftMargin: 10
+                    anchors.fill: parent
+                    spacing: 10
+
+                    Image{
+                        id: foldersViewIcon
+                        source: "qrc:/resource/ui/assets/albumIcon.png"
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+
+                    Rectangle {
+                        height: foldersText.height
+                        Layout.fillWidth: true
+                        color: "transparent"
+                        Layout.alignment: Qt.AlignVCenter
+
+                        Text {
+                            id: foldersText
+                            color: "white"
+                            font.pointSize: 30
+                            text: qsTr("Folders")
+                            //anchors.horizontalCenter: parent.horizontalCenter
+                            //anchors.verticalCenter: parent.verticalCenter
+                        }
+                    }
+
+                }
+
+                MouseArea{
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: {
+                        foldersWindow.color = "#1d1d1e"
+                    }
+
+                    onExited: {
+                        foldersWindow.color = "transparent"
+                    }
+
+                    onClicked: {
+                        ViewController.foldersView()
+                    }
+
+                }
+            }
         }
     }
 }

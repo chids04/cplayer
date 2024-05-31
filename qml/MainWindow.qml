@@ -28,6 +28,10 @@ Rectangle{
             viewLoader.source = "AlbumSongs.qml"
         }
 
+        function onFoldersViewSelected(){
+            viewLoader.source = "Folders.qml"
+        }
+
     }
 
     RowLayout {

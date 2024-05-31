@@ -14,6 +14,7 @@ public:
 signals:
     void songViewSelected();
     void albumViewSelected();
+    void foldersViewSelected();
     void albumSelected();
 
 
@@ -21,6 +22,7 @@ public slots:
     void songView();
     void albumView();
     void selectAlbum();
+    void foldersView();
 };
 
 #endif // VIEWCONTROLLER_H
