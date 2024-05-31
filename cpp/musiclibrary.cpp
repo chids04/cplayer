@@ -27,10 +27,10 @@ void MusicLibrary::onMusicPathChanged(const QUrl &dirPath){
 
     while(it.hasNext()){
         QString filePath = it.next();
-        const char *encodedPath = QFile::encodeName(filePath).constData();
-
+        //const char *encodedPath = QFile::encodeName(filePath).constData();
+        std::string encodedPath = filePath.toUtf8().constData();
         //TagLib::FileRef f(filePath.toStdString().c_str());
-        TagLib::MPEG::File f(encodedPath);
+        TagLib::MPEG::File f(encodedPath.c_str());
 
         if(f.hasID3v2Tag()){
             //TagLib::Tag *tag = f.tag();
