@@ -1,8 +1,11 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls.Basic
+
 import com.c.MediaController
 import com.c.ViewController
+import com.c.SongView
+import com.c.AlbumView
 
 Rectangle{
 
@@ -15,13 +18,13 @@ Rectangle{
         target: ViewController
 
         function onSongViewSelected(){
-            console.log("switching to song view")
             viewLoader.source = "Songs.qml"
-            console.log(viewLoader.active)
+            SongView.loadSongs();
         }
 
         function onAlbumViewSelected(){
             viewLoader.source = "Albums.qml"
+            AlbumView.loadAlbums()
         }
 
         function onAlbumSelected(){
@@ -43,7 +46,7 @@ Rectangle{
 
         Loader {
             id: viewLoader
-            source: "Songs.qml"
+            source: "Folders.qml"
             Layout.fillWidth: true
             Layout.fillHeight: true
         }

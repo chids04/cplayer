@@ -3,7 +3,7 @@ import QtQuick.Controls
 
 import com.c.AlbumListModel
 import com.c.ViewController
-import com.c.AlbumViewController
+import com.c.AlbumSongsView
 import com.c.AlbumFilterProxyModel
 
 Item {
@@ -56,7 +56,7 @@ Item {
 
                     onDoubleClicked:{
                         AlbumFilterModel.setAlbumName(albumName)
-                        AlbumController.setAlbum(albumArtists, albumName, albumGenre, albumYear, albumSongCount)
+                        AlbumSongsView.setAlbum(albumArtists, albumName, albumGenre, albumYear, albumSongCount)
                         ViewController.selectAlbum()
                     }
 

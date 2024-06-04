@@ -9,6 +9,15 @@ void SongListModel::addSong(const Song &song){
     endInsertRows();
 }
 
+void SongListModel::clear()
+{
+    if(!m_songs.isEmpty()){
+        beginRemoveRows(QModelIndex(), 0, m_songs.count() - 1);
+        m_songs.clear();
+        endRemoveRows();
+    }
+}
+
 int SongListModel::rowCount(const QModelIndex &parent) const {
     Q_UNUSED(parent)
     return m_songs.count();

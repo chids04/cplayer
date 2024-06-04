@@ -1,54 +1,23 @@
 #ifndef ALBUMVIEW_H
 #define ALBUMVIEW_H
 
-#include <QString>
 #include <QObject>
-#include <QStringList>
-#include <QDebug>
+
+#include "albumholder.h"
 
 class AlbumView : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString albumName READ albumName WRITE setAlbumName NOTIFY albumNameChanged)
-    Q_PROPERTY(QStringList albumArtists READ albumArtists WRITE setAlbumArtists NOTIFY albumArtistsChanged)
-    Q_PROPERTY(QString year READ year WRITE setYear NOTIFY yearChanged)
-    Q_PROPERTY(QString songCount READ songCount WRITE setSongCount NOTIFY songCountChanged)
-    Q_PROPERTY(QString genre READ genre WRITE setGenre NOTIFY genreChanged)
+
 public:
-    explicit AlbumView(QObject *parent = nullptr);
-    QString albumName() const;
-    void setAlbumName(const QString &newAlbumName);
-    QStringList albumArtists() const;
-    void setAlbumArtists(const QStringList &newAlbumArtists);
-
-    QString year() const;
-    void setYear(const QString &newYear);
-
-    QString genre() const;
-    void setGenre(const QString &newGenre);
-
-    QString songCount() const;
-    void setSongCount(const QString &newSongCount);
-
-signals:
-    void albumNameChanged();
-    void yearChanged();
-
-    void genreChanged();
-
-    void albumArtistsChanged();
-
-    void songCountChanged();
+    explicit AlbumView(AlbumHolder *albumHolder, QObject *parent = nullptr);
 
 public slots:
-    void setAlbum(QStringList albumArtists, QString albumName, QString genre, int year, int songCount);
+    void loadAlbums();
 
 private:
-    QString m_albumName;
-    QStringList m_albumArtists;
-    QString m_year;
-    QString m_genre;
-    QString m_songCount;
+    AlbumHolder *albumHolder;
+
 };
 
 #endif // ALBUMVIEW_H

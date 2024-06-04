@@ -12,6 +12,7 @@ RoundButton {
     padding:20
 
     property alias buttonText: contentText.text
+    property alias buttonTextSize: contentText.font.pointSize
     signal buttonClicked();
 
     onClicked: {

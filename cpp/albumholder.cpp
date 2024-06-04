@@ -37,6 +37,8 @@ QStringList AlbumHolder::getSongsInAlbum(const QStringList &artist, const QStrin
 
 void AlbumHolder::addToModel()
 {
+    albumListModel->clear();
+
     for(Album &album : albums){
         albumListModel->addAlbum(album);
     }

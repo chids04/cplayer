@@ -3,7 +3,7 @@ import QtQuick.Layouts
 import QtQuick.Controls
 
 import com.c.AlbumFilterProxyModel
-import com.c.AlbumViewController
+import com.c.AlbumSongsView
 import com.c.MediaController
 import com.c.PlaylistManager
 
@@ -38,7 +38,7 @@ Item {
                     Layout.preferredHeight: parent.height - 10
                     Layout.preferredWidth: parent.height - 10
 
-                    source: "image://coverArt/" + AlbumController.albumName + "/" + AlbumController.albumArtists[0]
+                    source: "image://coverArt/" + AlbumSongsView.albumName + "/" + AlbumSongsView.albumArtists[0]
                     sourceSize.width: parent.height - 10
                     sourceSize.height: parent.height - 10
 
@@ -51,7 +51,7 @@ Item {
                     Text{
                         id: loadedAlbumName
                         color: "white"
-                        text: AlbumController.albumName
+                        text: AlbumSongsView.albumName
                         font.bold: true
                         font.pointSize: 40
 
@@ -60,21 +60,21 @@ Item {
 
                     Text{
                         id: loadedAlbumArtists
-                        text: AlbumController.albumArtists.join(", ")
+                        text: AlbumSongsView.albumArtists.join(", ")
                         color:"white"
                         font.pointSize: 20
                     }
 
                     Text{
                         id: loadedAlbumGenre
-                        text: AlbumController.genre
+                        text: AlbumSongsView.genre
                         color: "white"
                         font.pointSize: 10
                     }
 
                     Text{
                         id: loadedAlbumYear
-                        text: AlbumController.year
+                        text: AlbumSongsView.year
                         color: "white"
                         font.pointSize: 10
                     }
@@ -96,7 +96,7 @@ Item {
                 buttonText: "Play Album"
 
                 onButtonClicked: {
-                    PlaylistManager.playAlbum(AlbumController.albumName, AlbumController.albumArtists);
+                    PlaylistManager.playAlbum(AlbumSongsView.albumName, AlbumSongsView.albumArtists);
                 }
 
             }

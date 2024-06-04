@@ -65,3 +65,13 @@ QHash<int, QByteArray> AlbumListModel::roleNames() const
 
     return roles;
 }
+
+void AlbumListModel::clear()
+{
+    if(!m_albums.isEmpty()){
+        beginRemoveRows(QModelIndex(), 0, m_albums.count() - 1);
+        m_albums.clear();
+        endRemoveRows();
+
+    }
+}

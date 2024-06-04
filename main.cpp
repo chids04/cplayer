@@ -11,8 +11,12 @@
 #include "cpp/albumlistmodel.h"
 #include "cpp/viewcontroller.h"
 #include "cpp/albumfilterproxymodel.h"
-#include "cpp/albumview.h"
+#include "cpp/albumsongsview.h"
 #include "cpp/playlistmanager.h"
+#include "cpp/folderview.h"
+#include "cpp/songholder.h"
+#include "cpp/songview.h"
+#include "cpp/albumview.h"
 
 int main(int argc, char *argv[])
 {
@@ -34,11 +38,24 @@ int main(int argc, char *argv[])
     AlbumHolder *albumHolder = new AlbumHolder(albumListModel);
     qmlRegisterSingletonInstance("com.c.AlbumListModel", 1, 0, "AlbumModel", albumListModel);
 
+    AlbumView *albumView = new AlbumView(albumHolder);
+    qmlRegisterSingletonInstance("com.c.AlbumView", 1, 0, "AlbumView", albumView);
+
+    AlbumSongsView *albumSongsView = new AlbumSongsView;
+    qmlRegisterSingletonInstance("com.c.AlbumSongsView", 1, 0, "AlbumSongsView", albumSongsView);
+
     PlaylistManager *playlistManager = new PlaylistManager(albumHolder);
     qmlRegisterSingletonInstance("com.c.PlaylistManager", 1, 0, "PlaylistManager", playlistManager);
 
     SongListModel *songModel = new SongListModel;
     qmlRegisterSingletonInstance("com.c.SongModel", 1, 0, "SongModel", songModel);
+
+    SongHolder *songHolder = new SongHolder(songModel);
+    SongView *songView = new SongView(songHolder);
+    qmlRegisterSingletonInstance("com.c.SongView", 1, 0, "SongView", songView);
+
+    FolderView *folderView = new FolderView(songHolder, albumHolder, coverArtHolder);
+    qmlRegisterSingletonInstance("com.c.FolderView", 1, 0, "FolderView", folderView);
 
     AlbumFilterProxyModel *albumFilterProxyModel = new AlbumFilterProxyModel;
     qmlRegisterSingletonInstance("com.c.AlbumFilterProxyModel", 1, 0,"AlbumFilterModel", albumFilterProxyModel);
@@ -55,8 +72,6 @@ int main(int argc, char *argv[])
     ViewController *viewController = new ViewController;
     qmlRegisterSingletonInstance("com.c.ViewController", 1, 0, "ViewController", viewController);
 
-    AlbumView *albumView = new AlbumView;
-    qmlRegisterSingletonInstance("com.c.AlbumViewController", 1, 0, "AlbumController", albumView);
 
     MediaImageProvider *mediaImageProvider = new MediaImageProvider(coverArtHolder);
     engine.addImageProvider(QLatin1String("coverArt"), mediaImageProvider);

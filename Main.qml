@@ -15,21 +15,6 @@ Window {
     visible: true
     title: qsTr("c")
 
-
-    onVisibleChanged: {
-        folderDialog.open()
-    }
-
-    FolderDialog{
-        id: folderDialog
-        title: "Select a directory to scan for music"
-
-        onAccepted: {
-            MusicLibrary.musicPath = folderDialog.folder
-        }
-
-    }
-
     Rectangle {
         anchors.fill: parent
         color: "#131314"

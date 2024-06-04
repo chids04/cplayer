@@ -52,13 +52,17 @@ qt_add_qml_module(appcplayer
         SOURCES cpp/albumlistmodel.h cpp/albumlistmodel.cpp
         SOURCES cpp/viewcontroller.h cpp/viewcontroller.cpp
         SOURCES cpp/albumfilterproxymodel.h cpp/albumfilterproxymodel.cpp
-        SOURCES cpp/albumview.h cpp/albumview.cpp
+        SOURCES cpp/albumsongsview.h cpp/albumsongsview.cpp
         SOURCES cpp/playlistmanager.h cpp/playlistmanager.cpp
         SOURCES cpp/playlist.h cpp/playlist.cpp
         QML_FILES qml/components/CButton.qml
         QML_FILES qml/Folders.qml
         QML_FILES qml/AlbumSongs.qml
-
+        SOURCES  cpp/folderview.cpp cpp/folderview.h
+        SOURCES cpp/musicscannerthread.cpp cpp/musicscannerthread.h
+        SOURCES cpp/songholder.cpp cpp/songholder.h
+        SOURCES cpp/songview.cpp cpp/songview.h
+        SOURCES cpp/albumview.cpp cpp/albumview.h
 )
 
 
