@@ -2,21 +2,22 @@
 #include <QQmlApplicationEngine>
 #include <QFontDatabase>
 
-#include "cpp/mediaplayercontroller.h"
-#include "cpp/mediaimageprovider.h"
-#include "cpp/musiclibrary.h"
-#include "cpp/songlistmodel.h"
-#include "cpp/coverartholder.h"
-#include "cpp/albumholder.h"
-#include "cpp/albumlistmodel.h"
-#include "cpp/viewcontroller.h"
-#include "cpp/albumfilterproxymodel.h"
-#include "cpp/albumsongsview.h"
-#include "cpp/playlistmanager.h"
-#include "cpp/folderview.h"
-#include "cpp/songholder.h"
-#include "cpp/songview.h"
-#include "cpp/albumview.h"
+#include "mediaplayercontroller.h"
+#include "mediaimageprovider.h"
+#include "musiclibrary.h"
+#include "songlistmodel.h"
+#include "coverartholder.h"
+#include "albumholder.h"
+#include "albumlistmodel.h"
+#include "viewcontroller.h"
+#include "albumfilterproxymodel.h"
+#include "albumsongsview.h"
+#include "playlistmanager.h"
+#include "folderview.h"
+#include "songholder.h"
+#include "songview.h"
+#include "albumview.h"
+
 
 int main(int argc, char *argv[])
 {

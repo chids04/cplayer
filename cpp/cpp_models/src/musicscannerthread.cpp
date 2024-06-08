@@ -13,14 +13,10 @@ void MusicScannerThread::run() {
 
     while(it.hasNext()){
         QString filePath = it.next();
-        //const char *encodedPath = QFile::encodeName(filePath).constData();
-        std::string encodedPath = filePath.toUtf8().constData();
-        //TagLib::FileRef f(filePath.toStdString().c_str());
+        std::wstring encodedPath = filePath.toStdWString();
         TagLib::MPEG::File f(encodedPath.c_str());
 
         if(f.hasID3v2Tag()){
-            //TagLib::Tag *tag = f.tag();
-
 
             QStringList features;
             QStringList albumArtists;
@@ -39,16 +35,10 @@ void MusicScannerThread::run() {
             int trackNum = f.ID3v2Tag()->track();
 
             qDebug() << "Length of" << title << "is" << length << "seconds";
-            //loadedCover.loadFromData(QByteArray::fromRawData(l.front().data(), l.front()->size()))
-            // QString title = QString::fromStdWString(tag->title().toWString());
-            // QString albumName = QString::fromStdWString(tag->album().toWString());
-            // QString genre = QString::fromStdWString(tag->genre().toWString());
-            // int year = tag->year();
 
             TagLib::PropertyMap props = f.properties();
             TagLib::StringList artistList = props["ARTIST"];
             bool firstIter = true;
-
 
             for (const auto &artist : artistList){
                 QString feature = QString::fromStdWString(artist.toWString());
@@ -85,20 +75,6 @@ void MusicScannerThread::run() {
                     }
                 }
             }
-
-
-                        // TagLib::StringList names = f.complexPropertyKeys();
-            // for(const auto &name : names){
-            //     const auto& properties = f.complexProperties(name);
-            //     for(const auto &property : properties){
-            //         for(const auto &[key, value] : property){
-            //             if(value.type() == TagLib::Variant::ByteVector){
-            //                 loadedCover.loadFromData(QByteArray::fromRawData(value.value<TagLib::ByteVector>().data(),value.value<TagLib::ByteVector>().size()));
-            //                 loadedCover = loadedCover.scaled(80, 80, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-            //             }
-            //         }
-            //     }
-            // }
 
 
 
