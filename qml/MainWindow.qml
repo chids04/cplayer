@@ -19,12 +19,10 @@ Rectangle{
 
         function onSongViewSelected(){
             viewLoader.source = "Songs.qml"
-            SongView.loadSongs();
         }
 
         function onAlbumViewSelected(){
             viewLoader.source = "Albums.qml"
-            AlbumView.loadAlbums()
         }
 
         function onAlbumSelected(){

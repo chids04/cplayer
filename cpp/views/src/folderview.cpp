@@ -17,5 +17,6 @@ void FolderView::startFolderScanningThread(QUrl filePath)
 void FolderView::onScanningFinished()
 {
     songHolder->populateModel();
+    albumHolder->addToModel();
 
 }

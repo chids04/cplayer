@@ -17,4 +17,7 @@
         <file>ui/assets/Roboto-Black.ttf</file>
         <file>ui/fonts/Satoshi-Medium.otf</file>
     </qresource>
+    <qresource prefix="/">
+        <file>qml/components/SongEntry.qml</file>
+    </qresource>
 </RCC>
