@@ -21,3 +21,8 @@ void ViewController::foldersView()
 {
     emit foldersViewSelected();
 }
+
+void ViewController::playlistsView()
+{
+    emit playlistsViewSelected();
+}

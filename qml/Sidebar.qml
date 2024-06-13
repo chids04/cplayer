@@ -163,7 +163,7 @@ Item{
 
                     Image{
                         id: foldersViewIcon
-                        source: "qrc:/resource/ui/assets/albumIcon.png"
+                        source: "qrc:/resource/ui/assets/folderIcon.png"
                         Layout.alignment: Qt.AlignVCenter
                     }
 
@@ -198,6 +198,61 @@ Item{
 
                     onClicked: {
                         ViewController.foldersView()
+                    }
+
+                }
+            }
+
+            Rectangle{
+                id: playlistsWindow
+                Layout.fillWidth: true
+                height: 60
+                color: "transparent"
+                bottomRightRadius: 40
+                topRightRadius: 40
+
+                RowLayout{
+                    anchors.leftMargin: 10
+                    anchors.fill: parent
+                    spacing: 10
+
+                    Image{
+                        id: playlistsIcon
+                        source: "qrc:/resource/ui/assets/folderIcon.png"
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+
+                    Rectangle {
+                        height: playlistsText.height
+                        Layout.fillWidth: true
+                        color: "transparent"
+                        Layout.alignment: Qt.AlignVCenter
+
+                        Text {
+                            id: playlistsText
+                            color: "white"
+                            font.pointSize: 30
+                            text: qsTr("Playlists")
+                            //anchors.horizontalCenter: parent.horizontalCenter
+                            //anchors.verticalCenter: parent.verticalCenter
+                        }
+                    }
+
+                }
+
+                MouseArea{
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: {
+                        playlistsWindow.color = "#1d1d1e"
+                    }
+
+                    onExited: {
+                        playlistsWindow.color = "transparent"
+                    }
+
+                    onClicked: {
+                        ViewController.playlistsView()
                     }
 
                 }

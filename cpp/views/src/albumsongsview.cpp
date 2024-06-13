@@ -23,7 +23,6 @@ QStringList AlbumSongsView::albumArtists() const
 void AlbumSongsView::setAlbumArtists(const QStringList &newAlbumArtists)
 {
     m_albumArtists = newAlbumArtists;
-    qDebug() << "setting artist";
     emit albumArtistsChanged();
 }
 
@@ -55,7 +54,6 @@ void AlbumSongsView::setGenre(const QString &newGenre)
 
 void AlbumSongsView::setAlbum(QStringList albumArtists, QString albumName, QString genre, int year, int songCount)
 {
-    qDebug() << "signal worked";
     setAlbumArtists(albumArtists);
     setAlbumName(albumName);
     setGenre(genre);

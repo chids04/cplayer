@@ -54,67 +54,76 @@ Item{
                 Layout.fillHeight: true
                 Layout.preferredWidth: parent.width * 0.3
 
-                Image {
-                    id: songArt
-                    height: 80
-                    width: 80
-                    source: "qrc:/resource/ui/assets/pika.png"
-                    anchors{
-                        left: parent.left
-                        verticalCenter: parent.verticalCenter
-                        leftMargin: 7
-                    }
 
-                    sourceSize.width: 80
-                    sourceSize.height: 80
+                RowLayout{
+                    anchors.fill: parent
+                    anchors.leftMargin: 10
+                    spacing: 10
 
-                    Connections{
-                        target: MediaPlayerController
-                        function onCoverArtChanged(){
-                            songArt.source = "image://coverArt/" + MediaPlayerController.album + "/" + MediaPlayerController.leadingArtist
-                        }
-                    }
-
-
-
-                }
-
-                Column {
-                    spacing: 5
-                    anchors{
-                        left: songArt.right
-                        verticalCenter: parent.verticalCenter
-                        leftMargin: 7
-                    }
-
-                    Text {
-                        id: songName
-                        text: "line 1"
-                        color: "white"
-                        font.bold: true
+                    Image {
+                        id: songArt
+                        Layout.preferredHeight: 80
+                        Layout.preferredWidth: 80
+                        Layout.alignment: Qt.AlignVCenter
+                        source: "qrc:/resource/ui/assets/pika.png"
+                        sourceSize.width: 80
+                        sourceSize.height: 80
 
                         Connections{
                             target: MediaPlayerController
-                            function onTrackTitleChanged(){
-                                songName.text = MediaPlayerController.trackTitle
+                            function onCoverArtChanged(){
+                                songArt.source = "image://coverArt/" + MediaPlayerController.album + "/" + MediaPlayerController.leadingArtist
                             }
-
                         }
                     }
 
-                    Text{
-                        id: songAuthors
-                        text: "line 2"
-                        color: "white"
+                    ColumnLayout{
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        Layout.alignment: Qt.AlignVCenter
 
-                        Connections{
-                            target: MediaPlayerController
-                            function onLeadingArtistChanged(){
-                                songAuthors.text = MediaPlayerController.features.length === 0 ? MediaPlayerController.leadingArtist  : MediaPlayerController.leadingArtist + " feat. " + MediaPlayerController.features.join(", ")
+                        Text {
+                            id: songName
+                            text: "line 1"
+                            color: "white"
+                            font.bold: true
+                            Layout.preferredWidth: mediaInfo.width - songArt.width - 30
+                            Layout.minimumWidth: 100
+
+                            elide: Text.ElideRight
+
+                            Connections{
+                                target: MediaPlayerController
+                                function onTrackTitleChanged(){
+                                    songName.text = MediaPlayerController.trackTitle
+                                }
+
                             }
                         }
+
+                        Text{
+                            id: songAuthors
+                            text: "line 2"
+                            color: "white"
+                            Layout.preferredWidth: mediaInfo.width - songArt.width - 30
+                            Layout.minimumWidth: 100
+                            elide: Text.ElideRight
+
+                            Connections{
+                                target: MediaPlayerController
+                                function onLeadingArtistChanged(){
+                                    songAuthors.text = MediaPlayerController.features.length === 0 ? MediaPlayerController.leadingArtist  : MediaPlayerController.leadingArtist + " feat. " + MediaPlayerController.features.join(", ")
+                                }
+                            }
+                        }
+
+                        Item{
+                            Layout.fillWidth: true
+                        }
+
                     }
                 }
+
             }
 
             Rectangle{
@@ -123,43 +132,57 @@ Item{
                 Layout.fillHeight: true
                 Layout.preferredWidth: parent.width * 0.4
 
-                Rectangle{
-                    id: controlHolder
-                    height: childrenRect.height
 
-                    anchors.centerIn: parent
+                ColumnLayout{
+                    anchors.fill: parent
+                    spacing: 0
 
                     RowLayout {
                         id: playbackControls
-                        anchors{
-                            top: parent.top
-                            horizontalCenter: parent.horizontalCenter
+
+                        Layout.alignment: Qt.AlignHCenter
+                        //spacing: 40
+                        Layout.fillWidth: true
+
+                        Item{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            Image {
+                                id: shuffleSongs
+                                anchors.centerIn: parent
+                                height: 30
+                                width: 30
+                                source: "qrc:/resource/ui/assets/shuffle.png"
+
+                            }
                         }
 
-                        spacing: 40
 
-                        Image {
-                            id: shuffleSongs
-                            height: 30
-                            width: 30
-                            source: "qrc:/resource/ui/assets/shuffle.png"
 
-                        }
+                        Item{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
 
-                        Image {
-                            id: previousBtn
-                            height: 30
-                            width: 30
-                            source: "qrc:/resource/ui/assets/previous.png"
+                            Image {
+                                id: previousBtn
+                                height: 30
+                                width: 30
+                                source: "qrc:/resource/ui/assets/previous.png"
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
 
-                            MouseArea{
-                                anchors.fill: parent
+                                MouseArea{
+                                    anchors.fill: parent
 
-                                onClicked: {
-                                    MediaPlayerController.queuePrevious()
+                                    onClicked: {
+                                        MediaPlayerController.queuePrevious()
+                                    }
                                 }
                             }
                         }
+
+
 
                         // MultiEffect{
                         //     source: playBtn
@@ -172,68 +195,88 @@ Item{
                         //     shadowVerticalOffset: 11
                         // }
 
-                        Image {
-                            id: playBtn
-                            source: "qrc:/resource/ui/assets/play.png"
+                        Item{
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
 
-                            MouseArea {
-                                anchors.fill: parent
+                            Image {
+                                id: playBtn
+                                source: "qrc:/resource/ui/assets/play.png"
+                                width: 30
+                                height: 30
 
-                                onClicked: {
-                                    MediaPlayerController.togglePlayState()
-                                }
-                            }
+                                anchors.centerIn: parent
 
-                            Connections {
-                                target: MediaPlayerController
-                                function onUpdateUI(){
-                                    if(MediaPlayerController.playing) {
-                                        playBtn.source = "qrc:/resource/ui/assets/play.png"
-                                    }
-                                    else{
-                                        playBtn.source = "qrc:/resource/ui/assets/pause.png"
+                                MouseArea {
+                                    anchors.fill: parent
+
+                                    onClicked: {
+                                        MediaPlayerController.togglePlayState()
                                     }
                                 }
-                            }
 
-                        }
-
-                        Image {
-                            id: nextBtn
-                            height: 30
-                            width: 30
-                            source: "qrc:/resource/ui/assets/next.png"
-
-                            MouseArea {
-                                anchors.fill: parent
-
-                                onClicked:{
-                                    MediaPlayerController.queueNext()
+                                Connections {
+                                    target: MediaPlayerController
+                                    function onUpdateUI(){
+                                        if(MediaPlayerController.playing) {
+                                            playBtn.source = "qrc:/resource/ui/assets/play.png"
+                                        }
+                                        else{
+                                            playBtn.source = "qrc:/resource/ui/assets/pause.png"
+                                        }
+                                    }
                                 }
+
                             }
                         }
 
-                        Image{
-                            id: repeatSongs
-                            height: 30
-                            width: 30
-                            source: "qrc:/resource/ui/assets/repeat.png"
-                        }
-                    }
-
-                    RowLayout{
-
-                        anchors{
-                            top: playbackControls.bottom
-                            topMargin: 15
-                            horizontalCenter: parent.horizontalCenter
-                        }
-
-                        spacing: 10
 
 
                         Item{
-                            width: 30
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+
+                            Image {
+                                id: nextBtn
+                                height: 30
+                                width: 30
+                                source: "qrc:/resource/ui/assets/next.png"
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                MouseArea {
+                                    anchors.fill: parent
+
+                                    onClicked:{
+                                        MediaPlayerController.queueNext()
+                                    }
+                                }
+                            }
+                        }
+
+
+
+                        Item{
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+
+                            Image{
+                                id: repeatSongs
+                                height: 30
+                                width: 30
+                                source: "qrc:/resource/ui/assets/repeat.png"
+                                anchors.centerIn: parent
+                            }
+                        }
+
+
+                    }
+                    RowLayout{
+                        Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
+                        Layout.bottomMargin: 10
+                        spacing: 10
+
+                        Item{
+                            Layout.preferredWidth: 30
 
                             Text{
                                 id: elapsedTime
@@ -265,7 +308,7 @@ Item{
                             //     horizontalCenter: parent.horizontalCenter
                             // }
 
-                            Layout.preferredWidth: 400
+                            Layout.preferredWidth: mediaControls.width-60
                             onValueChanged: {
                                 MediaPlayerController.position = value
                             }
@@ -301,7 +344,7 @@ Item{
 
 
                         Item{
-                            width: 30
+                            Layout.preferredWidth: 30
 
                             Text{
                                 height: 20
@@ -322,8 +365,209 @@ Item{
 
                     }
 
-
                 }
+
+                // Rectangle{
+                //     id: controlHolder
+                //     height: childrenRect.height
+
+                //     anchors.centerIn: parent
+
+                //     RowLayout {
+                //         id: playbackControls
+                //         anchors{
+                //             top: parent.top
+                //             horizontalCenter: parent.horizontalCenter
+                //         }
+
+                //         spacing: 40
+
+                //         Image {
+                //             id: shuffleSongs
+                //             height: 30
+                //             width: 30
+                //             source: "qrc:/resource/ui/assets/shuffle.png"
+
+                //         }
+
+                //         Image {
+                //             id: previousBtn
+                //             height: 30
+                //             width: 30
+                //             source: "qrc:/resource/ui/assets/previous.png"
+
+                //             MouseArea{
+                //                 anchors.fill: parent
+
+                //                 onClicked: {
+                //                     MediaPlayerController.queuePrevious()
+                //                 }
+                //             }
+                //         }
+
+                //         // MultiEffect{
+                //         //     source: playBtn
+                //         //     anchors.fill: playBtn
+                //         //     shadowBlur: 1
+                //         //     shadowEnabled: true
+                //         //     shadowColor: "#80000000"
+                //         //     autoPaddingEnabled: true
+                //         //     shadowHorizontalOffset: 15
+                //         //     shadowVerticalOffset: 11
+                //         // }
+
+                //         Image {
+                //             id: playBtn
+                //             source: "qrc:/resource/ui/assets/play.png"
+
+                //             MouseArea {
+                //                 anchors.fill: parent
+
+                //                 onClicked: {
+                //                     MediaPlayerController.togglePlayState()
+                //                 }
+                //             }
+
+                //             Connections {
+                //                 target: MediaPlayerController
+                //                 function onUpdateUI(){
+                //                     if(MediaPlayerController.playing) {
+                //                         playBtn.source = "qrc:/resource/ui/assets/play.png"
+                //                     }
+                //                     else{
+                //                         playBtn.source = "qrc:/resource/ui/assets/pause.png"
+                //                     }
+                //                 }
+                //             }
+
+                //         }
+
+                //         Image {
+                //             id: nextBtn
+                //             height: 30
+                //             width: 30
+                //             source: "qrc:/resource/ui/assets/next.png"
+
+                //             MouseArea {
+                //                 anchors.fill: parent
+
+                //                 onClicked:{
+                //                     MediaPlayerController.queueNext()
+                //                 }
+                //             }
+                //         }
+
+                //         Image{
+                //             id: repeatSongs
+                //             height: 30
+                //             width: 30
+                //             source: "qrc:/resource/ui/assets/repeat.png"
+                //         }
+                //     }
+
+                //     RowLayout{
+
+                //         anchors{
+                //             top: playbackControls.bottom
+                //             topMargin: 15
+                //             horizontalCenter: parent.horizontalCenter
+                //         }
+
+                //         spacing: 10
+
+
+                //         Item{
+                //             width: 30
+
+                //             Text{
+                //                 id: elapsedTime
+                //                 text: "00:00"
+                //                 anchors.centerIn: parent
+                //                 color: "white"
+
+                //                 Connections{
+                //                     target: MediaPlayerController
+                //                     function onPositionChanged(){
+                //                         elapsedTime.text = MediaPlayerController.genTime(MediaPlayerController.position)
+                //                     }
+                //                 }
+
+
+                //             }
+                //         }
+
+
+
+                //         Slider {
+                //             id: control
+                //             from: 0
+                //             to: MediaPlayerController.duration
+                //             value: MediaPlayerController.position
+                //             // anchors{
+                //             //     top: playbackControls.bottom
+                //             //     topMargin: 15
+                //             //     horizontalCenter: parent.horizontalCenter
+                //             // }
+
+                //             Layout.preferredWidth: 400
+                //             onValueChanged: {
+                //                 MediaPlayerController.position = value
+                //             }
+
+                //             background: Rectangle {
+                //                     x: control.leftPadding
+                //                     y: control.topPadding + control.availableHeight / 2 - height / 2
+                //                     implicitWidth: 200
+                //                     implicitHeight: 4
+                //                     width: control.availableWidth
+                //                     height: implicitHeight
+                //                     radius: 2
+                //                     color: "#2e2e2e"
+
+                //                     Rectangle {
+                //                         width: control.visualPosition * parent.width
+                //                         height: parent.height
+                //                         color: "#606060"
+                //                         radius: 2
+                //                     }
+                //                 }
+
+                //                 handle: Rectangle {
+                //                     x: control.leftPadding + control.visualPosition * (control.availableWidth - width)
+                //                     y: control.topPadding + control.availableHeight / 2 - height / 2
+                //                     implicitWidth: 16
+                //                     implicitHeight: 16
+                //                     radius: 8
+                //                     color: "#606060"
+                //                 }
+
+                //             }
+
+
+                //         Item{
+                //             width: 30
+
+                //             Text{
+                //                 height: 20
+                //                 id: songDuration
+                //                 text : "00:00"
+                //                 anchors.centerIn: parent
+                //                 color: "white"
+
+                //                 Connections{
+                //                     target: MediaPlayerController
+                //                     function onDurationChanged(){
+                //                         songDuration.text = MediaPlayerController.genTime(MediaPlayerController.duration)
+
+                //                     }
+                //                 }
+                //             }
+                //         }
+
+                //     }
+
+
+                // }
 
 
 

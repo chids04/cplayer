@@ -44,6 +44,9 @@ QVariant SongListModel::data(const QModelIndex &index, int role) const {
         case FeaturingArtistsRole:
             return song.featuringArtists;
 
+        case NumberInAlbumRole:
+            return song.trackNum;
+
         default:
             return QVariant();
     }
@@ -56,6 +59,7 @@ QHash<int, QByteArray> SongListModel::roleNames() const {
     roles[ArtistRole] = "artist";
     roles[AlbumRole] = "album";
     roles[FeaturingArtistsRole] = "features";
+    roles[NumberInAlbumRole] = "albumNum";
 
     return roles;
 }
@@ -104,4 +108,15 @@ QStringList SongListModel::getSongFeatures(const QString &filePath) const
     }
 
     return QStringList();
+}
+
+int SongListModel::getSongTrackNum(const QString &filePath) const
+{
+    for(const Song &song : m_songs){
+        if(song.filePath == filePath){
+            return song.trackNum;
+        }
+    }
+
+    return 0;
 }

@@ -16,7 +16,8 @@ public:
         TitleRole,
         ArtistRole,
         AlbumRole,
-        FeaturingArtistsRole
+        FeaturingArtistsRole,
+        NumberInAlbumRole
 
     };
 
@@ -29,6 +30,7 @@ public:
     QString getSongArtist(const QString &filePath) const;
     QString getSongAlbum(const QString &filePath) const;
     QStringList getSongFeatures(const QString &filePath) const;
+    int getSongTrackNum(const QString &filePath) const;
 
 
 private:

@@ -11,6 +11,7 @@
 #include "albumlistmodel.h"
 #include "viewcontroller.h"
 #include "albumfilterproxymodel.h"
+#include "folderlistmodel.h"
 #include "albumsongsview.h"
 #include "playlistmanager.h"
 #include "folderview.h"
@@ -35,8 +36,11 @@ int main(int argc, char *argv[])
 
     CoverArtHolder *coverArtHolder = new CoverArtHolder;
 
+    SongListModel *songModel = new SongListModel;
+    qmlRegisterSingletonInstance("com.c.SongModel", 1, 0, "SongModel", songModel);
+
     AlbumListModel *albumListModel = new AlbumListModel;
-    AlbumHolder *albumHolder = new AlbumHolder(albumListModel);
+    AlbumHolder *albumHolder = new AlbumHolder(albumListModel, songModel);
     qmlRegisterSingletonInstance("com.c.AlbumListModel", 1, 0, "AlbumModel", albumListModel);
 
     AlbumView *albumView = new AlbumView(albumHolder);
@@ -45,22 +49,24 @@ int main(int argc, char *argv[])
     AlbumSongsView *albumSongsView = new AlbumSongsView;
     qmlRegisterSingletonInstance("com.c.AlbumSongsView", 1, 0, "AlbumSongsView", albumSongsView);
 
-    PlaylistManager *playlistManager = new PlaylistManager(albumHolder);
+    PlaylistManager *playlistManager = new PlaylistManager(albumHolder, songModel);
     qmlRegisterSingletonInstance("com.c.PlaylistManager", 1, 0, "PlaylistManager", playlistManager);
 
-    SongListModel *songModel = new SongListModel;
-    qmlRegisterSingletonInstance("com.c.SongModel", 1, 0, "SongModel", songModel);
 
     SongHolder *songHolder = new SongHolder(songModel);
     SongView *songView = new SongView(songHolder);
     qmlRegisterSingletonInstance("com.c.SongView", 1, 0, "SongView", songView);
 
-    FolderView *folderView = new FolderView(songHolder, albumHolder, coverArtHolder);
+    FolderListModel *folderListModel = new FolderListModel;
+    qmlRegisterSingletonInstance("com.c.FolderModel", 1, 0, "FolderModel", folderListModel);
+
+    FolderView *folderView = new FolderView(songHolder, albumHolder, coverArtHolder, folderListModel);
     qmlRegisterSingletonInstance("com.c.FolderView", 1, 0, "FolderView", folderView);
 
     AlbumFilterProxyModel *albumFilterProxyModel = new AlbumFilterProxyModel;
     qmlRegisterSingletonInstance("com.c.AlbumFilterProxyModel", 1, 0,"AlbumFilterModel", albumFilterProxyModel);
     albumFilterProxyModel->setSourceModel(songModel);
+    albumFilterProxyModel->sort(0, Qt::AscendingOrder);
     albumFilterProxyModel->setDynamicSortFilter(true);
 
 

@@ -6,6 +6,7 @@
 #include <QAbstractListModel>
 
 #include "album.h"
+
 class AlbumListModel : public QAbstractListModel
 {
     Q_OBJECT

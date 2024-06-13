@@ -7,6 +7,7 @@
 #include <QObject>
 #include <QThread>
 #include <QPixmap>
+#include <QFileInfo>
 #include <QStringList>
 #include <QDirIterator>
 #include <QQmlListProperty>
@@ -24,6 +25,7 @@
 #include "coverartholder.h"
 #include "albumholder.h"
 #include "songholder.h"
+#include "folder.h"
 
 //this class needs to get
 //list of albums
@@ -39,7 +41,7 @@ public:
 
 signals:
     void songFetched(Song song);
-    void scanningFinished();
+    void scanningFinished(QString folderName, QString folderPath, int songCount);
 
 private:
     QUrl musicPath;

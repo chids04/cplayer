@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Layouts
 import QtQuick.Controls
 
 import com.c.AlbumListModel
@@ -28,6 +29,8 @@ Item {
     GridView {
         id: gridView
         anchors.fill: parent
+        anchors.rightMargin: 10
+        anchors.leftMargin: 10
         cellWidth: itemWidth
         cellHeight: itemWidth
 
@@ -62,29 +65,31 @@ Item {
 
                 }
 
-                Column{
-                    spacing: 5
-                    anchors.centerIn: parent
+                ColumnLayout{
+                    spacing: 0
+                    anchors.fill: parent
+                    anchors.bottomMargin: 5
 
                     Image {
                         source: "image://coverArt/" + albumName + "/" + albumArtists[0]
                         sourceSize.width: albumCard.width - 100
                         sourceSize.height: albumCard.width - 100
+                        Layout.alignment: Qt.AlignHCenter
                     }
 
                     Text {
                         text: albumName
                         font.bold: true
-                        horizontalAlignment: Text.AlignHCenter
                         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                         color: "white"
+                        Layout.alignment: Qt.AlignHCenter
                     }
 
                     Text {
                         text: albumArtists[0]
-                        horizontalAlignment: Text.AlignHCenter
                         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                         color: "white"
+                        Layout.alignment: Qt.AlignHCenter
                     }
                 }
             }

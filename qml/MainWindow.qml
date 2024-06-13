@@ -33,6 +33,10 @@ Rectangle{
             viewLoader.source = "Folders.qml"
         }
 
+        function onPlaylistsViewSelected(){
+            viewLoader.source = "Playlists.qml"
+        }
+
     }
 
     RowLayout {

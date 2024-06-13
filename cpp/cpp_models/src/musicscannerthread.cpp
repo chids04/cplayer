@@ -2,13 +2,15 @@
 
 MusicScannerThread::MusicScannerThread(QUrl musicPath, SongHolder *songHolder, AlbumHolder *albumHolder, CoverArtHolder *coverArtHolder, QObject *parent)
     : QThread{parent}, musicPath(musicPath), songHolder(songHolder), albumHolder(albumHolder), coverArtHolder(coverArtHolder)
-{
-
-}
+{}
 
 void MusicScannerThread::run() {
-
     QString localPath = musicPath.toLocalFile();
+
+    QFileInfo fileInfo(localPath);
+    QString folderName = fileInfo.fileName();
+    int songCount = 0;
+
     QDirIterator it(localPath, QStringList() << "*.mp3", QDir::Files, QDirIterator::Subdirectories);
 
     while(it.hasNext()){
@@ -24,8 +26,7 @@ void MusicScannerThread::run() {
             QByteArray loadedCover;
             bool hasCover = false;
 
-
-
+            songCount++;
 
             QString title = QString::fromStdWString(f.ID3v2Tag()->title().toWString());
             QString genre = QString::fromStdWString(f.ID3v2Tag()->genre().toWString());
@@ -100,7 +101,7 @@ void MusicScannerThread::run() {
         }
     }
 
-    emit scanningFinished();
+    emit scanningFinished(folderName, localPath, songCount);
 
 
 }

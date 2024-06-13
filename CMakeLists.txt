@@ -44,12 +44,15 @@ qt_add_qml_module(appcplayer
         qml/AlbumSongs.qml
         qml/Folders.qml
         qml/MainWindow.qml
+        qml/Playlists.qml
 
     #QML Components
     QML_FILES
         qml/MediaSlider.qml
         qml/Sidebar.qml
         qml/components/CButton.qml
+        qml/components/SongDelegate.qml
+
 
     #C++ Models
     SOURCES
@@ -61,6 +64,7 @@ qt_add_qml_module(appcplayer
         cpp/cpp_models/include/playlist.h
         cpp/cpp_models/include/song.h
         cpp/cpp_models/include/songholder.h
+        cpp/cpp_models/include/folder.h
 
         cpp/cpp_models/src/album.cpp
         cpp/cpp_models/src/albumholder.cpp
@@ -70,6 +74,7 @@ qt_add_qml_module(appcplayer
         cpp/cpp_models/src/playlist.cpp
         cpp/cpp_models/src/song.cpp
         cpp/cpp_models/src/songholder.cpp
+        cpp/cpp_models/src/folder.cpp
 
     #C++ Playback Control
     SOURCES
@@ -89,10 +94,12 @@ qt_add_qml_module(appcplayer
         cpp/qml_models/include/albumfilterproxymodel.h
         cpp/qml_models/include/albumlistmodel.h
         cpp/qml_models/include/songlistmodel.h
+        cpp/qml_models/include/folderlistmodel.h
 
         cpp/qml_models/src/albumfilterproxymodel.cpp
         cpp/qml_models/src/albumlistmodel.cpp
         cpp/qml_models/src/songlistmodel.cpp
+        cpp/qml_models/src/folderlistmodel.cpp
 
     #C++ QML View Controllers
     SOURCES

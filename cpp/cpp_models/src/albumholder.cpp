@@ -1,6 +1,6 @@
 #include "albumholder.h"
 
-AlbumHolder::AlbumHolder(AlbumListModel *albumListModel) : albumListModel(albumListModel) {}
+AlbumHolder::AlbumHolder(AlbumListModel *albumListModel, const SongListModel *songListModel) : albumListModel(albumListModel), songListModel(songListModel) {}
 
 void AlbumHolder::addAlbum(Album &album)
 {

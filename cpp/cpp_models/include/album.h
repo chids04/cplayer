@@ -4,6 +4,8 @@
 #include <QHash>
 #include <QStringList>
 
+#include "songlistmodel.h"
+
 class Album
 {
 
@@ -25,6 +27,9 @@ private:
     QStringList artist;
     int year;
     int songCount = 0;
+
+    const SongListModel *songListModel;
+
 
 };
 

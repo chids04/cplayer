@@ -11,7 +11,7 @@
 class AlbumHolder
 {
 public:
-    AlbumHolder(AlbumListModel *albumListModel);
+    AlbumHolder(AlbumListModel *albumListModel, const SongListModel *songListModel);
 
     void addAlbum(Album &album);
     bool isExists(QString &name, QStringList &artist) const;
@@ -23,6 +23,7 @@ public:
 private:
     QList<Album> albums;
     AlbumListModel *albumListModel;
+    const SongListModel *songListModel;
 };
 
 #endif // ALBUMHOLDER_H
