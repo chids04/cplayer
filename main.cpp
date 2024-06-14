@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
     AlbumFilterProxyModel *albumFilterProxyModel = new AlbumFilterProxyModel;
     qmlRegisterSingletonInstance("com.c.AlbumFilterProxyModel", 1, 0,"AlbumFilterModel", albumFilterProxyModel);
     albumFilterProxyModel->setSourceModel(songModel);
-    albumFilterProxyModel->sort(0, Qt::AscendingOrder);
+    //albumFilterProxyModel->sort(0, Qt::AscendingOrder);
     albumFilterProxyModel->setDynamicSortFilter(true);
 
 

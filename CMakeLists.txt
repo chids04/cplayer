@@ -181,6 +181,15 @@ if(WIN32)
 elseif(UNIX)
     #target_include_directories(appcplayer PRIVATE)
     target_link_libraries(appcplayer PRIVATE Qt6::Quick Qt6::Multimedia Qt6::Widgets Qt6::Core TagLib::tag)
+
+    target_include_directories(appcplayer PRIVATE
+        ${TAGLIB_INCLUDE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/cpp_models/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/image_providers/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/qml_models/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/views/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/playback/include)
+
 endif()
 
 include(GNUInstallDirs)
