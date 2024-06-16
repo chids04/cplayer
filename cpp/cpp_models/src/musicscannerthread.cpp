@@ -15,8 +15,15 @@ void MusicScannerThread::run() {
 
     while(it.hasNext()){
         QString filePath = it.next();
-        std::wstring encodedPath = filePath.toStdWString();
-        TagLib::MPEG::File f(encodedPath.c_str());
+
+        #if defined(Q_OS_WIN)
+            std::wstring encodedPath = filePath.toStdWString();
+            TagLib::MPEG::File f(encodedPath.c_str());
+        #else
+            QByteArray temp = filePath.toUtf8();
+            const char* encodedPath = temp.constData();
+            TagLib::MPEG::File f(encodedPath);
+        #endif
 
         if(f.hasID3v2Tag()){
 
