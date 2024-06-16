@@ -22,7 +22,6 @@ void PlaylistView::loadPlaylistSongs(int id)
 
     PlaylistSongsModel *playlistSongModel = modelVariant.value<PlaylistSongsModel*>();
 
-
     setPlaylistID(idVariant.toInt());
     setPlaylistName(nameVariant.toString());
     setHasCover(hasCoverVariant.toBool());
