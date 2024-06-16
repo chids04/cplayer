@@ -45,6 +45,7 @@ qt_add_qml_module(appcplayer
         qml/Folders.qml
         qml/MainWindow.qml
         qml/Playlists.qml
+        qml/PlaylistSongs.qml
 
     #QML Components
     QML_FILES
@@ -52,7 +53,8 @@ qt_add_qml_module(appcplayer
         qml/Sidebar.qml
         qml/components/CButton.qml
         qml/components/SongDelegate.qml
-
+        qml/components/ErrorPopup.qml
+        qml/components/SongContextMenu.qml
 
     #C++ Models
     SOURCES
@@ -95,11 +97,19 @@ qt_add_qml_module(appcplayer
         cpp/qml_models/include/albumlistmodel.h
         cpp/qml_models/include/songlistmodel.h
         cpp/qml_models/include/folderlistmodel.h
+        cpp/qml_models/include/playlistmodel.h
+        cpp/qml_models/include/playlistsongsmodel.h
+        cpp/views/include/playlistview.h
+
 
         cpp/qml_models/src/albumfilterproxymodel.cpp
         cpp/qml_models/src/albumlistmodel.cpp
         cpp/qml_models/src/songlistmodel.cpp
         cpp/qml_models/src/folderlistmodel.cpp
+        cpp/qml_models/src/playlistmodel.cpp
+        cpp/qml_models/src/playlistsongsmodel.cpp
+        cpp/views/src/playlistview.cpp
+
 
     #C++ QML View Controllers
     SOURCES
@@ -114,37 +124,6 @@ qt_add_qml_module(appcplayer
         cpp/views/src/folderview.cpp
         cpp/views/src/songview.cpp
         cpp/views/src/viewcontroller.cpp
-
-
-
-        # SOURCES cpp/mediaplayercontroller.h cpp/mediaplayercontroller.cpp
-        # RESOURCES resources.qrc
-        # SOURCES cpp/mediaimageprovider.h cpp/mediaimageprovider.cpp
-        # QML_FILES qml/MediaSlider.qml
-        # QML_FILES qml/MainWindow.qml
-        # QML_FILES qml/Sidebar.qml
-        # QML_FILES qml/Songs.qml
-        # SOURCES cpp/song.h cpp/song.cpp
-        # SOURCES cpp/musiclibrary.h cpp/musiclibrary.cpp
-        # SOURCES cpp/songlistmodel.h cpp/songlistmodel.cpp
-        # SOURCES cpp/coverartholder.h cpp/coverartholder.cpp
-        # QML_FILES qml/Albums.qml
-        # SOURCES cpp/album.h cpp/album.cpp
-        # SOURCES cpp/albumholder.h cpp/albumholder.cpp
-        # SOURCES cpp/albumlistmodel.h cpp/albumlistmodel.cpp
-        # SOURCES cpp/viewcontroller.h cpp/viewcontroller.cpp
-        # SOURCES cpp/albumfilterproxymodel.h cpp/albumfilterproxymodel.cpp
-        # SOURCES cpp/albumsongsview.h cpp/albumsongsview.cpp
-        # SOURCES cpp/playlistmanager.h cpp/playlistmanager.cpp
-        # SOURCES cpp/playlist.h cpp/playlist.cpp
-        # QML_FILES qml/components/CButton.qml
-        # QML_FILES qml/Folders.qml
-        # QML_FILES qml/AlbumSongs.qml
-        # SOURCES  cpp/folderview.cpp cpp/folderview.h
-        # SOURCES cpp/musicscannerthread.cpp cpp/musicscannerthread.h
-        # SOURCES cpp/songholder.cpp cpp/songholder.h
-        # SOURCES cpp/songview.cpp cpp/songview.h
-        # SOURCES cpp/albumview.cpp cpp/albumview.h
 )
 
 

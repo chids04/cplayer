@@ -1,10 +1,23 @@
 #include "playlist.h"
 
-Playlist::Playlist(int id) : id(id) {}
+Playlist::Playlist(int id, const QString &playlistName, bool hasCover) : id(id), playlistName(playlistName), hasCover(hasCover)
+{
+    playlistSongsModel = new PlaylistSongsModel;
+}
 
 void Playlist::addSong(const QString &url)
 {
     songUrls << url;
+}
+
+void Playlist::setSongCount(int songCount)
+{
+    this->songCount = songCount;
+}
+
+void Playlist::setDuration(int duration)
+{
+    this->duration = duration;
 }
 
 void Playlist::clearPlaylist()
@@ -16,6 +29,21 @@ void Playlist::clearPlaylist()
 int Playlist::getID() const
 {
     return id;
+}
+
+int Playlist::getDuration() const
+{
+    return duration;
+}
+
+int Playlist::getSongCount() const
+{
+    return songCount;
+}
+
+QString Playlist::getPlaylistName() const
+{
+    return playlistName;
 }
 
 QString Playlist::getNextSong()
@@ -42,4 +70,14 @@ QString Playlist::getPreviousSong()
     else{
         return songUrls.at(--currentIndex);
     }
+}
+
+PlaylistSongsModel* Playlist::getSongModel() const
+{
+    return playlistSongsModel;
+}
+
+bool Playlist::playlistHasCover() const
+{
+    return hasCover;
 }

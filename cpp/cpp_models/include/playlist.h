@@ -5,27 +5,38 @@
 #include <QDebug>
 #include <QStringList>
 
+#include "playlistsongsmodel.h"
+
 class Playlist
 {
 public:
-    Playlist(int id);
+    Playlist(int id, const QString &playlistName, bool hasCover = false);
 
     void addSong(const QString &url);
+
     void setSongCount(int songCount);
     void setDuration(int duration);
-    void clearPlaylist();
 
     int getID() const;
+    int getDuration() const;
+    int getSongCount() const;
+    QString getPlaylistName() const;
     QString getNextSong();
     QString getPreviousSong();
+    PlaylistSongsModel* getSongModel() const;
+    bool playlistHasCover() const;
 
+    void clearPlaylist();
 
 private:
-    QStringList songUrls;
-    int songCount;
-    int duration;
-    int currentIndex = 0;
     int id;
+    int duration;
+    int songCount;
+    int currentIndex = 0;
+    bool hasCover = false;
+    QString playlistName;
+    QStringList songUrls;
+    PlaylistSongsModel *playlistSongsModel;
 
 };
 

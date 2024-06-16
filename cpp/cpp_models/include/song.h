@@ -11,22 +11,6 @@
 #include <iostream>
 
 
-// class Song : QObject
-// {
-//     Q_OBJECT
-
-// public:
-//     QUrl filePath;
-//     std::wstring title;
-//     std::wstring artist;
-//     std::wstring album;
-//     std::vector<std::wstring> featuringArtists;
-
-//     Song(const QUrl &filePath, const std::wstring &title, const std::wstring &artist, const std::wstring &album,
-//              const std::vector<std::wstring> &featuringArtists,
-//              QObject *parent=nullptr);
-// };
-
 struct Song {
     QString filePath;
     QString title;

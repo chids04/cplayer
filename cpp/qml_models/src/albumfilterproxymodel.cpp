@@ -22,7 +22,7 @@ bool AlbumFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &s
 }
 
 //sorts the songs by album number
-bool AlbumFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right)
+bool AlbumFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
     QVariant leftData = sourceModel()->data(left, SongListModel::NumberInAlbumRole);
     QVariant rightData = sourceModel()->data(right, SongListModel::NumberInAlbumRole);

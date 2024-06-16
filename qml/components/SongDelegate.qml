@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls.Basic
+import QtQuick.Controls
 import com.c.MediaController
 import com.c.SongModel
 
@@ -39,6 +39,7 @@ Rectangle {
         id: songClick
         anchors.fill: parent
         hoverEnabled: true
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
 
         onEntered: {
             tintOverlay.color = "#383838"
@@ -57,9 +58,21 @@ Rectangle {
             songRect.state = ''
         }
 
-        onClicked: {
-            songDelegateClicked()
+        onClicked: mouse => {
+            if(mouse.button === Qt.LeftButton){
+                songDelegateClicked()
+            }
+            else if(mouse.button === Qt.RightButton){
+                contextMenu.popup()
+            }
+
+
         }
+
+        SongContextMenu{
+            id:contextMenu
+        }
+
 
         Behavior on scale {
             NumberAnimation {

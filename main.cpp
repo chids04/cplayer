@@ -18,6 +18,8 @@
 #include "songholder.h"
 #include "songview.h"
 #include "albumview.h"
+#include "playlistmodel.h"
+#include "playlistview.h"
 
 
 int main(int argc, char *argv[])
@@ -52,6 +54,10 @@ int main(int argc, char *argv[])
     PlaylistManager *playlistManager = new PlaylistManager(albumHolder, songModel);
     qmlRegisterSingletonInstance("com.c.PlaylistManager", 1, 0, "PlaylistManager", playlistManager);
 
+    PlaylistModel *playlistModel = new PlaylistModel;
+    qmlRegisterSingletonInstance("com.c.PlaylistModel", 1, 0, "PlaylistModel", playlistModel);
+    PlaylistView *playlistView = new PlaylistView(playlistModel);
+    qmlRegisterSingletonInstance("com.c.PlaylistView", 1, 0, "PlaylistView", playlistView);
 
     SongHolder *songHolder = new SongHolder(songModel);
     SongView *songView = new SongView(songHolder);
@@ -66,7 +72,7 @@ int main(int argc, char *argv[])
     AlbumFilterProxyModel *albumFilterProxyModel = new AlbumFilterProxyModel;
     qmlRegisterSingletonInstance("com.c.AlbumFilterProxyModel", 1, 0,"AlbumFilterModel", albumFilterProxyModel);
     albumFilterProxyModel->setSourceModel(songModel);
-    //albumFilterProxyModel->sort(0, Qt::AscendingOrder);
+    albumFilterProxyModel->sort(0, Qt::AscendingOrder);
     albumFilterProxyModel->setDynamicSortFilter(true);
 
 

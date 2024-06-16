@@ -5,7 +5,7 @@ PlaylistManager::PlaylistManager(AlbumHolder *albumHolder, const SongListModel *
 
     //creating now playing playlist
 
-    playlists.push_back(Playlist(1));
+    playlists.push_back(Playlist(1, "Now Playing"));
 }
 
 QString PlaylistManager::setNextFilePath() const

@@ -2,8 +2,11 @@ import QtQuick
 import QtQuick.Layouts
 import Qt.labs.platform
 import QtQuick.Controls.Basic
+import QtQuick.Effects
 
 import "./qml"
+import "./qml/components"
+
 import com.c.MediaController
 import com.c.MusicLibrary
 
@@ -15,7 +18,10 @@ Window {
     visible: true
     title: qsTr("c")
 
+    property alias mainWindow: mainContent
+    property alias mainErrorPopup: errorPopup
     Rectangle {
+        id: mainContent
         anchors.fill: parent
         color: "#131314"
 
@@ -29,10 +35,15 @@ Window {
             MediaSlider{
             }
 
+        }
 
+        ErrorPopup{
+            id: errorPopup
         }
 
     }
 
-}
+
+   }
+
 

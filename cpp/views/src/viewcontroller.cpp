@@ -26,3 +26,8 @@ void ViewController::playlistsView()
 {
     emit playlistsViewSelected();
 }
+
+void ViewController::selectPlaylist()
+{
+    emit playlistSelected();
+}

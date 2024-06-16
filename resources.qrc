@@ -18,7 +18,4 @@
         <file>ui/fonts/Satoshi-Medium.otf</file>
         <file>ui/assets/folderIcon.png</file>
     </qresource>
-    <qresource prefix="/">
-        <file>qml/Playlists.qml</file>
-    </qresource>
 </RCC>
