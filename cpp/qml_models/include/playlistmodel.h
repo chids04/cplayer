@@ -17,6 +17,7 @@ public:
         SongCountRole,
         DurationRole,
         SongModelRole,
+        SongListRole,
         HasCoverRole
     };
 
@@ -24,7 +25,7 @@ public:
     void clear();
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-    QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
+    QModelIndex index(int row, int column=0, const QModelIndex &parent = QModelIndex()) const override;
     QModelIndex getIndexForID(int id) const;
     QHash<int, QByteArray> roleNames() const override;
 

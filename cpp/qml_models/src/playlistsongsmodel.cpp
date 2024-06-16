@@ -1,10 +1,13 @@
 #include "playlistsongsmodel.h"
 #include <QDebug>
 
-PlaylistSongsModel::PlaylistSongsModel(QObject *parent) : QAbstractListModel(parent) {}
+PlaylistSongsModel::PlaylistSongsModel(SongListModel *songListModel, QObject *parent) : songListModel(songListModel), QAbstractListModel(parent) {}
 
-void PlaylistSongsModel::addSong(QString filePath, QString title, QString artist, QString album, QStringList featuringArtists, int length, int trackNum){
-    Song song = Song(filePath, title, artist, album, featuringArtists, length, trackNum);
+void PlaylistSongsModel::addSong(int index){
+
+    QModelIndex idx = songListModel->index(index);
+    QVariant songVariant = songListModel->data(idx, SongListModel::SongObjectRole);
+    Song song = songVariant.value<Song>();
 
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     m_songs << song;
@@ -23,6 +26,17 @@ void PlaylistSongsModel::clear()
 int PlaylistSongsModel::rowCount(const QModelIndex &parent) const {
     Q_UNUSED(parent)
     return m_songs.count();
+}
+
+QModelIndex PlaylistSongsModel::index(int row, int column, const QModelIndex &parent) const {
+    Q_UNUSED(parent)
+
+    // Check for a valid row and column
+    if (row >= 0 && row < rowCount() && column == 0) {
+        return createIndex(row, column);
+    } else {
+        return QModelIndex(); // Return an invalid index if out of bounds
+    }
 }
 
 QVariant PlaylistSongsModel::data(const QModelIndex &index, int role) const {

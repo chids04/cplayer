@@ -37,6 +37,7 @@ Item {
         model: SongModel// This is the model exposed from C++
         delegate: SongDelegate{
             id: songDelegate
+            songDelegateIndex: index
             songDelegateHeight: 80
             songDelegateWidth: songsListView.width - 23
             songDelegateColor: index % 2 == 0 ? "#1e1f20" : "#131314"

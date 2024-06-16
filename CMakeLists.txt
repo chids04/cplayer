@@ -82,9 +82,12 @@ qt_add_qml_module(appcplayer
     SOURCES
         cpp/playback/include/mediaplayercontroller.h
         cpp/playback/include/playlistmanager.h
+        cpp/playback/include/nowplaying.h
+
 
         cpp/playback/src/mediaplayercontroller.cpp
         cpp/playback/src/playlistmanager.cpp
+        cpp/playback/src/nowplaying.cpp
 
     #C++ Image Providers
     SOURCES

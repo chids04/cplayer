@@ -16,7 +16,7 @@ class PlaylistManager : public QObject
     Q_PROPERTY(QStringList features READ features WRITE setFeatures NOTIFY featuresChanged)
 
 public:
-    explicit PlaylistManager(AlbumHolder *albumHolder, const SongListModel *songModel, QObject *parent = nullptr);
+    explicit PlaylistManager(AlbumHolder *albumHolder, SongListModel *songModel, QObject *parent = nullptr);
 
     QString setNextFilePath() const;
     void nextFilePath(const QString &newNextFilePath);
@@ -54,7 +54,7 @@ private:
 
     int currentPlaylistID;
 
-    const SongListModel *songListModel;
+    SongListModel *songListModel;
 
     bool compareTrackNum(QString &url1, QString &url2);
 };

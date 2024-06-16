@@ -1,11 +1,11 @@
 #include "playlistmanager.h"
 
-PlaylistManager::PlaylistManager(AlbumHolder *albumHolder, const SongListModel *songListModel, QObject *parent) : albumHolder(albumHolder),
+PlaylistManager::PlaylistManager(AlbumHolder *albumHolder, SongListModel *songListModel, QObject *parent) : albumHolder(albumHolder),
     songListModel(songListModel), QObject(parent) {
 
     //creating now playing playlist
 
-    playlists.push_back(Playlist(1, "Now Playing"));
+    playlists.push_back(Playlist(1, "Now Playing", songListModel));
 }
 
 QString PlaylistManager::setNextFilePath() const

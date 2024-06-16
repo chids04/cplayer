@@ -5,11 +5,8 @@
 #include <QPixmap>
 #include <QString>
 #include <QObject>
+#include <QMetaType>
 #include <QStringList>
-
-#include <vector>
-#include <iostream>
-
 
 struct Song {
     QString filePath;
@@ -20,8 +17,11 @@ struct Song {
     int length;
     int trackNum;
 
+    Song() {}
+
     Song(const QString &filePath, const QString &title, const QString &artist, const QString &album,
          const QStringList &featuringArtists, int length, int trackNum);
 };
 
+Q_DECLARE_METATYPE(Song)
 #endif // SONG_H

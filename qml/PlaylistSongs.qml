@@ -113,16 +113,17 @@ Item {
                     }
                 }
 
-                model: PlaylistManager.playlistSongsModel
+                model: PlaylistView.playlistSongsModel
 
                 delegate: SongDelegate{
                     id: songDelegate
 
+                    songDelegateIndex: index
                     songDelegateHeight: 80
                     songDelegateWidth: playlistSongsListView.width - 23
                     songDelegateColor: index % 2 == 0 ? "#1e1f20" : "#131314"
 
-                    songDelegateNumber: index
+                    songDelegateNumber: index + 1
                     songDelegateTitle: title
                     songDelegateAuthors: features.length === 0 ? artist  : artist + " feat. " + features.join(", ")
                     songDelegateAlbum: album

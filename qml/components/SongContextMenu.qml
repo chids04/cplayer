@@ -1,10 +1,13 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import com.c.PlaylistModel
+import com.c.PlaylistView
 
 Menu {
     id: mainMenu
     title: qsTr("Tools")
+
+    property int songIndex
 
     Menu {
         id: addToPlaylistMenu
@@ -14,12 +17,15 @@ Menu {
             model: PlaylistModel  // Assuming PlaylistModel is exposed from C++
 
             delegate: MenuItem {
+                id: menuItemDelegate
                 text: playlistName  // Assuming playlistName is the role in PlaylistModel
                 //onTriggered: addToPlaylist(model.playlistName)
                 onTriggered: {
-
+                    console.log(playlistID)
+                    console.log(songIndex)
+                    PlaylistView.addSongToPlaylist(playlistID, songIndex)
                 }
-            }
+                            }
             onObjectAdded: (index, object) => addToPlaylistMenu.insertItem(index, object)
             onObjectRemoved: (index, object) => addToPlaylistMenu.removeItem(object)
         }
@@ -28,13 +34,15 @@ Menu {
                 ParallelAnimation {
                     id: popIn
                     PropertyAnimation {
-                        target: popup
+                        //target: [mainMenu, addToPlaylistMenu]
+                        target: mainMenu
                         property: "scale"
                         from: 0.9
                         to: 1
                         duration: 50
                     }
                     PropertyAnimation {
+                        //target: [mainMenu, addToPlaylistMenu]
                         target: mainMenu
                         property: "opacity"
                         from: 0.9
@@ -47,6 +55,7 @@ Menu {
                 ParallelAnimation {
                     id: popOut
                     PropertyAnimation {
+                        //target: [mainMenu, addToPlaylistMenu]
                         target: mainMenu
                         property: "scale"
                         from: 1
@@ -54,7 +63,8 @@ Menu {
                         duration: 50
                     }
                     PropertyAnimation {
-                        target: popup
+                        //target: [mainMenu, addToPlaylistMenu]
+                        target: mainMenu
                         property: "opacity"
                         from: 1
                         to: 0.9
@@ -63,7 +73,11 @@ Menu {
                 }
             }
 
+    function openContextMenu(index){
+        songIndex = index
+        mainMenu.popup()
 
+    }
 
 }
 

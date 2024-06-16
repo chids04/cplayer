@@ -23,6 +23,17 @@ int SongListModel::rowCount(const QModelIndex &parent) const {
     return m_songs.count();
 }
 
+QModelIndex SongListModel::index(int row, int column, const QModelIndex &parent) const {
+    Q_UNUSED(parent)
+
+    // Check for a valid row and column
+    if (row >= 0 && row < rowCount() && column == 0) {
+        return createIndex(row, column);
+    } else {
+        return QModelIndex(); // Return an invalid index if out of bounds
+    }
+}
+
 QVariant SongListModel::data(const QModelIndex &index, int role) const {
     if(index.row() < 0 || index.row() >= m_songs.count())
         return QVariant();
@@ -47,6 +58,9 @@ QVariant SongListModel::data(const QModelIndex &index, int role) const {
         case NumberInAlbumRole:
             return song.trackNum;
 
+        case SongObjectRole:
+            return QVariant::fromValue(song);
+
         default:
             return QVariant();
     }
@@ -60,6 +74,7 @@ QHash<int, QByteArray> SongListModel::roleNames() const {
     roles[AlbumRole] = "album";
     roles[FeaturingArtistsRole] = "features";
     roles[NumberInAlbumRole] = "albumNum";
+    roles[SongObjectRole] = "songObject";
 
     return roles;
 }

@@ -1,11 +1,11 @@
 #include "playlistview.h"
 
-PlaylistView::PlaylistView(PlaylistModel *playlistModel, QObject *parent) : playlistModel(playlistModel)
+PlaylistView::PlaylistView(PlaylistModel *playlistModel, SongListModel *songListModel, QObject *parent) : playlistModel(playlistModel), songListModel(songListModel)
 {}
 
 void PlaylistView::addPlaylist(QString playlistName, bool hasCover)
 {
-    Playlist playlist(playlistNum, playlistName);
+    Playlist playlist(playlistNum, playlistName, songListModel);
     playlistModel->addPlaylist(playlist);
 
     playlistNum++;
@@ -13,25 +13,30 @@ void PlaylistView::addPlaylist(QString playlistName, bool hasCover)
 
 void PlaylistView::loadPlaylistSongs(int id)
 {
+    qDebug() << id;
     QModelIndex index = playlistModel->getIndexForID(id);
     QVariant idVariant = playlistModel->data(index, PlaylistModel::PlaylistIDRole);
     QVariant nameVariant = playlistModel->data(index, PlaylistModel::PlaylistNameRole);
     QVariant modelVariant = playlistModel->data(index, PlaylistModel::SongModelRole);
     QVariant hasCoverVariant = playlistModel->data(index, PlaylistModel::HasCoverRole);
 
+    PlaylistSongsModel *playlistSongModel = modelVariant.value<PlaylistSongsModel*>();
+
+
     setPlaylistID(idVariant.toInt());
     setPlaylistName(nameVariant.toString());
     setHasCover(hasCoverVariant.toBool());
-    setPlaylistSongsModel(modelVariant);
+    setPlaylistSongsModel(playlistSongModel);
 }
 
-QVariant PlaylistView::playlistSongsModel() const
+PlaylistSongsModel *PlaylistView::playlistSongsModel()
 {
+    qDebug() << "attempting to get model";
     return m_playlistSongsModel;
 }
 
 
-void PlaylistView::setPlaylistSongsModel(const QVariant &newPlaylistSongsModel)
+void PlaylistView::setPlaylistSongsModel(PlaylistSongsModel *newPlaylistSongsModel)
 {
     if (m_playlistSongsModel == newPlaylistSongsModel)
         return;
@@ -52,13 +57,18 @@ void PlaylistView::setPlaylistName(const QString &newPlaylistName)
     emit playlistNameChanged();
 }
 
-void PlaylistView::addSongToPlaylist(int id, QString filePath, QString title, QString artist, QString album, QStringList featuringArtists, int length, int trackNum)
+void PlaylistView::addSongToPlaylist(int id, int songIndex)
 {
     QModelIndex index = playlistModel->getIndexForID(id);
     QVariant modelVariant = playlistModel->data(index, PlaylistModel::SongModelRole);
     PlaylistSongsModel *songModel = modelVariant.value<PlaylistSongsModel*>();
 
-    songModel->addSong(filePath, title, artist, album, featuringArtists, length, trackNum);
+    songModel->addSong(songIndex);
+    index = songModel->index(0);
+    QVariant dataVariant = songModel->data(index, PlaylistSongsModel::TitleRole);
+    QString songTitle = dataVariant.toString();
+
+    qDebug() << "added" << songTitle << "to playlist" << id;
 
 }
 

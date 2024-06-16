@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 
     PlaylistModel *playlistModel = new PlaylistModel;
     qmlRegisterSingletonInstance("com.c.PlaylistModel", 1, 0, "PlaylistModel", playlistModel);
-    PlaylistView *playlistView = new PlaylistView(playlistModel);
+    PlaylistView *playlistView = new PlaylistView(playlistModel, songModel);
     qmlRegisterSingletonInstance("com.c.PlaylistView", 1, 0, "PlaylistView", playlistView);
 
     SongHolder *songHolder = new SongHolder(songModel);

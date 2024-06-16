@@ -1,8 +1,10 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+
 import com.c.MediaController
 import com.c.SongModel
+import com.c.AlbumFilterProxyModel
 
 
 Rectangle {
@@ -12,6 +14,8 @@ Rectangle {
     //color: index % 2 == 0 ? "#1e1f20" : "#131314"
 
     property string songDelegateLeadingArtist
+    property int songDelegateIndex
+    property bool songFromAlbum
 
     property alias songDelegateColor: songRect.color
     property alias songDelegateWidth: songRect.width
@@ -21,6 +25,7 @@ Rectangle {
     property alias songDelegateTitle: songTitle.text
     property alias songDelegateAuthors: songAuthors.text
     property alias songDelegateAlbum: songAlbum.text
+
 
     signal songDelegateClicked()
     signal songDelegateDoubleClicked()
@@ -63,7 +68,7 @@ Rectangle {
                 songDelegateClicked()
             }
             else if(mouse.button === Qt.RightButton){
-                contextMenu.popup()
+                contextMenu.openContextMenu(index)
             }
 
 
@@ -71,6 +76,7 @@ Rectangle {
 
         SongContextMenu{
             id:contextMenu
+            songIndex: songDelegateIndex
         }
 
 

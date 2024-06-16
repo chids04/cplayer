@@ -1,8 +1,8 @@
 #include "playlist.h"
 
-Playlist::Playlist(int id, const QString &playlistName, bool hasCover) : id(id), playlistName(playlistName), hasCover(hasCover)
+Playlist::Playlist(int id, const QString &playlistName, SongListModel* songListModel, bool hasCover) : id(id), playlistName(playlistName), hasCover(hasCover)
 {
-    playlistSongsModel = new PlaylistSongsModel;
+    playlistSongsModel = new PlaylistSongsModel(songListModel);
 }
 
 void Playlist::addSong(const QString &url)
@@ -44,6 +44,11 @@ int Playlist::getSongCount() const
 QString Playlist::getPlaylistName() const
 {
     return playlistName;
+}
+
+QList<Song> Playlist::getSongs() const
+{
+    return songs;
 }
 
 QString Playlist::getNextSong()

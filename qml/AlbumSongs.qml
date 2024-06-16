@@ -141,6 +141,7 @@ Item {
                 delegate: SongDelegate{
                     id: songDelegate
 
+                    songDelegateIndex: index
                     songDelegateHeight: 80
                     songDelegateWidth: albumSongsListView.width - 23
                     songDelegateColor: index % 2 == 0 ? "#1e1f20" : "#131314"

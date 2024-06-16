@@ -12,17 +12,17 @@ class PlaylistView : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QVariant playlistSongsModel READ playlistSongsModel WRITE setPlaylistSongsModel NOTIFY playlistSongsModelChanged)
+    Q_PROPERTY(PlaylistSongsModel *playlistSongsModel READ playlistSongsModel WRITE setPlaylistSongsModel NOTIFY playlistSongsModelChanged)
     Q_PROPERTY(int playlistID READ playlistID WRITE setPlaylistID NOTIFY playlistIDChanged)
     Q_PROPERTY(QString playlistName READ playlistName WRITE setPlaylistName NOTIFY playlistNameChanged)
     Q_PROPERTY(bool hasCover READ hasCover WRITE setHasCover NOTIFY hasCoverChanged)
 
 public:
-    explicit PlaylistView(PlaylistModel *playlistModel, QObject *parent=nullptr);
+    explicit PlaylistView(PlaylistModel *playlistModel, SongListModel *songListModel, QObject *parent=nullptr);
 
-    QVariant playlistSongsModel() const;
+    PlaylistSongsModel *playlistSongsModel();
 
-    void setPlaylistSongsModel(const QVariant &newPlaylistSongsModel);
+    void setPlaylistSongsModel(PlaylistSongsModel *newPlaylistSongsModel);
 
     QString playlistName() const;
 
@@ -36,7 +36,7 @@ public slots:
     void addPlaylist(QString playlistName, bool hasCover = false);
     void loadPlaylistSongs(int id);
     void setPlaylistName(const QString &newPlaylistName);
-    void addSongToPlaylist(int id, QString filePath, QString title, QString artist, QString album, QStringList featuringArtists, int length, int trackNum);
+    void addSongToPlaylist(int id, int songIndex);
 
 signals:
     void playlistSongsModelChanged();
@@ -49,9 +49,10 @@ signals:
 
 private:
     PlaylistModel *playlistModel;
+    SongListModel *songListModel;
 
     int playlistNum = 0;
-    QVariant m_playlistSongsModel;
+    PlaylistSongsModel *m_playlistSongsModel;
     QString m_playlistName;
     bool m_hasCover;
     int m_playlistID;
