@@ -3,6 +3,8 @@
 
 #include <QAbstractListModel>
 
+#include <memory>
+
 #include "song.h"
 
 class SongListModel : public QAbstractListModel
@@ -22,7 +24,7 @@ public:
 
     };
 
-    void addSong(const Song &song);
+    void addSong(std::shared_ptr<Song> song);
     void clear();
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -36,8 +38,12 @@ public:
     QStringList getSongFeatures(const QString &filePath) const;
     int getSongTrackNum(const QString &filePath) const;
 
+public slots:
+    void onSongAdded(std::shared_ptr<Song> song);
+
 private:
-    QList<Song> m_songs;
+    QList<std::shared_ptr<Song>> m_songs;
+
 };
 
 #endif // SONGLISTMODEL_H

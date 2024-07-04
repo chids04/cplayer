@@ -1,11 +1,10 @@
 #include "albumview.h"
 
-AlbumView::AlbumView(AlbumHolder *albumHolder, QObject *parent) : albumHolder(albumHolder), QObject(parent)
+AlbumView::AlbumView(QObject *parent) : QObject(parent)
 {
 
 }
 
 void AlbumView::loadAlbums()
 {
-    albumHolder->addToModel();
 }

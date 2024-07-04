@@ -1,6 +1,7 @@
 #include "albumlistmodel.h"
 
-AlbumListModel::AlbumListModel(QObject *parent) : QAbstractListModel(parent) {}
+AlbumListModel::AlbumListModel(QObject *parent) : QAbstractListModel(parent) {
+}
 
 void AlbumListModel::addAlbum(const Album &album)
 {
@@ -8,6 +9,31 @@ void AlbumListModel::addAlbum(const Album &album)
     m_albums << album;
     endInsertRows();
 
+}
+
+QModelIndex AlbumListModel::findAlbumIndex(const QString &albumName, const QStringList &albumArtists)
+{
+    for(int row=0; row<m_albums.count(); row++) {
+        const Album &album = m_albums.at(row);
+        if(album.getName() == albumName && album.getArtist() == albumArtists){
+            return index(row);
+        }
+    }
+}
+
+void AlbumListModel::updateAlbum(std::shared_ptr<Song> song)
+{
+
+    for(Album &album: m_albums){
+        if(album.getName() == song->album && album.getArtist() == song->albumArtists){
+            album.addSong(song);
+            return;
+        }
+    }
+    //album doesnt exist, need to create a new one
+    Album album(song->album, song->albumArtists, song->genre, song->year);
+    album.addSong(song);
+    addAlbum(album);
 }
 
 int AlbumListModel::rowCount(const QModelIndex &parent) const
@@ -34,7 +60,7 @@ QVariant AlbumListModel::data(const QModelIndex &index, int role) const
             return album.getGenre();
 
         case AlbumSongsRole:
-            return album.getSongs();
+            return QVariant::fromValue(album.getSongs());
 
         case AlbumArtistRole:
             return album.getArtist();

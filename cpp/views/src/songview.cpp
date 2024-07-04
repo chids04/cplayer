@@ -1,11 +1,10 @@
 #include "songview.h"
 
-SongView::SongView(SongHolder *songHolder, QObject *parent) : QObject(parent), songHolder(songHolder)
+SongView::SongView(QObject *parent) : QObject(parent)
 {
 
 }
 
 void SongView::loadSongs()
 {
-    songHolder->populateModel();
 }

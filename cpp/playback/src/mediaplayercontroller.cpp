@@ -1,18 +1,20 @@
 #include "mediaplayercontroller.h"
-#include <QFileDialog>
-#include <QUrl>
 
 // Constructor and Destructor
-MediaPlayerController::MediaPlayerController(const CoverArtHolder *coverArtHolder, PlaylistManager *playlistManager, SongListModel *songModel, QObject *parent)
-    : coverArtHolder(coverArtHolder), playlistManager(playlistManager), songModel(songModel), QObject(parent) {
+MediaPlayerController::MediaPlayerController(const CoverArtHolder *coverArtHolder, NowPlaying *nowPlaying, QObject *parent)
+    : coverArtHolder(coverArtHolder), nowPlaying(nowPlaying), QObject(parent) {
     player = new QMediaPlayer;
     output = new QAudioOutput;
 
     connect(player, &QMediaPlayer::positionChanged, this, &MediaPlayerController::onPositionChanged);
     connect(player, &QMediaPlayer::durationChanged, this, &MediaPlayerController::durationChanged);
     connect(this, &MediaPlayerController::playingChanged, this, &MediaPlayerController::onPlayingChanged);
+    connect(this, &MediaPlayerController::nextSong, nowPlaying, &NowPlaying::onNextClicked);
+    connect(this, &MediaPlayerController::previousSong, nowPlaying, &NowPlaying::onPreviousClicked);
 
-    connect(playlistManager, &PlaylistManager::playlistQueued, this, &MediaPlayerController::queueNext);
+    connect(nowPlaying, &NowPlaying::playSong, this, &MediaPlayerController::onPlaySong);
+    connect(nowPlaying, &NowPlaying::jumpToEnd, this, &MediaPlayerController::onJumpToEnd);
+
     connect(player, &QMediaPlayer::mediaStatusChanged, this, &MediaPlayerController::onMediaStatusChanged);
 
     m_volume = 0.2;
@@ -36,7 +38,7 @@ void MediaPlayerController::onMediaStatusChanged(QMediaPlayer::MediaStatus statu
 
         case QMediaPlayer::EndOfMedia:
             //getNext song
-            queueNext();
+            nextClicked();
             break;
     }
 }
@@ -76,8 +78,6 @@ void MediaPlayerController::setLeadingArtist(QString &leadingArtist) {
     }
 }
 
-
-
 // Player Position and Duration
 qint64 MediaPlayerController::position() const {
     return player->position();
@@ -87,6 +87,8 @@ void MediaPlayerController::setPosition(qint64 newPosition) {
     if (player->position() != newPosition) {
         player->setPosition(newPosition);
     }
+
+    emit positionChanged();
 }
 
 qint64 MediaPlayerController::duration() const {
@@ -131,15 +133,16 @@ void MediaPlayerController::setFeatures(const QStringList &newFeatures) {
     }
 }
 
-void MediaPlayerController::setSong(QString filePath, QString title, QString artist, QString album, QStringList features) {
+void MediaPlayerController::onPlaySong(std::shared_ptr<Song> song) {
     player->stop();
 
-    player->setSource(QUrl::fromLocalFile(filePath));
-    setTrackTitle(title);
-    setLeadingArtist(artist);
-    setFilePath(filePath);
-    setAlbum(album);
-    setFeatures(features);
+    player->setSource(QUrl::fromLocalFile(song->filePath));
+    setTrackTitle(song->title);
+    setLeadingArtist(song->artist);
+    setFilePath(song->filePath);
+    setAlbum(song->album);
+    setFeatures(song->featuringArtists);
+
     emit coverArtChanged();
     emit leadingArtistChanged();
 
@@ -149,30 +152,19 @@ void MediaPlayerController::setSong(QString filePath, QString title, QString art
 }
 
 
-void MediaPlayerController::queueNext()
+void MediaPlayerController::nextClicked()
 {
-    QString nextSongFilePath = playlistManager->getNextSong();
-
-    if(nextSongFilePath != QString()){
-        setSong(nextSongFilePath, songModel->getSongTitle(nextSongFilePath), songModel->getSongArtist(nextSongFilePath), songModel->getSongAlbum(nextSongFilePath), songModel->getSongFeatures(nextSongFilePath));
-    }
+    emit nextSong();
 }
 
-void MediaPlayerController::queuePrevious()
+void MediaPlayerController::previousClicked()
 {
-    qDebug() << player->position();
-    if(player->position() <= 4000){
-        QString previousSongFilePath = playlistManager->getPreviousSong();
-
-        if(previousSongFilePath != QString()){
-            setSong(previousSongFilePath, songModel->getSongTitle(previousSongFilePath), songModel->getSongArtist(previousSongFilePath), songModel->getSongAlbum(previousSongFilePath), songModel->getSongFeatures(previousSongFilePath));
-        }
-    }
-    else{
-        player->setPosition(0);
-    }
+    emit previousSong(player->position());
 }
 
+void MediaPlayerController::onJumpToEnd(){
+    player->setPosition(player->duration());
+}
 
 // Volume Control
 float MediaPlayerController::volume() const {

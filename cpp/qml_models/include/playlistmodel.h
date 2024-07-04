@@ -17,7 +17,6 @@ public:
         SongCountRole,
         DurationRole,
         SongModelRole,
-        SongListRole,
         HasCoverRole
     };
 

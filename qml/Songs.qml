@@ -49,7 +49,7 @@ Item {
             songDelegateLeadingArtist: artist
 
             onSongDelegateDoubleClicked: {
-                MediaPlayerController.setSong(filePath, title, artist, album, features)
+                MediaPlayerController.onPlaySong(songObject)
             }
 
         }

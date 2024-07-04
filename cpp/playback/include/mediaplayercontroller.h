@@ -20,9 +20,8 @@
 #include <taglib/id3v2tag.h>
 #include <taglib/tpropertymap.h>
 
+#include "nowplaying.h"
 #include "coverartholder.h"
-#include "playlistmanager.h"
-#include "songlistmodel.h"
 
 class MediaPlayerController : public QObject {
 
@@ -41,7 +40,7 @@ class MediaPlayerController : public QObject {
 
 public:
     //could use signal and slot instead of passing around object pointers
-    explicit MediaPlayerController(const CoverArtHolder *coverArtHolder, PlaylistManager *playlistManager, SongListModel *songModel,  QObject *parent = nullptr);
+    explicit MediaPlayerController(const CoverArtHolder *coverArtHolder, NowPlaying *nowPlaying,  QObject *parent = nullptr);
 
     bool playing() const;
 
@@ -76,6 +75,8 @@ signals:
     void updateUI();
 
     void playingChanged();
+    void nextSong();
+    void previousSong(int duration);
     void albumChanged();
     void volumeChanged();
     void featuresChanged();
@@ -83,12 +84,13 @@ signals:
 public slots:
     void onPositionChanged();
     void onPlayingChanged();
-    void queueNext();
-    void queuePrevious();
+    void nextClicked();
+    void previousClicked();
+    void onJumpToEnd();
     void togglePlayState();
     void onMediaStatusChanged(QMediaPlayer::MediaStatus status);
 
-    void setSong(QString filePath, QString title, QString artist, QString album, QStringList features);
+    void onPlaySong(std::shared_ptr<Song> song);
     void setVolume(float newVolume);
 
     QString genTime(qint64 currentTime);
@@ -104,17 +106,12 @@ private:
 
     QMediaPlayer *player;
     QAudioOutput *output;
-    PlaylistManager *playlistManager;
-    SongListModel *songModel;
+    NowPlaying *nowPlaying;
     const CoverArtHolder *coverArtHolder;
 
     void setTrackTitle(QString &title);
     void setLeadingArtist(QString &leadingArtist);
     void setCoverArt(QPixmap coverArt);
-
-    //current song
-    //current song image
-    //current song artist
 
     bool m_playing = false;
     qreal currentDuration;

@@ -63,11 +63,6 @@ void PlaylistView::addSongToPlaylist(int id, int songIndex)
     PlaylistSongsModel *songModel = modelVariant.value<PlaylistSongsModel*>();
 
     songModel->addSong(songIndex);
-    index = songModel->index(0);
-    QVariant dataVariant = songModel->data(index, PlaylistSongsModel::TitleRole);
-    QString songTitle = dataVariant.toString();
-
-    qDebug() << "added" << songTitle << "to playlist" << id;
 
 }
 

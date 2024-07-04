@@ -19,7 +19,8 @@ public:
         ArtistRole,
         AlbumRole,
         FeaturingArtistsRole,
-        NumberInAlbumRole
+        NumberInAlbumRole,
+        SongObjectRole
 
     };
 
@@ -31,7 +32,7 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
 private:
-    QList<Song> m_songs;
+    QList<std::shared_ptr<Song>> m_songs;
     SongListModel *songListModel;
 };
 

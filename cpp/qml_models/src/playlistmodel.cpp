@@ -39,13 +39,7 @@ QVariant PlaylistModel::data(const QModelIndex &index, int role) const
             return playlist.getDuration();
 
         case SongModelRole:
-        {
-            PlaylistSongsModel *playlistSongsModel = playlist.getSongModel();
-            return QVariant::fromValue(playlistSongsModel);
-        }
-
-        case SongListRole:
-            return QVariant::fromValue(playlist.getSongs());
+            return QVariant::fromValue(playlist.getSongModel());
 
         case HasCoverRole:
             return playlist.playlistHasCover();
@@ -65,7 +59,6 @@ QHash<int, QByteArray> PlaylistModel::roleNames() const
     roles[DurationRole] = "duration";
     roles[SongModelRole] = "songModel";
     roles[HasCoverRole] = "playlistHasCover";
-    roles[SongListRole] = "songList";
 
     return roles;
 }

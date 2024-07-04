@@ -59,34 +59,25 @@ qt_add_qml_module(appcplayer
     #C++ Models
     SOURCES
         cpp/cpp_models/include/album.h
-        cpp/cpp_models/include/albumholder.h
         cpp/cpp_models/include/coverartholder.h
-        cpp/cpp_models/include/musiclibrary.h
         cpp/cpp_models/include/musicscannerthread.h
         cpp/cpp_models/include/playlist.h
         cpp/cpp_models/include/song.h
-        cpp/cpp_models/include/songholder.h
         cpp/cpp_models/include/folder.h
 
         cpp/cpp_models/src/album.cpp
-        cpp/cpp_models/src/albumholder.cpp
         cpp/cpp_models/src/coverartholder.cpp
-        cpp/cpp_models/src/musiclibrary.cpp
         cpp/cpp_models/src/musicscannerthread.cpp
         cpp/cpp_models/src/playlist.cpp
         cpp/cpp_models/src/song.cpp
-        cpp/cpp_models/src/songholder.cpp
         cpp/cpp_models/src/folder.cpp
 
     #C++ Playback Control
     SOURCES
         cpp/playback/include/mediaplayercontroller.h
-        cpp/playback/include/playlistmanager.h
         cpp/playback/include/nowplaying.h
 
-
         cpp/playback/src/mediaplayercontroller.cpp
-        cpp/playback/src/playlistmanager.cpp
         cpp/playback/src/nowplaying.cpp
 
     #C++ Image Providers

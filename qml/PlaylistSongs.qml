@@ -5,7 +5,6 @@ import QtQuick.Controls
 import com.c.AlbumFilterProxyModel
 import com.c.AlbumSongsView
 import com.c.MediaController
-import com.c.PlaylistManager
 import com.c.PlaylistView
 
 import "./components"
@@ -130,7 +129,7 @@ Item {
                     songDelegateLeadingArtist: artist
 
                     onSongDelegateDoubleClicked: {
-                        MediaPlayerController.setSong(filePath, title, artist, album, features)
+                        MediaPlayerController.onPlaySong(songObject)
                     }
 
                 }

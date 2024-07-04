@@ -8,7 +8,6 @@ import "./qml"
 import "./qml/components"
 
 import com.c.MediaController
-import com.c.MusicLibrary
 
 Window {
     width: 1280

@@ -1,15 +1,17 @@
 #include "folderview.h"
 
-FolderView::FolderView(SongHolder *songHolder, AlbumHolder *albumHolder, CoverArtHolder *coverArtHolder, FolderListModel *folderListModel, QObject *parent)
-    : QObject{parent}, songHolder(songHolder), albumHolder(albumHolder), coverArtHolder(coverArtHolder), folderListModel(folderListModel)
+FolderView::FolderView(SongListModel *songListModel, AlbumListModel *albumListModel, FolderListModel *folderListModel, CoverArtHolder *coverArtHolder, QObject *parent)
+    : QObject(parent), songListModel(songListModel), albumListModel(albumListModel), folderListModel(folderListModel), coverArtHolder(coverArtHolder)
 {
 
 }
 
 void FolderView::startFolderScanningThread(QUrl filePath)
 {
-    MusicScannerThread *musicScannerThread = new MusicScannerThread(filePath, songHolder, albumHolder, coverArtHolder, this);
+    MusicScannerThread *musicScannerThread = new MusicScannerThread(filePath, coverArtHolder, this);
     connect(musicScannerThread, &MusicScannerThread::scanningFinished, this, &FolderView::onScanningFinished);
+    connect(musicScannerThread, &MusicScannerThread::songFetched, songListModel, &SongListModel::onSongAdded);
+    connect(musicScannerThread, &MusicScannerThread::songFetched, albumListModel, &AlbumListModel::updateAlbum);
     connect(musicScannerThread, &MusicScannerThread::finished, musicScannerThread, &QObject::deleteLater);
     musicScannerThread->start();
 }
@@ -21,7 +23,7 @@ void FolderView::onScanningFinished(QString folderName, QString folderPath, int 
     folderListModel->clear();
     folderListModel->addFolder(folder);
 
-    songHolder->populateModel();
-    albumHolder->addToModel();
+    //songHolder->populateModel();
+    //albumHolder->addToModel();
 
 }
