@@ -3,11 +3,7 @@
 
 PlaylistSongsModel::PlaylistSongsModel(SongListModel *songListModel, QObject *parent) : songListModel(songListModel), QAbstractListModel(parent) {}
 
-void PlaylistSongsModel::addSong(int index){
-
-    QModelIndex idx = songListModel->index(index);
-    QVariant songVariant = songListModel->data(idx, SongListModel::SongObjectRole);
-    auto song = songVariant.value<std::shared_ptr<Song>>();
+void PlaylistSongsModel::addSong(std::shared_ptr<Song> song){
 
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     m_songs << song;

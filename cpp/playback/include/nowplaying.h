@@ -23,7 +23,9 @@ public slots:
     void playAlbum(const QString &albumName, const QStringList &albumArtists, bool queue=false);
     void onPreviousClicked(int duration);
     void onNextClicked();
-    void addToQueue(QString filePath);
+    void queueNext(std::shared_ptr<Song> song);
+    void addToQueue(std::shared_ptr<Song> song);
+    void playNow(std::shared_ptr<Song> song);
 
 private:
     QList<std::shared_ptr<Song>> songQueue;

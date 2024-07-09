@@ -56,13 +56,13 @@ void PlaylistView::setPlaylistName(const QString &newPlaylistName)
     emit playlistNameChanged();
 }
 
-void PlaylistView::addSongToPlaylist(int id, int songIndex)
+void PlaylistView::addSongToPlaylist(int id, std::shared_ptr<Song> song)
 {
     QModelIndex index = playlistModel->getIndexForID(id);
     QVariant modelVariant = playlistModel->data(index, PlaylistModel::SongModelRole);
     PlaylistSongsModel *songModel = modelVariant.value<PlaylistSongsModel*>();
 
-    songModel->addSong(songIndex);
+    songModel->addSong(song);
 
 }
 

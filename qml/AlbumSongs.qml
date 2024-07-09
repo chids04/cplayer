@@ -19,6 +19,7 @@ Item {
 
     ColumnLayout{
         anchors.fill: parent
+        spacing: 0
 
         Rectangle{
             id: albumInfo
@@ -88,17 +89,26 @@ Item {
             }
         }
 
-        Item{
+        RowLayout{
             id: albumControls
 
             CButton{
                 id: playAlbumBtn
-                buttonText: "Play Album"
+                buttonText: "Play Now"
 
                 onButtonClicked: {
                     NowPlaying.playAlbum(AlbumSongsView.albumName, AlbumSongsView.albumArtists, false);
                 }
 
+            }
+
+            CButton{
+                id: queueAlbumBtn
+                buttonText: "Add to Queue"
+
+                onButtonClicked: {
+                    NowPlaying.playAlbum(AlbumSongsView.albumName, AlbumSongsView.albumArtists, true);
+                }
             }
 
 
@@ -108,7 +118,6 @@ Item {
             id: songList
             Layout.fillHeight: true
             Layout.fillWidth: true
-            Layout.topMargin: playAlbumBtn.height
 
             color: "transparent"
             ListView {
@@ -146,6 +155,7 @@ Item {
                     songDelegateWidth: albumSongsListView.width - 23
                     songDelegateColor: index % 2 == 0 ? "#1e1f20" : "#131314"
 
+                    songObj: songObject
                     songDelegateNumber: albumNum
                     songDelegateTitle: title
                     songDelegateAuthors: features.length === 0 ? artist  : artist + " feat. " + features.join(", ")
@@ -153,7 +163,7 @@ Item {
                     songDelegateLeadingArtist: artist
 
                     onSongDelegateDoubleClicked: {
-                        MediaPlayerController.onPlaySong(songObject)
+                        NowPlaying.playSong(songObject)
                     }
 
                 }

@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QVariant>
 
+#include <memory>
+
 #include "playlist.h"
 #include "playlistmodel.h"
 #include "playlistsongsmodel.h"
@@ -36,7 +38,7 @@ public slots:
     void addPlaylist(QString playlistName, bool hasCover = false);
     void loadPlaylistSongs(int id);
     void setPlaylistName(const QString &newPlaylistName);
-    void addSongToPlaylist(int id, int songIndex);
+    void addSongToPlaylist(int id, std::shared_ptr<Song> song);
 
 signals:
     void playlistSongsModelChanged();

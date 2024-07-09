@@ -24,7 +24,7 @@ public:
 
     };
 
-    void addSong(int index);
+    void addSong(std::shared_ptr<Song> song);
     void clear();
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;

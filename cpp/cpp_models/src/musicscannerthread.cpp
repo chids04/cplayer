@@ -28,36 +28,33 @@ void MusicScannerThread::run() {
         if(!f.isNull() && !f.tag()->isEmpty()){
             songCount++;
 
-            QString title = QString::fromStdWString(f.tag()->title().toWString());
-            QString genre = QString::fromStdWString(f.tag()->genre().toWString());
-            QString albumName = QString::fromStdWString(f.tag()->album().toWString());
+            QString title = QString::fromUtf8(f.tag()->title().to8Bit(true));
+            QString genre = QString::fromUtf8(f.tag()->genre().to8Bit(true));
+            QString artists = QString::fromUtf8(f.tag()->artist().to8Bit(true));
+            QString albumName = QString::fromUtf8(f.tag()->album().to8Bit(true));
             int year = f.tag()->year();
-            qDebug() << "got song title";
             //int length = f.audioProperties()->lengthInSeconds();
             int length = 0;
             int trackNum = f.tag()->track();
 
-            qDebug() << "got song info";
 
             TagLib::PropertyMap properties = f.properties();
 
             QStringList features;
             QString leadingArtist;
-            TagLib::StringList artists = properties["ARTIST"];
 
-            bool firstIter = true;
-            for(const auto &artist: artists){
-                QString feature = QString::fromStdWString(artist.toWString());
-
-                if(firstIter){
-                    leadingArtist = feature;
-                    bool firstIter = false;
+            auto splitArtists = [](const QString &artists, QString &leadingArtist, QStringList &features){
+                if(artists.contains(" / ")){
+                    QStringList artistList = artists.split(" / ");
+                    leadingArtist = artistList.first();
+                    features = artistList.mid(1);
                 }
                 else{
-                    features << feature;
+                    leadingArtist = artists;
                 }
+            };
 
-            }
+            splitArtists(artists, leadingArtist, features);
 
             QStringList albumArtists;
             TagLib::StringList albumArtistsList = properties["ALBUMARTIST"];

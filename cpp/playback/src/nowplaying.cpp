@@ -8,20 +8,37 @@ NowPlaying::NowPlaying(SongListModel *songListModel, AlbumListModel *albumListMo
 
 void NowPlaying::playAlbum(const QString &albumName, const QStringList &albumArtists, bool queue)
 {
+    qDebug() << "playing album" << albumName << "by" << albumArtists;
     QModelIndex albumIndex = albumListModel->findAlbumIndex(albumName, albumArtists);
     QVariant albumSongsVariant = albumListModel->data(albumIndex, AlbumListModel::AlbumSongsRole);
     QList<std::shared_ptr<Song>> songs = albumSongsVariant.value<QList<std::shared_ptr<Song>>>();
 
+    std::sort(songs.begin(), songs.end(), [](const std::shared_ptr<Song> &a, const std::shared_ptr<Song> &b){
+        return a->trackNum < b->trackNum;
+    });
+
+    qDebug() << "got list of songs in album";
+
     if(queue){
         songQueue.append(songs);
     }
+
+    else if(songQueue.count() == 0){
+        songQueue.append(songs);
+        emit playSong(songQueue[currentIndex]);
+    }
+
     else{
         int index = currentIndex + 1;
         for(const auto &song : songs){
             songQueue.insert(index, song);
             index++;
         }
+        currentIndex++;
+        emit playSong(songQueue[currentIndex]);
     }
+
+
 
 }
 
@@ -31,12 +48,12 @@ void NowPlaying::onPreviousClicked(int duration)
         emit playSong(songQueue[0]);
     }
     else{
-        if(duration <= 4000){
+        if(duration >= 3000){
             emit playSong(songQueue[currentIndex]);
         }
         else{
-            emit playSong(songQueue[currentIndex-1]);
             currentIndex--;
+            emit playSong(songQueue[currentIndex]);
         }
     }
 }
@@ -47,13 +64,42 @@ void NowPlaying::onNextClicked()
         emit jumpToEnd();
     }
     else{
-        emit playSong(songQueue[currentIndex + 1]);
+        currentIndex++;
+        emit playSong(songQueue[currentIndex]);
     }
 }
 
-void NowPlaying::addToQueue(QString filePath)
+void NowPlaying::queueNext(std::shared_ptr<Song> song)
 {
+    if(songQueue.count() == 0) {
+        songQueue.append(song);
+    }
+    else{
+        songQueue.insert(currentIndex + 1, song);
+    }
+}
+
+void NowPlaying::addToQueue(std::shared_ptr<Song> song)
+{
+    songQueue.append(song);
+}
+
+void NowPlaying::playNow(std::shared_ptr<Song> song)
+{
+    if(songQueue.count() == 0){
+        songQueue.append(song);
+        emit playSong(songQueue[currentIndex]);
+    }
+
+    else{
+        songQueue.insert(currentIndex + 1, song);
+        currentIndex++;
+        emit playSong(songQueue[currentIndex]);
+    }
 
 }
+
+
+
 
 

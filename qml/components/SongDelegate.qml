@@ -16,6 +16,7 @@ Rectangle {
     property string songDelegateLeadingArtist
     property int songDelegateIndex
     property bool songFromAlbum
+    property var songObj;
 
     property alias songDelegateColor: songRect.color
     property alias songDelegateWidth: songRect.width
@@ -68,7 +69,7 @@ Rectangle {
                 songDelegateClicked()
             }
             else if(mouse.button === Qt.RightButton){
-                contextMenu.openContextMenu(index)
+                contextMenu.openContextMenu(songObj)
             }
 
 
@@ -76,7 +77,6 @@ Rectangle {
 
         SongContextMenu{
             id:contextMenu
-            songIndex: songDelegateIndex
         }
 
 

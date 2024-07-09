@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import QtQuick.Controls.Basic
 import com.c.MediaController
 import com.c.SongModel
+import com.c.NowPlaying
 
 import "./components"
 
@@ -41,6 +42,7 @@ Item {
             songDelegateHeight: 80
             songDelegateWidth: songsListView.width - 23
             songDelegateColor: index % 2 == 0 ? "#1e1f20" : "#131314"
+            songObj: songObject
 
             songDelegateNumber: index + 1
             songDelegateTitle: title
@@ -49,7 +51,7 @@ Item {
             songDelegateLeadingArtist: artist
 
             onSongDelegateDoubleClicked: {
-                MediaPlayerController.onPlaySong(songObject)
+                NowPlaying.playNow(songObject)
             }
 
         }

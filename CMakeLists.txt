@@ -93,6 +93,7 @@ qt_add_qml_module(appcplayer
         cpp/qml_models/include/folderlistmodel.h
         cpp/qml_models/include/playlistmodel.h
         cpp/qml_models/include/playlistsongsmodel.h
+        cpp/qml_models/include/songfilterproxymodel.h
         cpp/views/include/playlistview.h
 
 
@@ -102,6 +103,8 @@ qt_add_qml_module(appcplayer
         cpp/qml_models/src/folderlistmodel.cpp
         cpp/qml_models/src/playlistmodel.cpp
         cpp/qml_models/src/playlistsongsmodel.cpp
+        cpp/qml_models/src/songfilterproxymodel.cpp
+
         cpp/views/src/playlistview.cpp
 
 
