@@ -4,9 +4,11 @@ import Qt.labs.platform
 import QtQuick.Dialogs
 import QtQuick.Controls.Basic
 
-import com.c.PlaylistModel
-import com.c.PlaylistView
-import com.c.ViewController
+//import com.c.PlaylistModel
+//import com.c.PlaylistView
+//import com.c.ViewController
+
+import cplayer
 
 import "./components"
 import "../.."
@@ -14,7 +16,6 @@ import "../.."
 
 Item {
     id: playlistsView
-    anchors.fill: parent
 
     ColumnLayout{
         anchors.fill: parent
@@ -24,7 +25,7 @@ Item {
             spacing: 20
 
             Text{
-                text: "Playlists"
+                text: "playlists"
                 font.bold: true
                 font.pointSize: 100
                 color: "white"
@@ -142,7 +143,8 @@ Item {
                                 mainErrorPopup.openPopup("Playlist must have a name")
                             }
                             else{
-                                PlaylistView.addPlaylist(inputField.text)
+                                //PlaylistView.addPlaylist(inputField.text)
+                                MusicHandler.playlistManager.addPlaylist(inputField.text)
                                 popUp.close()
                             }
                         }
@@ -212,7 +214,9 @@ Item {
                                 // AlbumFilterModel.setAlbumName(albumName)
                                 // AlbumSongsView.setAlbum(albumArtists, albumName, albumGenre, albumYear, albumSongCount)
                                 // ViewController.selectAlbum()
-                                PlaylistView.loadPlaylistSongs(playlistID)
+                                //PlaylistView.loadPlaylistSongs(playlistID)
+                                MusicHandler.playlistManager.loadPlaylistSongs(playlistID)
+                                ModelHandler.setPlaylistSongsList(MusicHandler.playlistManager.playlistSongsModel)
                                 ViewController.selectPlaylist()
                             }
 
@@ -244,7 +248,7 @@ Item {
                     }
                 }
 
-                model: PlaylistModel
+                model: ModelHandler.playlistList
                 delegate: playlistDelegate
 
                 onWidthChanged: {

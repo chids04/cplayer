@@ -13,21 +13,29 @@
 class FolderView : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QUrl path READ path WRITE setPath NOTIFY pathChanged);
 public:
-    explicit FolderView(SongListModel *songlistModel, AlbumListModel *albumListModel, FolderListModel *folderListModel, CoverArtHolder *coverArtHolder, QObject *parent = nullptr);
+
+    explicit FolderView(QObject *parent = nullptr);
+    static FolderView &instance();
+
+    QUrl path() const;
+    void setPath(const QUrl &newPath);
 
 signals:
     void onSongsLoaded();
+
+    void pathChanged();
 
 public slots:
     void startFolderScanningThread(QUrl filePath);
     void onScanningFinished(QString folderName, QString folderPath, int songCount);
 
 private:
-    SongListModel *songListModel;
-    AlbumListModel *albumListModel;
-    FolderListModel *folderListModel;
-    CoverArtHolder *coverArtHolder;
+    QUrl m_path;
+
+    void appendToFile(QUrl &folderPath);
+    void readFromFile(QUrl &filePath);
 };
 
 #endif // FOLDERVIEW_H

@@ -18,12 +18,11 @@
 
 class MediaImageProvider : public QQuickImageProvider
 {
+
 public:
-    MediaImageProvider(const CoverArtHolder *coverArtHolder);
+    MediaImageProvider();
     QPixmap requestPixmap(const QString &id, QSize *size, const QSize &requestedSize);
 
-private:
-    const CoverArtHolder *coverArtHolder;
 };
 
 #endif // MEDIAIMAGEPROVIDER_H

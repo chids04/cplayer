@@ -12,6 +12,7 @@ class AlbumFilterProxyModel : public QSortFilterProxyModel
     Q_PROPERTY(QString albumName READ albumName WRITE setAlbumName NOTIFY albumNameChanged)
 public:
     explicit AlbumFilterProxyModel(QObject *parent = nullptr);
+    static AlbumFilterProxyModel &instance();
 
 
     QString albumName() const;

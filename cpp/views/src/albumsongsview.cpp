@@ -2,6 +2,12 @@
 
 AlbumSongsView::AlbumSongsView(QObject *parent) : QObject(parent) {}
 
+AlbumSongsView &AlbumSongsView::instance()
+{
+    static AlbumSongsView albumSongsView;
+    return albumSongsView;
+}
+
 QString AlbumSongsView::albumName() const
 {
     return m_albumName;

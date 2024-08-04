@@ -1,17 +1,21 @@
 #include "folderview.h"
 
-FolderView::FolderView(SongListModel *songListModel, AlbumListModel *albumListModel, FolderListModel *folderListModel, CoverArtHolder *coverArtHolder, QObject *parent)
-    : QObject(parent), songListModel(songListModel), albumListModel(albumListModel), folderListModel(folderListModel), coverArtHolder(coverArtHolder)
-{
+FolderView::FolderView(QObject *parent)
+    : QObject(parent)
+{}
 
+FolderView &FolderView::instance()
+{
+    static FolderView folderView;
+    return folderView;
 }
 
 void FolderView::startFolderScanningThread(QUrl filePath)
 {
-    MusicScannerThread *musicScannerThread = new MusicScannerThread(filePath, coverArtHolder, this);
+    MusicScannerThread *musicScannerThread = new MusicScannerThread(filePath, this);
     connect(musicScannerThread, &MusicScannerThread::scanningFinished, this, &FolderView::onScanningFinished);
-    connect(musicScannerThread, &MusicScannerThread::songFetched, songListModel, &SongListModel::onSongAdded);
-    connect(musicScannerThread, &MusicScannerThread::songFetched, albumListModel, &AlbumListModel::updateAlbum);
+    connect(musicScannerThread, &MusicScannerThread::songFetched, &SongListModel::instance(), &SongListModel::onSongAdded);
+    connect(musicScannerThread, &MusicScannerThread::songFetched, &AlbumListModel::instance(), &AlbumListModel::updateAlbum);
     connect(musicScannerThread, &MusicScannerThread::finished, musicScannerThread, &QObject::deleteLater);
     musicScannerThread->start();
 }
@@ -19,11 +23,34 @@ void FolderView::startFolderScanningThread(QUrl filePath)
 void FolderView::onScanningFinished(QString folderName, QString folderPath, int songCount)
 {
     Folder folder(folderName, folderPath, songCount);
+
     //clearing model since multiple folder support not added yet
-    folderListModel->clear();
-    folderListModel->addFolder(folder);
+    FolderListModel::instance().clear();
+    FolderListModel::instance().addFolder(folder);
 
-    //songHolder->populateModel();
-    //albumHolder->addToModel();
+}
 
+void FolderView::appendToFile(QUrl &folderPath)
+{
+    QFile file("config/paths.dat");
+
+    if(file.open(QIODevice::Append | QIODevice::Text)){
+        QTextStream out(&file);
+        out << folderPath.toString() << "\n";
+        file.close();
+    }
+
+}
+
+QUrl FolderView::path() const
+{
+    return m_path;
+}
+
+void FolderView::setPath(const QUrl &newPath)
+{
+    if (m_path == newPath)
+        return;
+    m_path = newPath;
+    emit pathChanged();
 }

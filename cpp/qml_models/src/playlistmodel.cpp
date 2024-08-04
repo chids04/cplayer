@@ -4,6 +4,12 @@ PlaylistModel::PlaylistModel(QObject *parent) : QAbstractListModel(parent)
 {
 }
 
+PlaylistModel &PlaylistModel::instance()
+{
+    static PlaylistModel playlistModel;
+    return playlistModel;
+}
+
 void PlaylistModel::addPlaylist(const Playlist &playlist)
 {
     beginInsertRows(QModelIndex(), rowCount(), rowCount());

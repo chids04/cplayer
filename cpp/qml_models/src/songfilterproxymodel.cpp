@@ -1,142 +1,71 @@
+#include "songfilterproxymodel.h"
 #include "songlistmodel.h"
 #include <QDebug>
 
-SongListModel::SongListModel(QObject *parent) : QAbstractListModel(parent) {}
-
-void SongListModel::addSong(std::shared_ptr<Song> song){
-    beginInsertRows(QModelIndex(), rowCount(), rowCount());
-    m_songs << song;
-    endInsertRows();
-}
-
-void SongListModel::clear()
+SongFilterProxyModel::SongFilterProxyModel(QObject *parent)
+    : QSortFilterProxyModel(parent)
 {
-    if(!m_songs.isEmpty()){
-        beginRemoveRows(QModelIndex(), 0, m_songs.count() - 1);
-        m_songs.clear();
-        endRemoveRows();
-    }
+    setSourceModel(&SongListModel::instance());
 }
 
-int SongListModel::rowCount(const QModelIndex &parent) const {
-    Q_UNUSED(parent)
-    return m_songs.count();
-}
-
-QModelIndex SongListModel::index(int row, int column, const QModelIndex &parent) const {
-    Q_UNUSED(parent)
-
-    // Check for a valid row and column
-    if (row >= 0 && row < rowCount() && column == 0) {
-        return createIndex(row, column);
-    } else {
-        return QModelIndex(); // Return an invalid index if out of bounds
-    }
-}
-
-QVariant SongListModel::data(const QModelIndex &index, int role) const {
-    if(index.row() < 0 || index.row() >= m_songs.count())
-        return QVariant();
-
-    auto song = m_songs[index.row()];
-
-    switch(role){
-        case FilePathRole:
-        return song->filePath;
-
-        case TitleRole:
-        return song->title;
-
-        case ArtistRole:
-        return song->artist;
-
-        case AlbumRole:
-        return song->album;
-
-        case FeaturingArtistsRole:
-        return song->featuringArtists;
-
-        case NumberInAlbumRole:
-        return song->trackNum;
-
-        case SongObjectRole:
-            return QVariant::fromValue(song);
-
-        default:
-            return QVariant();
-    }
-}
-
-QHash<int, QByteArray> SongListModel::roleNames() const {
-    QHash<int, QByteArray> roles;
-    roles[FilePathRole] = "filePath";
-    roles[TitleRole] = "title";
-    roles[ArtistRole] = "artist";
-    roles[AlbumRole] = "album";
-    roles[FeaturingArtistsRole] = "features";
-    roles[NumberInAlbumRole] = "albumNum";
-    roles[SongObjectRole] = "songObject";
-
-    return roles;
-}
-
-QString SongListModel::getSongTitle(const QString &filePath) const
+SongFilterProxyModel &SongFilterProxyModel::instance()
 {
-    //add error checking here
-    for(const auto song : m_songs){
-        if(song->filePath == filePath){
-            return song->title;
-        }
-    }
-
-    return QString();
+    static SongFilterProxyModel songFilterProxyModel;
+    return songFilterProxyModel;
 }
 
-QString SongListModel::getSongArtist(const QString &filePath) const
+QString SongFilterProxyModel::filterString() const
 {
-    for(const auto song : m_songs){
-        if(song->filePath == filePath){
-            return song->artist;
-        }
-    }
-
-    return QString();
+    return m_filterString;
 }
 
-QString SongListModel::getSongAlbum(const QString &filePath) const
+void SongFilterProxyModel::setFilterString(const QString &filterString)
 {
-    for(const auto song : m_songs){
-        if(song->filePath == filePath){
-            return song->album;
-        }
+    if (m_filterString != filterString) {
+        m_filterString = normalizeString(filterString);
+        //invalidateFilter();
+        invalidate();
+        emit filterStringChanged();
     }
-
-    return QString();
 }
 
-QStringList SongListModel::getSongFeatures(const QString &filePath) const
+bool SongFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
-    for(const auto song : m_songs){
-        if(song->filePath == filePath){
-            return song->featuringArtists;
-        }
+    if (m_filterString.isEmpty()) {
+        return true;
     }
 
-    return QStringList();
+    QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
+    QString title = sourceModel()->data(index, SongListModel::TitleRole).toString();
+    QString artist = sourceModel()->data(index, SongListModel::ArtistRole).toString();
+
+    double titleScore = rapidfuzz::fuzz::partial_ratio(normalizeString(title).toStdString(), m_filterString.toStdString());
+    double artistScore = rapidfuzz::fuzz::partial_ratio(normalizeString(artist).toStdString(), m_filterString.toStdString());
+
+
+    return titleScore > 50;
 }
 
-int SongListModel::getSongTrackNum(const QString &filePath) const
+bool SongFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
-    for(const auto song : m_songs){
-        if(song->filePath == filePath){
-            return song->trackNum;
-        }
-    }
+    QString leftTitle = sourceModel()->data(left, SongListModel::TitleRole).toString();
+    QString rightTitle = sourceModel()->data(right, SongListModel::TitleRole).toString();
+    QString normalizedLeftTitle = normalizeString(leftTitle);
+    QString normalizedRightTitle = normalizeString(rightTitle);
 
-    return 0;
+    double leftScore = rapidfuzz::fuzz::partial_ratio(normalizedLeftTitle.toStdString(), m_filterString.toStdString());
+    double rightScore = rapidfuzz::fuzz::partial_ratio(normalizedRightTitle.toStdString(), m_filterString.toStdString());
+
+
+    return leftScore > rightScore;
 }
 
-void SongListModel::onSongAdded(std::shared_ptr<Song> song)
+
+
+QString SongFilterProxyModel::normalizeString(const QString &string) const
 {
-    addSong(song);
+    static QRegularExpression re(QStringLiteral("\\p{Mn}"));
+    QString normalized = string.normalized(QString::NormalizationForm_KD);
+    normalized.remove(re);
+    return normalized;
 }

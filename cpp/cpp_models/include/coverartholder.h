@@ -24,10 +24,12 @@ inline uint qHash(const CoverArtKey &key, uint seed = 0){
 }
 
 class CoverArtHolder
-
 {
+
 public:
     CoverArtHolder();
+    static CoverArtHolder &instance();
+
     void addCover(const QString &artist, const QString &albumName, QByteArray &coverArt);
     QByteArray getCover(const QString &artist, const QString &albumName) const;
     bool hasCover(const QString &artist, const QString &albumName) const;

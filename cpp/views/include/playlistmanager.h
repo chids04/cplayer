@@ -1,5 +1,5 @@
-#ifndef PLAYLISTVIEW_H
-#define PLAYLISTVIEW_H
+#ifndef PLAYLISTMANAGER_H
+#define PLAYLISTMANAGER_H
 
 #include <QObject>
 #include <QVariant>
@@ -9,8 +9,9 @@
 #include "playlist.h"
 #include "playlistmodel.h"
 #include "playlistsongsmodel.h"
+#include "modelhandler.h"
 
-class PlaylistView : public QObject
+class PlaylistManager : public QObject
 {
     Q_OBJECT
 
@@ -20,7 +21,8 @@ class PlaylistView : public QObject
     Q_PROPERTY(bool hasCover READ hasCover WRITE setHasCover NOTIFY hasCoverChanged)
 
 public:
-    explicit PlaylistView(PlaylistModel *playlistModel, SongListModel *songListModel, QObject *parent=nullptr);
+    explicit PlaylistManager(QObject *parent=nullptr);
+    static PlaylistManager &instance();
 
     PlaylistSongsModel *playlistSongsModel();
 
@@ -60,4 +62,4 @@ private:
     int m_playlistID;
 };
 
-#endif // PLAYLISTVIEW_H
+#endif // PLAYLISTMANAGER_H

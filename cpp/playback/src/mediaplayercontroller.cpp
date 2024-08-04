@@ -1,19 +1,19 @@
 #include "mediaplayercontroller.h"
 
 // Constructor and Destructor
-MediaPlayerController::MediaPlayerController(const CoverArtHolder *coverArtHolder, NowPlaying *nowPlaying, QObject *parent)
-    : coverArtHolder(coverArtHolder), nowPlaying(nowPlaying), QObject(parent) {
+MediaPlayerController::MediaPlayerController(QObject *parent)
+    : QObject(parent) {
     player = new QMediaPlayer;
     output = new QAudioOutput;
 
     connect(player, &QMediaPlayer::positionChanged, this, &MediaPlayerController::onPositionChanged);
     connect(player, &QMediaPlayer::durationChanged, this, &MediaPlayerController::durationChanged);
     connect(this, &MediaPlayerController::playingChanged, this, &MediaPlayerController::onPlayingChanged);
-    connect(this, &MediaPlayerController::nextSong, nowPlaying, &NowPlaying::onNextClicked);
-    connect(this, &MediaPlayerController::previousSong, nowPlaying, &NowPlaying::onPreviousClicked);
+    connect(this, &MediaPlayerController::nextSong, &NowPlaying::instance(), &NowPlaying::onNextClicked);
+    connect(this, &MediaPlayerController::previousSong, &NowPlaying::instance(), &NowPlaying::onPreviousClicked);
 
-    connect(nowPlaying, &NowPlaying::playSong, this, &MediaPlayerController::onPlaySong);
-    connect(nowPlaying, &NowPlaying::jumpToEnd, this, &MediaPlayerController::onJumpToEnd);
+    connect(&NowPlaying::instance(), &NowPlaying::playSong, this, &MediaPlayerController::onPlaySong);
+    connect(&NowPlaying::instance(), &NowPlaying::jumpToEnd, this, &MediaPlayerController::onJumpToEnd);
 
     connect(player, &QMediaPlayer::mediaStatusChanged, this, &MediaPlayerController::onMediaStatusChanged);
 
@@ -21,6 +21,13 @@ MediaPlayerController::MediaPlayerController(const CoverArtHolder *coverArtHolde
     output->setVolume(m_volume);
     player->setAudioOutput(output);
 }
+
+MediaPlayerController &MediaPlayerController::instance()
+{
+    static MediaPlayerController mediaPlayerController;
+    return mediaPlayerController;
+}
+
 
 // Playback Control
 void MediaPlayerController::playPause(bool newPlaying) {
@@ -163,6 +170,8 @@ void MediaPlayerController::previousClicked()
 }
 
 void MediaPlayerController::onJumpToEnd(){
+    m_playing = false;
+    emit updateUI();
     player->setPosition(player->duration());
 }
 

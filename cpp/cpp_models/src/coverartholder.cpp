@@ -2,6 +2,12 @@
 
 CoverArtHolder::CoverArtHolder() {}
 
+CoverArtHolder &CoverArtHolder::instance()
+{
+    static CoverArtHolder coverArtHolder;
+    return coverArtHolder;
+}
+
 void CoverArtHolder::addCover(const QString &artist, const QString &albumName, QByteArray &coverArt)
 {
     CoverArtKey key = {artist, albumName};

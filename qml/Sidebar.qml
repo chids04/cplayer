@@ -2,13 +2,17 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Effects
 import QtQuick.Controls.Basic
-import com.c.MediaController
-import com.c.ViewController
 
+//import com.c.ViewController
+
+import cplayer
 
 Item{
+    id: sidebarItem
     Layout.fillHeight: true
     Layout.preferredWidth: 250
+
+    property int selectedItem: -1
 
     MultiEffect{
         source: sidebarNav
@@ -25,8 +29,6 @@ Item{
         anchors.fill: parent
         color: "#232425"
         topRightRadius: 20
-
-
 
         ColumnLayout{
             spacing: 30
@@ -67,7 +69,7 @@ Item{
                             id: songText
                             color: "white"
                             font.pointSize: 30
-                            text: qsTr("Songs")
+                            text: qsTr("songs")
                             //anchors.horizontalCenter: parent.horizontalCenter
                             //anchors.verticalCenter: parent.verticalCenter
                         }
@@ -79,18 +81,42 @@ Item{
                     anchors.fill: parent
                     hoverEnabled: true
                     onEntered: {
-                        songsWindow.color = "#1d1d1e"
+                        if(songsWindow.state != "clicked") songsWindow.color = "#1d1d1e"
                     }
 
                     onExited: {
-                        songsWindow.color = "transparent"
+                        if(songsWindow.state != "clicked") songsWindow.color = "transparent"
                     }
 
                     onClicked: {
-                        ViewController.songView()
+                        songsWindow.state = "clicked"
+                        albumWindow.state = ""
+                        foldersWindow.state = ""
+                        playlistsWindow.state = ""
+
+                        ViewController.songViewSelected()
+                    }
+                }
+
+                states: [
+                    State {
+                        name: "clicked"
+                        PropertyChanges {
+                            target: songsWindow;
+                            color: "#1d1d1e"
+                        }
+                    },
+
+                    State{
+                        name: ""
+                        PropertyChanges {
+                            target: songsWindow;
+                            color: "transparent"
+
+                        }
                     }
 
-                }
+                ]
             }
 
             Rectangle{
@@ -122,7 +148,7 @@ Item{
                             id: albumText
                             color: "white"
                             font.pointSize: 30
-                            text: qsTr("Albums")
+                            text: qsTr("albums")
                             //anchors.horizontalCenter: parent.horizontalCenter
                             //anchors.verticalCenter: parent.verticalCenter
                         }
@@ -134,18 +160,44 @@ Item{
                     anchors.fill: parent
                     hoverEnabled: true
                     onEntered: {
-                        albumWindow.color = "#1d1d1e"
+                        if(albumWindow.state != "clicked") albumWindow.color = "#1d1d1e"
                     }
 
                     onExited: {
-                        albumWindow.color = "transparent"
+                        if(albumWindow.state != "clicked") albumWindow.color = "transparent"
                     }
 
                     onClicked: {
-                        ViewController.albumView()
+                        albumWindow.state = "clicked"
+                        songsWindow.state = ""
+                        foldersWindow.state = ""
+                        playlistsWindow.state = ""
+                        selectedItem = 1
+                        ViewController.albumViewSelected()
                     }
 
                 }
+
+                states: [
+                    State {
+                        name: "clicked"
+
+                        PropertyChanges {
+                            target: albumWindow;
+                            color: "#1d1d1e"
+                        }
+                    },
+
+                    State{
+                        name: ""
+                        PropertyChanges {
+                            target: albumWindow;
+                            color: "transparent"
+
+                        }
+                    }
+
+                ]
             }
 
             Rectangle{
@@ -177,7 +229,7 @@ Item{
                             id: foldersText
                             color: "white"
                             font.pointSize: 30
-                            text: qsTr("Folders")
+                            text: qsTr("folders")
                             //anchors.horizontalCenter: parent.horizontalCenter
                             //anchors.verticalCenter: parent.verticalCenter
                         }
@@ -189,18 +241,42 @@ Item{
                     anchors.fill: parent
                     hoverEnabled: true
                     onEntered: {
-                        foldersWindow.color = "#1d1d1e"
+                        if(foldersWindow.state != "clicked") foldersWindow.color = "#1d1d1e"
                     }
 
                     onExited: {
-                        foldersWindow.color = "transparent"
+                        if(foldersWindow.state != "clicked") foldersWindow.color = "transparent"
                     }
 
                     onClicked: {
-                        ViewController.foldersView()
+                        foldersWindow.state = "clicked"
+                        songsWindow.state = ""
+                        albumWindow.state = ""
+                        playlistsWindow.state = ""
+                        ViewController.foldersViewSelected()
                     }
 
                 }
+                states: [
+                    State {
+                        name: "clicked"
+
+                        PropertyChanges {
+                            target: foldersWindow;
+                            color: "#1d1d1e"
+                        }
+                    },
+
+                    State{
+                        name: ""
+                        PropertyChanges {
+                            target: foldersWindow;
+                            color: "transparent"
+
+                        }
+                    }
+
+                ]
             }
 
             Rectangle{
@@ -218,7 +294,9 @@ Item{
 
                     Image{
                         id: playlistsIcon
-                        source: "qrc:/resource/ui/assets/folderIcon.png"
+                        source: "qrc:/resource/ui/assets/playlistIcon.png"
+                        sourceSize.width: 40
+                        sourceSize.height: 40
                         Layout.alignment: Qt.AlignVCenter
                     }
 
@@ -232,7 +310,7 @@ Item{
                             id: playlistsText
                             color: "white"
                             font.pointSize: 30
-                            text: qsTr("Playlists")
+                            text: qsTr("playlists")
                             //anchors.horizontalCenter: parent.horizontalCenter
                             //anchors.verticalCenter: parent.verticalCenter
                         }
@@ -244,18 +322,43 @@ Item{
                     anchors.fill: parent
                     hoverEnabled: true
                     onEntered: {
-                        playlistsWindow.color = "#1d1d1e"
+                        if(playlistsWindow.state != "clicked") playlistsWindow.color = "#1d1d1e"
                     }
 
                     onExited: {
-                        playlistsWindow.color = "transparent"
+                        if(playlistsWindow.state != "clicked") playlistsWindow.color = "transparent"
                     }
 
                     onClicked: {
-                        ViewController.playlistsView()
+                        playlistsWindow.state = "clicked"
+                        foldersWindow.state = ""
+                        albumWindow.state = ""
+                        songsWindow.state = ""
+                        ViewController.playlistsViewSelected()
                     }
 
                 }
+
+                states: [
+                    State {
+                        name: "clicked"
+
+                        PropertyChanges {
+                            target: playlistsWindow;
+                            color: "#1d1d1e"
+                        }
+                    },
+
+                    State{
+                        name: ""
+                        PropertyChanges {
+                            target: playlistsWindow;
+                            color: "transparent"
+
+                        }
+                    }
+
+                ]
             }
         }
     }

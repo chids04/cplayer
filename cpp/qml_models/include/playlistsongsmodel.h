@@ -11,7 +11,7 @@ class PlaylistSongsModel : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    explicit PlaylistSongsModel(SongListModel *songListModel, QObject *parent = nullptr);
+    explicit PlaylistSongsModel(QObject *parent = nullptr);
 
     enum SongRoles {
         FilePathRole = Qt::UserRole + 1,
@@ -33,7 +33,6 @@ public:
 
 private:
     QList<std::shared_ptr<Song>> m_songs;
-    SongListModel *songListModel;
 };
 
 Q_DECLARE_METATYPE(PlaylistSongsModel*)

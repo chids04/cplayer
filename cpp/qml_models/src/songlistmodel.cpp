@@ -3,6 +3,12 @@
 
 SongListModel::SongListModel(QObject *parent) : QAbstractListModel(parent) {}
 
+SongListModel &SongListModel::instance()
+{
+    static SongListModel songListModel;
+    return songListModel;
+}
+
 void SongListModel::addSong(std::shared_ptr<Song> song){
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     m_songs << song;
@@ -83,7 +89,7 @@ QHash<int, QByteArray> SongListModel::roleNames() const {
 QString SongListModel::getSongTitle(const QString &filePath) const
 {
     //add error checking here
-    for(const auto song : m_songs){
+    for(const auto &song : m_songs){
         if(song->filePath == filePath){
             return song->title;
         }
@@ -94,7 +100,7 @@ QString SongListModel::getSongTitle(const QString &filePath) const
 
 QString SongListModel::getSongArtist(const QString &filePath) const
 {
-    for(const auto song : m_songs){
+    for(const auto &song : m_songs){
         if(song->filePath == filePath){
             return song->artist;
         }
@@ -105,7 +111,7 @@ QString SongListModel::getSongArtist(const QString &filePath) const
 
 QString SongListModel::getSongAlbum(const QString &filePath) const
 {
-    for(const auto song : m_songs){
+    for(const auto &song : m_songs){
         if(song->filePath == filePath){
             return song->album;
         }
@@ -116,7 +122,7 @@ QString SongListModel::getSongAlbum(const QString &filePath) const
 
 QStringList SongListModel::getSongFeatures(const QString &filePath) const
 {
-    for(const auto song : m_songs){
+    for(const auto &song : m_songs){
         if(song->filePath == filePath){
             return song->featuringArtists;
         }
@@ -127,7 +133,7 @@ QStringList SongListModel::getSongFeatures(const QString &filePath) const
 
 int SongListModel::getSongTrackNum(const QString &filePath) const
 {
-    for(const auto song : m_songs){
+    for(const auto &song : m_songs){
         if(song->filePath == filePath){
             return song->trackNum;
         }

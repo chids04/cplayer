@@ -2,20 +2,15 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 
-import com.c.AlbumFilterProxyModel
-import com.c.AlbumSongsView
-import com.c.MediaController
-import com.c.NowPlaying
+//import com.c.AlbumFilterProxyModel
+//import com.c.AlbumSongsView
+//import com.c.NowPlaying
+
+import cplayer
 
 import "./components"
 
-
 Item {
-    anchors.fill: parent
-    anchors.topMargin: 20
-
-
-
 
     ColumnLayout{
         anchors.fill: parent
@@ -39,7 +34,7 @@ Item {
                     Layout.preferredHeight: parent.height - 10
                     Layout.preferredWidth: parent.height - 10
 
-                    source: "image://coverArt/" + AlbumSongsView.albumName + "/" + AlbumSongsView.albumArtists[0]
+                    source: "image://coverArt/" + ViewController.albumSongsView.albumName + "/" + ViewController.albumSongsView.albumArtists[0]
                     sourceSize.width: parent.height - 10
                     sourceSize.height: parent.height - 10
 
@@ -52,30 +47,29 @@ Item {
                     Text{
                         id: loadedAlbumName
                         color: "white"
-                        text: AlbumSongsView.albumName
+                        text: ViewController.albumSongsView.albumName
                         font.bold: true
                         font.pointSize: 40
-
 
                     }
 
                     Text{
                         id: loadedAlbumArtists
-                        text: AlbumSongsView.albumArtists.join(", ")
+                        text: ViewController.albumSongsView.albumArtists.join(", ")
                         color:"white"
                         font.pointSize: 20
                     }
 
                     Text{
                         id: loadedAlbumGenre
-                        text: AlbumSongsView.genre
+                        text: ViewController.albumSongsView.genre
                         color: "white"
                         font.pointSize: 10
                     }
 
                     Text{
                         id: loadedAlbumYear
-                        text: AlbumSongsView.year
+                        text: ViewController.albumSongsView.year
                         color: "white"
                         font.pointSize: 10
                     }
@@ -97,7 +91,7 @@ Item {
                 buttonText: "Play Now"
 
                 onButtonClicked: {
-                    NowPlaying.playAlbum(AlbumSongsView.albumName, AlbumSongsView.albumArtists, false);
+                    MusicHandler.nowPlaying.playAlbum(ViewController.albumSongsView.albumName, ViewController.albumSongsView.albumArtists, false);
                 }
 
             }
@@ -107,7 +101,7 @@ Item {
                 buttonText: "Add to Queue"
 
                 onButtonClicked: {
-                    NowPlaying.playAlbum(AlbumSongsView.albumName, AlbumSongsView.albumArtists, true);
+                    MusicHandler.nowPlaying.playAlbum(ViewController.albumSongsView.albumName, ViewController.AlbumSongsView.albumArtists, true);
                 }
             }
 
@@ -145,7 +139,7 @@ Item {
                     }
                 }
 
-                model: AlbumFilterModel
+                model: ModelHandler.albumSongs
 
                 delegate: SongDelegate{
                     id: songDelegate
@@ -163,7 +157,7 @@ Item {
                     songDelegateLeadingArtist: artist
 
                     onSongDelegateDoubleClicked: {
-                        NowPlaying.playSong(songObject)
+                        MusicHandler.NowPlaying.playNow(songObject)
                     }
 
                 }

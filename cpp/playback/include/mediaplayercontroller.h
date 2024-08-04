@@ -40,7 +40,8 @@ class MediaPlayerController : public QObject {
 
 public:
     //could use signal and slot instead of passing around object pointers
-    explicit MediaPlayerController(const CoverArtHolder *coverArtHolder, NowPlaying *nowPlaying,  QObject *parent = nullptr);
+    explicit MediaPlayerController(QObject *parent = nullptr);
+    static MediaPlayerController &instance();
 
     bool playing() const;
 
@@ -106,8 +107,6 @@ private:
 
     QMediaPlayer *player;
     QAudioOutput *output;
-    NowPlaying *nowPlaying;
-    const CoverArtHolder *coverArtHolder;
 
     void setTrackTitle(QString &title);
     void setLeadingArtist(QString &leadingArtist);

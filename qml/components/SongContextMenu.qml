@@ -1,8 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import com.c.PlaylistModel
-import com.c.PlaylistView
-import com.c.NowPlaying
+
+import cplayer
 
 Menu {
     id: mainMenu
@@ -15,7 +14,7 @@ Menu {
         text: "Queue Next"
 
         onTriggered: {
-            NowPlaying.queueNext(songObj)
+            MusicHandler.nowPlaying.queueNext(songObj)
         }
     }
 
@@ -24,13 +23,13 @@ Menu {
         title: "Add to playlist"
         Instantiator {
             id: playlistInstantiator
-            model: PlaylistModel  // Assuming PlaylistModel is exposed from C++
+            model: ModelHandler.playlistList // Assuming PlaylistModel is exposed from C++
 
             delegate: MenuItem {
                 id: menuItemDelegate
                 text: playlistName
                 onTriggered: {
-                    PlaylistView.addSongToPlaylist(playlistID, songObj)
+                    MusicHandler.playlistManager.addSongToPlaylist(playlistID, songObj)
                 }
             }
 

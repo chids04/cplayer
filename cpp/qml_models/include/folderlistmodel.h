@@ -12,6 +12,7 @@ class FolderListModel : public QAbstractListModel
     Q_OBJECT
 public:
     explicit FolderListModel(QObject *parent = nullptr);
+    static FolderListModel &instance();
 
     enum FolderRoles {
         FolderNameRole = Qt::UserRole + 1,

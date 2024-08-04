@@ -2,7 +2,15 @@
 
 AlbumFilterProxyModel::AlbumFilterProxyModel(QObject *parent)
     : QSortFilterProxyModel{parent}
-{}
+{
+    setSourceModel(&SongListModel::instance());
+}
+
+AlbumFilterProxyModel &AlbumFilterProxyModel::instance()
+{
+    static AlbumFilterProxyModel albumFilterProxyModel;
+    return albumFilterProxyModel;
+}
 
 void AlbumFilterProxyModel::setAlbumName(const QString &newAlbumName)
 {

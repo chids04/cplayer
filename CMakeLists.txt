@@ -24,6 +24,9 @@ elseif(UNIX)
 
 endif()
 
+add_subdirectory(3rdparty/RapidFuzz)
+
+
 qt_standard_project_setup()
 
 qt_add_executable(appcplayer
@@ -59,25 +62,29 @@ qt_add_qml_module(appcplayer
     #C++ Models
     SOURCES
         cpp/cpp_models/include/album.h
-        cpp/cpp_models/include/coverartholder.h
-        cpp/cpp_models/include/musicscannerthread.h
-        cpp/cpp_models/include/playlist.h
-        cpp/cpp_models/include/song.h
-        cpp/cpp_models/include/folder.h
-
         cpp/cpp_models/src/album.cpp
+
+        cpp/cpp_models/include/coverartholder.h
         cpp/cpp_models/src/coverartholder.cpp
+
+        cpp/cpp_models/include/musicscannerthread.h
         cpp/cpp_models/src/musicscannerthread.cpp
+
+        cpp/cpp_models/include/playlist.h
         cpp/cpp_models/src/playlist.cpp
+
+        cpp/cpp_models/include/song.h
         cpp/cpp_models/src/song.cpp
+
+        cpp/cpp_models/include/folder.h
         cpp/cpp_models/src/folder.cpp
 
     #C++ Playback Control
     SOURCES
         cpp/playback/include/mediaplayercontroller.h
-        cpp/playback/include/nowplaying.h
-
         cpp/playback/src/mediaplayercontroller.cpp
+
+        cpp/playback/include/nowplaying.h
         cpp/playback/src/nowplaying.cpp
 
     #C++ Image Providers
@@ -88,25 +95,37 @@ qt_add_qml_module(appcplayer
     #C++ QML Models
     SOURCES
         cpp/qml_models/include/albumfilterproxymodel.h
-        cpp/qml_models/include/albumlistmodel.h
-        cpp/qml_models/include/songlistmodel.h
-        cpp/qml_models/include/folderlistmodel.h
-        cpp/qml_models/include/playlistmodel.h
-        cpp/qml_models/include/playlistsongsmodel.h
-        cpp/qml_models/include/songfilterproxymodel.h
-        cpp/views/include/playlistview.h
-
-
         cpp/qml_models/src/albumfilterproxymodel.cpp
+
+        cpp/qml_models/include/albumlistmodel.h
         cpp/qml_models/src/albumlistmodel.cpp
+
+        cpp/qml_models/include/songlistmodel.h
         cpp/qml_models/src/songlistmodel.cpp
+
+        cpp/qml_models/include/folderlistmodel.h
         cpp/qml_models/src/folderlistmodel.cpp
+
+        cpp/qml_models/include/playlistmodel.h
         cpp/qml_models/src/playlistmodel.cpp
+
+        cpp/qml_models/include/playlistsongsmodel.h
         cpp/qml_models/src/playlistsongsmodel.cpp
+
+        cpp/qml_models/include/songfilterproxymodel.h
         cpp/qml_models/src/songfilterproxymodel.cpp
 
-        cpp/views/src/playlistview.cpp
+        cpp/qml_models/include/albumsearchfilter.h
+        cpp/qml_models/src/albumsearchfilter.cpp
 
+        cpp/views/include/playlistmanager.h
+        cpp/views/src/playlistmanager.cpp
+
+        cpp/qml_models/include/modelhandler.h
+        cpp/qml_models/src/modelhandler.cpp
+
+        cpp/qml_models/include/musichandler.h
+        cpp/qml_models/src/musichandler.cpp
 
     #C++ QML View Controllers
     SOURCES
@@ -121,6 +140,9 @@ qt_add_qml_module(appcplayer
         cpp/views/src/folderview.cpp
         cpp/views/src/songview.cpp
         cpp/views/src/viewcontroller.cpp
+
+        cpp/views/src/playlistsongsview.cpp
+        cpp/views/include/playlistsongsview.h
 )
 
 
@@ -142,6 +164,7 @@ if(WIN32)
 
     target_link_libraries(appcplayer
         PRIVATE Qt6::Quick Qt6::Multimedia Qt6::Widgets Qt6::Core ${TAGLIB_LIBRARY}
+        rapidfuzz::rapidfuzz
     )
 
     #target_include_directories(appcplayer PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cpp/taglib/include ${TAGLIB_INCLUDE_DIR})
@@ -156,7 +179,10 @@ if(WIN32)
 
 elseif(UNIX)
     #target_include_directories(appcplayer PRIVATE)
-    target_link_libraries(appcplayer PRIVATE Qt6::Quick Qt6::Multimedia Qt6::Widgets Qt6::Core TagLib::tag)
+    target_link_libraries(appcplayer
+        PRIVATE Qt6::Quick Qt6::Multimedia Qt6::Widgets Qt6::Core TagLib::tag
+        rapidfuzz::rapidfuzz
+    )
 
     target_include_directories(appcplayer PRIVATE
         ${TAGLIB_INCLUDE_DIR}

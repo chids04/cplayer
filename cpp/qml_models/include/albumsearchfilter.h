@@ -1,22 +1,22 @@
-#ifndef SONGFILTERPROXYMODEL_H
-#define SONGFILTERPROXYMODEL_H
+#ifndef ALBUMSEARCHFILTER_H
+#define ALBUMSEARCHFILTER_H
 
 #include <QSortFilterProxyModel>
-#include <QRegularExpression>
-#include <QString>
+#include "albumlistmodel.h"
 #include <rapidfuzz/fuzz.hpp>
 
-class SongFilterProxyModel : public QSortFilterProxyModel
+class AlbumSearchFilter : public QSortFilterProxyModel
 {
     Q_OBJECT
     Q_PROPERTY(QString filterString READ filterString WRITE setFilterString NOTIFY filterStringChanged)
 
 public:
-    explicit SongFilterProxyModel(QObject *parent = nullptr);
-    static SongFilterProxyModel &instance();
+    explicit AlbumSearchFilter(QObject *parent = nullptr);
+    static AlbumSearchFilter &instance();
 
     QString filterString() const;
-    void setFilterString(const QString &filterString);
+
+    void setFilterString(const QString &newFilterString);
 
 protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
@@ -24,7 +24,6 @@ protected:
 
 private:
     QString normalizeString(const QString &string) const;
-    int matchScore(const QString &text, const QString &query) const;
 
 signals:
     void filterStringChanged();
@@ -32,5 +31,4 @@ signals:
 private:
     QString m_filterString;
 };
-
-#endif // SONGFILTERPROXYMODEL_H
+#endif // ALBUMSEARCHFILTER_H

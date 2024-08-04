@@ -32,3 +32,13 @@ int Folder::getSongCount() const
 {
     return songCount;
 }
+
+QDataStream &operator<<(QDataStream &out, const Folder &folder) {
+    out << folder.folderName << folder.folderPath << folder.songCount;
+    return out;
+}
+
+QDataStream &operator>>(QDataStream &in, Folder &folder) {
+    in >> folder.folderName >> folder.folderPath >> folder.songCount;
+    return in;
+}

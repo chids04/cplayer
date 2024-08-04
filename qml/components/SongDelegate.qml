@@ -2,10 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 
-import com.c.MediaController
-import com.c.SongModel
-import com.c.AlbumFilterProxyModel
-
 
 Rectangle {
     id: songRect

@@ -4,8 +4,6 @@
 #include <QObject>
 
 #include "song.h"
-#include "albumholder.h"
-#include "songlistmodel.h"
 #include "albumlistmodel.h"
 
 class NowPlaying : public QObject
@@ -13,7 +11,9 @@ class NowPlaying : public QObject
     Q_OBJECT
 
 public:
-    explicit NowPlaying(SongListModel *songListModel, AlbumListModel *albumListModel, QObject *parent = nullptr);
+    explicit NowPlaying(QObject *parent = nullptr);
+    static NowPlaying &instance();
+    static NowPlaying *create(QQmlEngine *engine, QJSEngine *);
 
 signals:
     void playSong(std::shared_ptr<Song> song);
@@ -31,8 +31,6 @@ private:
     QList<std::shared_ptr<Song>> songQueue;
     int currentIndex = 0;
 
-    SongListModel *songListModel;
-    AlbumListModel *albumListModel;
 };
 
 #endif // NOWPLAYING_H

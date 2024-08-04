@@ -16,6 +16,8 @@ class AlbumSongsView : public QObject
     Q_PROPERTY(QString genre READ genre WRITE setGenre NOTIFY genreChanged)
 public:
     explicit AlbumSongsView(QObject *parent = nullptr);
+    static AlbumSongsView &instance();
+
     QString albumName() const;
     void setAlbumName(const QString &newAlbumName);
     QStringList albumArtists() const;

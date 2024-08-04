@@ -36,7 +36,7 @@ class MusicScannerThread : public QThread
     void run() override;
 
 public:
-    explicit MusicScannerThread(QUrl musicPath, CoverArtHolder *coverArtHolder, QObject *parent = nullptr);
+    explicit MusicScannerThread(QUrl musicPath, QObject *parent = nullptr);
 
 signals:
     void songFetched(std::shared_ptr<Song>);
@@ -44,7 +44,6 @@ signals:
 
 private:
     QUrl musicPath;
-    CoverArtHolder *coverArtHolder;
 
 };
 

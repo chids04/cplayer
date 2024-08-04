@@ -1,8 +1,8 @@
 #include "playlist.h"
 
-Playlist::Playlist(int id, const QString &playlistName, SongListModel* songListModel, bool hasCover) : id(id), playlistName(playlistName), hasCover(hasCover)
+Playlist::Playlist(int id, const QString &playlistName, bool hasCover) : id(id), playlistName(playlistName), hasCover(hasCover)
 {
-    playlistSongsModel = new PlaylistSongsModel(songListModel);
+    playlistSongsModel = new PlaylistSongsModel;
 }
 
 void Playlist::setSongCount(int songCount)

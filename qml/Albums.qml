@@ -2,13 +2,16 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 
-import com.c.AlbumListModel
-import com.c.ViewController
-import com.c.AlbumSongsView
-import com.c.AlbumFilterProxyModel
+//import com.c.AlbumListModel
+//import com.c.ViewController
+//import com.c.AlbumSongsView
+//import com.c.AlbumFilterProxyModel
+//import com.c.AlbumSearchFilter
+
+import cplayer
 
 Item {
-    anchors.fill: parent;
+    id: albumWindow
 
     property int minColumns: 5
     property int maxColumns: 5
@@ -26,85 +29,129 @@ Item {
         }
     }
 
-    GridView {
-        id: gridView
+    ColumnLayout {
         anchors.fill: parent
-        anchors.rightMargin: 10
-        anchors.leftMargin: 10
-        cellWidth: itemWidth
-        cellHeight: itemWidth
 
+        Text {
+            text: "albums"
+            font.bold: true
+            font.pointSize: 100
+            Layout.preferredWidth: width
+            color: "white"
+        }
 
-        Component{
-            id: albumDelegate
+        TextField {
+            Layout.fillWidth: true
+            Layout.topMargin: 10
+            Layout.preferredHeight: 40
+            Layout.rightMargin: 10
+            placeholderText: "search for an album.."
+            placeholderTextColor: "darkgrey"
+            color: "white"
 
-            Rectangle{
-                id: albumCard
-                width: gridView.cellWidth
-                height: gridView.cellHeight
-                color: "transparent"
+            onTextChanged: AlbumSearchModel.filterString = text
+
+            background: Rectangle{
+                border.color: "#343434"
+                border.width: 2
+                color: "#232425"
                 radius: 10
+            }
 
-                MouseArea {
-                    anchors.fill: parent
-                    hoverEnabled: true
+        }
 
-                    onEntered: {
-                        albumCard.color = "#0b0b0b"
+        GridView {
+            id: gridView
+//            anchors.fill: parent
+//            anchors.rightMargin: 10
+//            anchors.leftMargin: 10
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+
+            cellWidth: itemWidth
+            cellHeight: itemWidth
+
+
+            Component{
+                id: albumDelegate
+
+                Rectangle{
+                    id: albumCard
+                    width: gridView.cellWidth
+                    height: gridView.cellHeight
+                    color: "transparent"
+                    radius: 10
+
+                    MouseArea {
+                        anchors.fill: parent
+                        hoverEnabled: true
+
+                        onEntered: {
+                            albumCard.color = "#0b0b0b"
+
+                        }
+                        onExited: {
+                            albumCard.color = "transparent"
+                        }
+
+                        onDoubleClicked:{
+                            //AlbumFilterModel.setAlbumName(albumName)
+                            ViewController.albumSongsView.setAlbum(albumArtists, albumName, albumGenre, albumYear, albumSongCount)
+                            ModelHandler.albumSongs.setAlbumName(albumName)
+                            ViewController.selectAlbum()
+                        }
 
                     }
-                    onExited: {
-                        albumCard.color = "transparent"
-                    }
 
-                    onDoubleClicked:{
-                        AlbumFilterModel.setAlbumName(albumName)
-                        AlbumSongsView.setAlbum(albumArtists, albumName, albumGenre, albumYear, albumSongCount)
-                        ViewController.selectAlbum()
-                    }
+                    ColumnLayout{
+                        spacing: 0
+                        anchors.fill: parent
+                        anchors.bottomMargin: 5
 
-                }
+                        Image {
+                            source: "image://coverArt/" + albumName + "/" + albumArtists[0]
+                            sourceSize.width: albumCard.width - 100
+                            sourceSize.height: albumCard.width - 100
+                            Layout.alignment: Qt.AlignHCenter
+                        }
 
-                ColumnLayout{
-                    spacing: 0
-                    anchors.fill: parent
-                    anchors.bottomMargin: 5
+                        Text {
+                            text: albumName
+                            font.bold: true
+                            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                            color: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                            Layout.fillWidth: true
+                            horizontalAlignment: Text.AlignHCenter
+                            elide: Text.ElideRight
+                        }
 
-                    Image {
-                        source: "image://coverArt/" + albumName + "/" + albumArtists[0]
-                        sourceSize.width: albumCard.width - 100
-                        sourceSize.height: albumCard.width - 100
-                        Layout.alignment: Qt.AlignHCenter
-                    }
-
-                    Text {
-                        text: albumName
-                        font.bold: true
-                        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                        color: "white"
-                        Layout.alignment: Qt.AlignHCenter
-                    }
-
-                    Text {
-                        text: albumArtists[0]
-                        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                        color: "white"
-                        Layout.alignment: Qt.AlignHCenter
+                        Text {
+                            text: albumArtists[0]
+                            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                            color: "white"
+                            Layout.alignment: Qt.AlignHCenter
+                            Layout.fillWidth: true
+                            horizontalAlignment: Text.AlignHCenter
+                            elide: Text.ElideRight
+                        }
                     }
                 }
             }
+
+            model: ModelHandler.albumList
+            delegate: albumDelegate
+
+            onWidthChanged: {
+                resizeTimer.restart()
+
+            }
+            onHeightChanged: {
+                resizeTimer.restart()
+            }
+
         }
-
-        model: AlbumModel
-        delegate: albumDelegate
-
-        onWidthChanged: {
-            resizeTimer.restart()
-
-        }
-        onHeightChanged: {
-            resizeTimer.restart()
-        }
-
     }
+
+
 }

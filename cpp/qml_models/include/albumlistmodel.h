@@ -1,6 +1,7 @@
 #ifndef ALBUMLISTMODEL_H
 #define ALBUMLISTMODEL_H
 
+#include <QtQml>
 #include <QList>
 #include <QString>
 #include <QAbstractListModel>
@@ -13,8 +14,10 @@
 class AlbumListModel : public QAbstractListModel
 {
     Q_OBJECT
+
 public:
     explicit AlbumListModel(QObject *parent = nullptr);
+    static AlbumListModel &instance();
 
     enum AlbumRoles {
         AlbumNameRole = Qt::UserRole + 1,

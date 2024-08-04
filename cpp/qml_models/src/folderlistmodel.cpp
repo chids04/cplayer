@@ -2,6 +2,12 @@
 
 FolderListModel::FolderListModel(QObject *parent) : QAbstractListModel(parent) {}
 
+FolderListModel &FolderListModel::instance()
+{
+    static FolderListModel folderListModel;
+    return folderListModel;
+}
+
 void FolderListModel::addFolder(const Folder &folder)
 {
     beginInsertRows(QModelIndex(), rowCount(), rowCount());

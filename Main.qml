@@ -7,7 +7,7 @@ import QtQuick.Effects
 import "./qml"
 import "./qml/components"
 
-import com.c.MediaController
+//import com.c.MediaController
 
 Window {
     width: 1280
@@ -19,6 +19,7 @@ Window {
 
     property alias mainWindow: mainContent
     property alias mainErrorPopup: errorPopup
+
     Rectangle {
         id: mainContent
         anchors.fill: parent

@@ -1,7 +1,7 @@
 #include "playlistsongsmodel.h"
 #include <QDebug>
 
-PlaylistSongsModel::PlaylistSongsModel(SongListModel *songListModel, QObject *parent) : songListModel(songListModel), QAbstractListModel(parent) {}
+PlaylistSongsModel::PlaylistSongsModel(QObject *parent) :  QAbstractListModel(parent) {}
 
 void PlaylistSongsModel::addSong(std::shared_ptr<Song> song){
 

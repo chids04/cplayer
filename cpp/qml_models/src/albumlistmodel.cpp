@@ -3,6 +3,12 @@
 AlbumListModel::AlbumListModel(QObject *parent) : QAbstractListModel(parent) {
 }
 
+AlbumListModel &AlbumListModel::instance()
+{
+    static AlbumListModel albumListModel;
+    return albumListModel;
+}
+
 void AlbumListModel::addAlbum(const Album &album)
 {
     beginInsertRows(QModelIndex(), rowCount(), rowCount());

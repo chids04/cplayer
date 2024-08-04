@@ -10,7 +10,7 @@
 class Playlist
 {
 public:
-    Playlist(int id, const QString &playlistName, SongListModel *songListModel, bool hasCover = false);
+    Playlist(int id, const QString &playlistName, bool hasCover = false);
 
     void addSong(const QString &url);
     void clearPlaylist();

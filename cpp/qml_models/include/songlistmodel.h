@@ -1,7 +1,9 @@
 #ifndef SONGLISTMODEL_H
 #define SONGLISTMODEL_H
 
+#include <QtQml>
 #include <QAbstractListModel>
+
 
 #include <memory>
 
@@ -10,8 +12,10 @@
 class SongListModel : public QAbstractListModel
 {
     Q_OBJECT
+
 public:
     explicit SongListModel(QObject *parent = nullptr);
+    static SongListModel &instance();
 
     enum SongRoles {
         FilePathRole = Qt::UserRole + 1,
@@ -43,6 +47,7 @@ public slots:
 
 private:
     QList<std::shared_ptr<Song>> m_songs;
+    static SongListModel *modelInstance;
 
 };
 
