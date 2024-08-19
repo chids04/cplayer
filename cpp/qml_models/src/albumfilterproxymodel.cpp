@@ -12,21 +12,21 @@ AlbumFilterProxyModel &AlbumFilterProxyModel::instance()
     return albumFilterProxyModel;
 }
 
-void AlbumFilterProxyModel::setAlbumName(const QString &newAlbumName)
+void AlbumFilterProxyModel::setCurrentAlbumName(const QString &newAlbumName)
 {
-    if (m_albumName == newAlbumName)
+    if (m_currentAlbumName == newAlbumName)
         return;
-    m_albumName = newAlbumName;
+    m_currentAlbumName = newAlbumName;
     invalidateFilter();
-    emit albumNameChanged();
+    emit currentAlbumNameChanged();
 }
 
 bool AlbumFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
     QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
-    bool flag = sourceModel()->data(index, SongListModel::AlbumRole).toString() == m_albumName ? true: false;
+    bool flag = sourceModel()->data(index, SongListModel::AlbumRole).toString() == m_currentAlbumName ? true: false;
     qDebug() << flag;
-    return sourceModel()->data(index, SongListModel::AlbumRole).toString() == m_albumName;
+    return sourceModel()->data(index, SongListModel::AlbumRole).toString() == m_currentAlbumName;
 }
 
 //sorts the songs by album number
@@ -38,7 +38,7 @@ bool AlbumFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex 
     return leftData.toInt() < rightData.toInt();
 }
 
-QString AlbumFilterProxyModel::albumName() const
+QString AlbumFilterProxyModel::currentAlbumName() const
 {
-    return m_albumName;
+    return m_currentAlbumName;
 }

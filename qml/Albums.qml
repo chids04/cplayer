@@ -49,7 +49,7 @@ Item {
             placeholderTextColor: "darkgrey"
             color: "white"
 
-            onTextChanged: AlbumSearchModel.filterString = text
+            onTextChanged: ModelHandler.albumList.filterString = text
 
             background: Rectangle{
                 border.color: "#343434"
@@ -97,7 +97,7 @@ Item {
                         onDoubleClicked:{
                             //AlbumFilterModel.setAlbumName(albumName)
                             ViewController.albumSongsView.setAlbum(albumArtists, albumName, albumGenre, albumYear, albumSongCount)
-                            ModelHandler.albumSongs.setAlbumName(albumName)
+                            ModelHandler.albumSongs.setCurrentAlbumName(albumName)
                             ViewController.selectAlbum()
                         }
 

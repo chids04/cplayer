@@ -44,6 +44,7 @@ int main(int argc, char *argv[])
     auto modelHandler = engine.singletonInstance<ModelHandler *>("cplayer", "ModelHandler");
     modelHandler->setSongList(&SongFilterProxyModel::instance());
     modelHandler->setAlbumList(&AlbumSearchFilter::instance());
+    modelHandler->setAlbumSongs(&AlbumFilterProxyModel::instance());
     modelHandler->setPlaylistList(&PlaylistModel::instance());
     modelHandler->setFolderList(&FolderListModel::instance());
 
