@@ -157,7 +157,7 @@ Item {
                     songDelegateLeadingArtist: artist
 
                     onSongDelegateDoubleClicked: {
-                        MusicHandler.NowPlaying.playNow(songObject)
+                        MusicHandler.nowPlaying.playNow(songObject)
                     }
 
                 }
