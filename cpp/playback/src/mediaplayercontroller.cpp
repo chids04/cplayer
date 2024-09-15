@@ -6,6 +6,15 @@ MediaPlayerController::MediaPlayerController(QObject *parent)
     player = new QMediaPlayer;
     output = new QAudioOutput;
 
+    const QList<QAudioDevice> audioDevices = QMediaDevices::audioOutputs();
+
+    for (const QAudioDevice &device : audioDevices)
+    {
+        qDebug() << "ID: " << device.id() << Qt::endl;
+        qDebug() << "Description: " << device.description() << Qt::endl;
+        qDebug() << "Is default: " << (device.isDefault() ? "Yes" : "No") << Qt::endl;
+    }
+
     connect(player, &QMediaPlayer::positionChanged, this, &MediaPlayerController::onPositionChanged);
     connect(player, &QMediaPlayer::durationChanged, this, &MediaPlayerController::durationChanged);
     connect(this, &MediaPlayerController::playingChanged, this, &MediaPlayerController::onPlayingChanged);
