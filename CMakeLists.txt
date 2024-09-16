@@ -10,7 +10,7 @@ find_package(Qt6 6.7 REQUIRED COMPONENTS Multimedia Quick Widgets Core)
 
 
 if(WIN32)
-    set(TAGLIB_ROOT "C:/pkg_mingw")
+    set(TAGLIB_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/xtras/taglib)
 
     find_path(TAGLIB_INCLUDE_DIR taglib/tag.h
         PATHS ${TAGLIB_ROOT}/include)
