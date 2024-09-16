@@ -11,6 +11,8 @@
 #include <QMediaPlayer>
 #include <QAudioOutput>
 #include <QTextStream>
+#include <QMediaDevices>
+#include <QAudioDevice>
 #include <QMediaMetaData>
 
 #include <taglib/fileref.h>
