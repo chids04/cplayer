@@ -33,25 +33,23 @@ public:
     void setFolderView(FolderView *newFolderView);
 
 signals:
-    void songViewSelected();
-    void albumViewSelected();
-    void foldersViewSelected();
     void albumSelected();
-    void playlistsViewSelected();
+    void songViewSelected();
     void playlistSelected();
-
-
-    void albumSongsViewChanged();
-
-    void playlistSongsViewChanged();
-
+    void albumViewSelected();
     void folderViewChanged();
+    void foldersViewSelected();
+    void settingsViewSelected();
+    void playlistsViewSelected();
+    void albumSongsViewChanged();
+    void playlistSongsViewChanged();
 
 public slots:
     void songView();
     void albumView();
     void selectAlbum();
     void foldersView();
+    void settingsView();
     void playlistsView();
     void selectPlaylist();
 private:

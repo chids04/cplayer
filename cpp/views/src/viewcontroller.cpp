@@ -28,6 +28,11 @@ void ViewController::foldersView()
     emit foldersViewSelected();
 }
 
+void ViewController::settingsView()
+{
+    emit settingsViewSelected();
+}
+
 void ViewController::playlistsView()
 {
     emit playlistsViewSelected();

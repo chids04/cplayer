@@ -8,12 +8,11 @@ import QtQuick.Controls.Basic
 
 import cplayer
 
-Rectangle{
+Item{
 
     id: mainWindow
     Layout.fillWidth: true
     Layout.fillHeight: true
-    color: "transparent"
 
     Connections{
         target: ViewController
@@ -41,11 +40,15 @@ Rectangle{
         function onPlaylistSelected(){
             stackView.push("PlaylistSongs.qml")
         }
+
+        function onSettingsViewSelected(){
+            stackView.push("Settings.qml")
+        }
     }
 
     RowLayout {
         anchors.fill: parent
-        spacing: 15
+        spacing: 10
 
         Sidebar{
         }
@@ -60,14 +63,6 @@ Rectangle{
             pushExit: null
 
         }
-
-//        Loader {
-//            id: viewLoader
-//            source: "Folders.qml"
-//            Layout.fillWidth: true
-//            Layout.fillHeight: true
-//        }
-
     }
 }
 

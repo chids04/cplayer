@@ -77,3 +77,16 @@ void ModelHandler::setFolderList(FolderListModel *newFolderList)
     m_folderList = newFolderList;
     emit folderListChanged();
 }
+
+SettingsManager *ModelHandler::settingsManager() const
+{
+    return m_settingsManager;
+}
+
+void ModelHandler::setSettingsManager(SettingsManager *newSettingsManager)
+{
+    if (m_settingsManager == newSettingsManager)
+        return;
+    m_settingsManager = newSettingsManager;
+    emit settingsManagerChanged();
+}

@@ -10,6 +10,7 @@
 #include "playlistsongsmodel.h"
 #include "albumsearchfilter.h"
 #include "folderlistmodel.h"
+#include "settingsmanager.h"
 
 
 class ModelHandler : public QObject
@@ -24,6 +25,7 @@ class ModelHandler : public QObject
     Q_PROPERTY(PlaylistModel* playlistList READ playlistList WRITE setPlaylistList NOTIFY playlistListChanged)
     Q_PROPERTY(PlaylistSongsModel* playlistSongsList READ playlistSongsList WRITE setPlaylistSongsList NOTIFY playlistSongsListChanged)
     Q_PROPERTY(FolderListModel* folderList READ folderList WRITE setFolderList NOTIFY folderListChanged)
+    Q_PROPERTY(SettingsManager* settingsManager READ settingsManager WRITE setSettingsManager NOTIFY settingsManagerChanged)
 
 public:
 
@@ -44,6 +46,9 @@ public:
     FolderListModel *folderList() const;
     void setFolderList(FolderListModel *newFolderList);
 
+    SettingsManager *settingsManager() const;
+    void setSettingsManager(SettingsManager *newSettingsManager);
+
 public slots:
     void setPlaylistSongsList(PlaylistSongsModel *newPlaylistSongsList);
 
@@ -60,6 +65,8 @@ signals:
 
     void folderListChanged();
 
+    void settingsManagerChanged();
+
 private:
 
     inline static QJSEngine *s_engine = nullptr;
@@ -69,6 +76,7 @@ private:
     PlaylistModel *m_playlistList = nullptr;
     PlaylistSongsModel *m_playlistSongsList = nullptr;
     FolderListModel *m_folderList = nullptr;
+    SettingsManager *m_settingsManager = nullptr;
 };
 
 #endif // MODELHANDLER_H

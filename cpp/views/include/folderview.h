@@ -30,6 +30,7 @@ signals:
 public slots:
     void startFolderScanningThread(QUrl filePath);
     void onScanningFinished(QString folderName, QString folderPath, int songCount);
+    void removeFolder(int index, QString folderPath);
 
 private:
     QUrl m_path;

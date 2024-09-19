@@ -42,7 +42,6 @@ bool SongFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &so
     double titleScore = rapidfuzz::fuzz::partial_ratio(normalizeString(title).toStdString(), m_filterString.toStdString());
     double artistScore = rapidfuzz::fuzz::partial_ratio(normalizeString(artist).toStdString(), m_filterString.toStdString());
 
-
     return titleScore > 50;
 }
 
@@ -56,8 +55,6 @@ bool SongFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &
     double leftScore = rapidfuzz::fuzz::partial_ratio(normalizedLeftTitle.toStdString(), m_filterString.toStdString());
     double rightScore = rapidfuzz::fuzz::partial_ratio(normalizedRightTitle.toStdString(), m_filterString.toStdString());
 
-    qDebug() << leftScore;
-    qDebug() << rightScore;
 
     return leftScore > rightScore;
 }

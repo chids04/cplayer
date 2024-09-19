@@ -186,7 +186,12 @@ Rectangle {
                 id: songAlbum
                 //text: album
                 color: "white"
-                anchors.centerIn: parent
+                width:parent.width
+                height: parent.height
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                elide: Text.ElideRight
+
             }
         }
 

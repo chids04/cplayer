@@ -49,6 +49,7 @@ qt_add_qml_module(appcplayer
         qml/MainWindow.qml
         qml/Playlists.qml
         qml/PlaylistSongs.qml
+        qml/Settings.qml
 
     #QML Components
     QML_FILES
@@ -58,6 +59,8 @@ qt_add_qml_module(appcplayer
         qml/components/SongDelegate.qml
         qml/components/ErrorPopup.qml
         qml/components/SongContextMenu.qml
+        qml/components/FolderDelegate.qml
+        qml/components/FolderDelPopUp.qml
 
     #C++ Models
     SOURCES
@@ -143,6 +146,12 @@ qt_add_qml_module(appcplayer
 
         cpp/views/src/playlistsongsview.cpp
         cpp/views/include/playlistsongsview.h
+
+    #C++ utlities
+    SOURCES
+        cpp/utility/src/settingsmanager.cpp
+        cpp/utility/include/settingsmanager.h
+
 )
 
 
@@ -174,7 +183,8 @@ if(WIN32)
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/image_providers/include
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/qml_models/include
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/views/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/playback/include)
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/playback/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/utility/include)
 
 
 elseif(UNIX)
@@ -190,7 +200,8 @@ elseif(UNIX)
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/image_providers/include
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/qml_models/include
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/views/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/playback/include)
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/playback/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/utility/include)
 
 endif()
 

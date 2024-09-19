@@ -52,7 +52,7 @@ Item{
                         Layout.preferredHeight: 80
                         Layout.preferredWidth: 80
                         Layout.alignment: Qt.AlignVCenter
-                        source: "qrc:/resource/ui/assets/pika.png"
+                        source: "qrc:/resource/ui/assets/unknownCover.png"
                         sourceSize.width: 80
                         sourceSize.height: 80
 
@@ -71,7 +71,6 @@ Item{
 
                         Text {
                             id: songName
-                            text: "line 1"
                             color: "white"
                             font.bold: true
                             Layout.preferredWidth: mediaInfo.width - songArt.width - 30
@@ -90,7 +89,6 @@ Item{
 
                         Text{
                             id: songAuthors
-                            text: "line 2"
                             color: "white"
                             Layout.preferredWidth: mediaInfo.width - songArt.width - 30
                             Layout.minimumWidth: 100

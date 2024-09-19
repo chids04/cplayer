@@ -1,5 +1,6 @@
 #include "folderlistmodel.h"
 
+
 FolderListModel::FolderListModel(QObject *parent) : QAbstractListModel(parent) {}
 
 FolderListModel &FolderListModel::instance()
@@ -12,6 +13,7 @@ void FolderListModel::addFolder(const Folder &folder)
 {
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     m_folders << folder;
+    SettingsManager::instance().writeFolder(folder);
     endInsertRows();
 }
 
@@ -57,6 +59,31 @@ QHash<int, QByteArray> FolderListModel::roleNames() const
     roles[FolderSongCountRole] = "folderSongCount";
 
     return roles;
+}
+
+void FolderListModel::removeFolder(int index, QString &folderPath)
+{
+    if(index < 0 || index >=m_folders.count()){
+        return;
+    }
+
+    beginRemoveRows(QModelIndex(), index, index);
+    m_folders.removeAt(index);
+    endRemoveRows();
+
+    SettingsManager::instance().removeFolder(folderPath);
+
+}
+
+bool FolderListModel::folderExists(QUrl &folderPath)
+{
+    for(const Folder &folder : m_folders) {
+        if(folder.getFolderPath() == folderPath.toLocalFile()){
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void FolderListModel::clear()

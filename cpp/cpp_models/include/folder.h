@@ -2,6 +2,7 @@
 #define FOLDER_H
 
 #include <QString>
+#include <QMetaType>
 #include <QDataStream>
 
 class Folder
@@ -30,5 +31,6 @@ private:
     int songCount;
 };
 
+Q_DECLARE_METATYPE(Folder)
 #endif // FOLDER_H
 

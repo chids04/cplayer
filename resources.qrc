@@ -22,5 +22,9 @@
         <file>ui/assets/playBtn.png</file>
         <file>ui/assets/pauseBtn.png</file>
         <file>ui/assets/playlistIcon.png</file>
+        <file>ui/assets/Library.png</file>
+        <file>ui/assets/album.png</file>
+        <file>ui/assets/settingsCog.png</file>
+        <file>ui/assets/x.png</file>
     </qresource>
 </RCC>

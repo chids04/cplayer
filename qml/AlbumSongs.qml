@@ -31,12 +31,10 @@ Item {
                 spacing: 10
                 Image{
                     id: albumCoverArt
-                    Layout.preferredHeight: parent.height - 10
-                    Layout.preferredWidth: parent.height - 10
 
                     source: "image://coverArt/" + ViewController.albumSongsView.albumName + "/" + ViewController.albumSongsView.albumArtists[0]
-                    sourceSize.width: parent.height - 10
-                    sourceSize.height: parent.height - 10
+                    sourceSize.width: 170
+                    sourceSize.height: 170
 
                 }
 
@@ -48,6 +46,8 @@ Item {
                         id: loadedAlbumName
                         color: "white"
                         text: ViewController.albumSongsView.albumName
+                        Layout.fillWidth: true
+                        elide: Text.ElideRight
                         font.bold: true
                         font.pointSize: 40
 
@@ -169,3 +169,4 @@ Item {
         }
     }
 }
+
