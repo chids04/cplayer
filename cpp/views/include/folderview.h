@@ -4,11 +4,6 @@
 #include <QObject>
 #include <QUrl>
 
-#include "folderlistmodel.h"
-#include "songlistmodel.h"
-#include "albumlistmodel.h"
-#include "musicscannerthread.h"
-#include "coverartholder.h"
 
 class FolderView : public QObject
 {
@@ -24,11 +19,11 @@ public:
 
 signals:
     void onSongsLoaded();
-
     void pathChanged();
+    void deleteSongs(QString &folderPath);
 
 public slots:
-    void startFolderScanningThread(QUrl filePath);
+    void startFolderScanningThread(QUrl filePath, bool firstScan);
     void onScanningFinished(QString folderName, QString folderPath, int songCount);
     void removeFolder(int index, QString folderPath);
 

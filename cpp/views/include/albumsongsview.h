@@ -4,7 +4,6 @@
 #include <QString>
 #include <QObject>
 #include <QStringList>
-#include <QDebug>
 
 class AlbumSongsView : public QObject
 {

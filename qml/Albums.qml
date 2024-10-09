@@ -109,7 +109,7 @@ Item {
                         anchors.bottomMargin: 5
 
                         Image {
-                            source: "image://coverArt/" + albumName + "/" + albumArtists[0]
+                            source: "image://coverArt/" + albumName + "/" + albumArtists.join('%')
                             sourceSize.width: albumCard.width - 100
                             sourceSize.height: albumCard.width - 100
                             Layout.alignment: Qt.AlignHCenter

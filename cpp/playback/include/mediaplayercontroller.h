@@ -3,27 +3,13 @@
 
 #include <QtQml>
 #include <QUrl>
-#include <QImage>
 #include <QPixmap>
 #include <QObject>
 #include <QString>
 #include <QStringList>
 #include <QMediaPlayer>
-#include <QAudioOutput>
-#include <QTextStream>
-#include <QMediaDevices>
-#include <QAudioDevice>
-#include <QMediaMetaData>
 
-#include <taglib/fileref.h>
-#include <taglib/tag.h>
-#include <taglib/attachedpictureframe.h>
-#include <taglib/mpegfile.h>
-#include <taglib/id3v2tag.h>
-#include <taglib/tpropertymap.h>
-
-#include "nowplaying.h"
-#include "coverartholder.h"
+#include "song.h"
 
 class MediaPlayerController : public QObject {
 
@@ -57,7 +43,6 @@ public:
     qint64 position() const;
     qint64 duration() const;
     float volume() const;
-    void setPosition(qint64 newPosition);
     void setFilePath(const QString &newFilePath);
 
     void playPause(bool newPlaying);
@@ -94,7 +79,9 @@ public slots:
     void onMediaStatusChanged(QMediaPlayer::MediaStatus status);
 
     void onPlaySong(std::shared_ptr<Song> song);
+    void onSongLoaded(std::shared_ptr<Song> song);
     void setVolume(float newVolume);
+    void setPosition(qint64 newPosition);
 
     QString genTime(qint64 currentTime);
 

@@ -17,6 +17,7 @@
 #include "modelhandler.h"
 #include "musichandler.h"
 #include "viewcontroller.h"
+#include "utilitysingleton.h"
 
 int main(int argc, char *argv[])
 {
@@ -38,8 +39,11 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
+    //for custom types used in signal/slots or that need to be written to and from QVariant
     qRegisterMetaType<std::shared_ptr<Song>>();
     qRegisterMetaType<QList<Folder>>();
+    qRegisterMetaType<QList<int>>();
+    qRegisterMetaType<QList<Song>>();
 
     auto modelHandler = engine.singletonInstance<ModelHandler *>("cplayer", "ModelHandler");
     modelHandler->setSongList(&SongFilterProxyModel::instance());
@@ -60,11 +64,14 @@ int main(int argc, char *argv[])
     viewController->setPlaylistSongsView(&PlaylistSongsView::instance());
     viewController->setFolderView(&FolderView::instance());
 
+    auto utilitySingleton = engine.singletonInstance<UtilitySingleton *>("cplayer", "UtilitySingleton");
+    utilitySingleton->setSettingsManager(&SettingsManager::instance());
+
     MediaImageProvider *mediaImageProvider = new MediaImageProvider;
     engine.addImageProvider(QLatin1String("coverArt"), mediaImageProvider);
 
     if(SettingsManager::instance().hasFolder()){
-        SettingsManager::instance().readFolders();
+        SettingsManager::instance().setup();
     }
 
 

@@ -152,6 +152,9 @@ qt_add_qml_module(appcplayer
         cpp/utility/src/settingsmanager.cpp
         cpp/utility/include/settingsmanager.h
 
+        cpp/utility/include/utilitysingleton.h
+        cpp/utility/src/utilitysingleton.cpp
+
 )
 
 

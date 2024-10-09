@@ -98,6 +98,11 @@ QHash<int, QByteArray> AlbumListModel::roleNames() const
     return roles;
 }
 
+QList<Album> AlbumListModel::getAlbums()
+{
+    return m_albums;
+}
+
 void AlbumListModel::clear()
 {
     if(!m_albums.isEmpty()){
@@ -105,5 +110,16 @@ void AlbumListModel::clear()
         m_albums.clear();
         endRemoveRows();
 
+    }
+}
+
+void AlbumListModel::deleteAlbum(QString &albumName, QStringList &albumArtists)
+{
+    for (int i = m_albums.size() - 1; i >= 0; --i) {
+        if (m_albums[i].getName() == albumName && m_albums[i].getArtist() == albumArtists) {
+            beginRemoveRows(QModelIndex(), i, i);
+            m_albums.removeAt(i);  // Remove song if its path contains the folderPath
+            endRemoveRows();
+        }
     }
 }

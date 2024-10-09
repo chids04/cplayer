@@ -2,8 +2,6 @@
 #define ALBUMSEARCHFILTER_H
 
 #include <QSortFilterProxyModel>
-#include "albumlistmodel.h"
-#include <rapidfuzz/fuzz.hpp>
 
 class AlbumSearchFilter : public QSortFilterProxyModel
 {

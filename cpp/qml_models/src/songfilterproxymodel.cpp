@@ -1,6 +1,9 @@
 #include "songfilterproxymodel.h"
-#include "songlistmodel.h"
+
 #include <QDebug>
+#include <QRegularExpression>
+#include <rapidfuzz/fuzz.hpp>
+#include "songlistmodel.h"
 
 SongFilterProxyModel::SongFilterProxyModel(QObject *parent)
     : QSortFilterProxyModel(parent)

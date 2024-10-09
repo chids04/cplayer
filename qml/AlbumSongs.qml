@@ -101,7 +101,7 @@ Item {
                 buttonText: "Add to Queue"
 
                 onButtonClicked: {
-                    MusicHandler.nowPlaying.playAlbum(ViewController.albumSongsView.albumName, ViewController.AlbumSongsView.albumArtists, true);
+                    MusicHandler.nowPlaying.playAlbum(ViewController.albumSongsView.albumName, ViewController.albumSongsView.albumArtists, true);
                 }
             }
 
@@ -155,6 +155,7 @@ Item {
                     songDelegateAuthors: features.length === 0 ? artist  : artist + " feat. " + features.join(", ")
                     songDelegateAlbum: album
                     songDelegateLeadingArtist: artist
+                    songFeatures: albumArtists
 
                     onSongDelegateDoubleClicked: {
                         MusicHandler.nowPlaying.playNow(songObject)

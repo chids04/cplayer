@@ -1,5 +1,8 @@
 #include "playlistmanager.h"
 
+#include "playlist.h"
+#include "playlistmodel.h"
+
 PlaylistManager::PlaylistManager(QObject *parent) : QObject(parent)
 {
     //
@@ -22,7 +25,6 @@ void PlaylistManager::addPlaylist(QString playlistName, bool hasCover)
 
 void PlaylistManager::loadPlaylistSongs(int id)
 {
-    qDebug() << id;
     QModelIndex index = PlaylistModel::instance().getIndexForID(id);
     QVariant idVariant = PlaylistModel::instance().data(index, PlaylistModel::PlaylistIDRole);
     QVariant nameVariant = PlaylistModel::instance().data(index, PlaylistModel::PlaylistNameRole);
@@ -42,7 +44,6 @@ void PlaylistManager::loadPlaylistSongs(int id)
 
 PlaylistSongsModel *PlaylistManager::playlistSongsModel()
 {
-    qDebug() << "attempting to get model";
     return m_playlistSongsModel;
 }
 

@@ -1,7 +1,13 @@
 #include "songlistmodel.h"
+
 #include <QDebug>
 
-SongListModel::SongListModel(QObject *parent) : QAbstractListModel(parent) {}
+#include "folderview.h"
+#include "albumlistmodel.h"
+
+SongListModel::SongListModel(QObject *parent) : QAbstractListModel(parent) {
+    connect(this, &SongListModel::deleteAlbum, &AlbumListModel::instance(), &AlbumListModel::deleteAlbum);
+}
 
 SongListModel &SongListModel::instance()
 {
@@ -65,6 +71,9 @@ QVariant SongListModel::data(const QModelIndex &index, int role) const {
         case NumberInAlbumRole:
         return song->trackNum;
 
+        case AlbumArtistsRole:
+            return song->albumArtists;
+
         case SongObjectRole:
             return QVariant::fromValue(song);
 
@@ -81,6 +90,7 @@ QHash<int, QByteArray> SongListModel::roleNames() const {
     roles[AlbumRole] = "album";
     roles[FeaturingArtistsRole] = "features";
     roles[NumberInAlbumRole] = "albumNum";
+    roles[AlbumArtistsRole] = "albumArtists";
     roles[SongObjectRole] = "songObject";
 
     return roles;
@@ -140,6 +150,27 @@ int SongListModel::getSongTrackNum(const QString &filePath) const
     }
 
     return 0;
+}
+
+QList<std::shared_ptr<Song> > SongListModel::getSongs()
+{
+    return m_songs;
+}
+
+void SongListModel::removeFolderSongs(QString &folderPath)
+{
+    QString songPath;
+
+    for (int i = m_songs.size() - 1; i >= 0; --i) {
+        songPath = m_songs[i]->filePath;
+        if (songPath.contains(folderPath, Qt::CaseSensitive)) {
+            emit deleteAlbum(m_songs[i]->album, m_songs[i]->albumArtists);
+            beginRemoveRows(QModelIndex(), i, i);
+            m_songs.removeAt(i);  // Remove song if its path contains the folderPath
+            endRemoveRows();
+
+        }
+    }
 }
 
 void SongListModel::onSongAdded(std::shared_ptr<Song> song)

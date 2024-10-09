@@ -21,11 +21,17 @@ struct Song {
     int length;
     int trackNum;
     int year;
+    int id;
+    QString songHash;
 
     Song() {}
 
     Song(const QString &filePath, const QString &title, const QString &artist, const QString &album, const QString &genre,
-         const QStringList &featuringArtists, const QStringList &albumArtists, int year, int length, int trackNum);
+         const QStringList &featuringArtists, const QStringList &albumArtists, int year, int length, int trackNum, int id);
+
+    void generateSongHash();
+    friend QDataStream &operator<<(QDataStream &out, const Song &song);
+    friend QDataStream &operator>>(QDataStream &in, Song &song);
 };
 
 Q_DECLARE_METATYPE(Song)

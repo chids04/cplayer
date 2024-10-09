@@ -7,9 +7,11 @@ import QtQuick.Effects
 import "./qml"
 import "./qml/components"
 
+import cplayer
+
 //import com.c.MediaController
 
-Window {
+ApplicationWindow {
     width: 1280
     height: 720
     minimumWidth: 1024
@@ -19,6 +21,10 @@ Window {
 
     property alias mainWindow: mainContent
     property alias mainErrorPopup: errorPopup
+
+    onClosing : {
+        UtilitySingleton.settingsManager.shutDown()
+    }
 
     Rectangle {
         id: mainContent

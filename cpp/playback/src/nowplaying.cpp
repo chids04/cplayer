@@ -1,8 +1,13 @@
 #include "nowplaying.h"
 
+#include "albumlistmodel.h"
+#include "songlistmodel.h"
+#include "mediaplayercontroller.h"
+
 NowPlaying::NowPlaying(QObject *parent) :
     QObject(parent)
-{}
+{
+}
 
 NowPlaying &NowPlaying::instance()
 {
@@ -10,15 +15,46 @@ NowPlaying &NowPlaying::instance()
     return nowPlaying;
 }
 
-NowPlaying *NowPlaying::create(QQmlEngine *engine, QJSEngine *)
+QList<std::shared_ptr<Song> > NowPlaying::getNowPlaying()
 {
-    return &NowPlaying::instance();
+    return songQueue;
+}
+
+int NowPlaying::getCurrentIndex()
+{
+    return currentIndex;
+}
+
+void NowPlaying::loadFromSettings()
+{
+    QSettings settings;
+    currentIndex = settings.value("nowPlayingCurrentIndex", 0).toInt();
+    qint64 position = settings.value("nowPlayingSongPosition", 0).toLongLong();
+    QList<int> songIDs = settings.value("nowPlayingList").value<QList<int>>();
+
+    //no songs
+    if(songIDs.isEmpty()){
+        return;
+    }
+
+    for (const auto &song : SongListModel::instance().getSongs()){
+        if(songIDs.contains(song->id)){
+            songQueue.append(song);
+        }
+    }
+
+    //if the song queue is empty
+    if(songQueue.isEmpty()){
+        return;
+    }
+
+    emit songLoaded(songQueue[currentIndex]);
+    emit positionLoaded(position);
 }
 
 
 void NowPlaying::playAlbum(const QString &albumName, const QStringList &albumArtists, bool queue)
 {
-    qDebug() << "playing album" << albumName << "by" << albumArtists;
     QModelIndex albumIndex = AlbumListModel::instance().findAlbumIndex(albumName, albumArtists);
     QVariant albumSongsVariant = AlbumListModel::instance().data(albumIndex, AlbumListModel::AlbumSongsRole);
     QList<std::shared_ptr<Song>> songs = albumSongsVariant.value<QList<std::shared_ptr<Song>>>();
@@ -27,7 +63,6 @@ void NowPlaying::playAlbum(const QString &albumName, const QStringList &albumArt
         return a->trackNum < b->trackNum;
     });
 
-    qDebug() << "got list of songs in album";
 
     if(queue){
         songQueue.append(songs);
@@ -45,6 +80,7 @@ void NowPlaying::playAlbum(const QString &albumName, const QStringList &albumArt
             index++;
         }
         currentIndex++;
+
         emit playSong(songQueue[currentIndex]);
     }
 

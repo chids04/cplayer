@@ -87,6 +87,7 @@ Item {
                 songDelegateAuthors: features.length === 0 ? artist  : artist + " feat. " + features.join(", ")
                 songDelegateAlbum: album
                 songDelegateLeadingArtist: artist
+                songFeatures: albumArtists
 
                 onSongDelegateDoubleClicked: {
                     //NowPlaying.playNow(songObject)

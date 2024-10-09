@@ -14,7 +14,7 @@ Item {
 
         onAccepted: {
             print(folderDialogs.folder)
-            ViewController.folderView.startFolderScanningThread(folderDialogs.folder)
+            ViewController.folderView.startFolderScanningThread(folderDialogs.folder, false)
         }
     }
 

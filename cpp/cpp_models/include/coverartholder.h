@@ -10,17 +10,35 @@
 #include <QStringList>
 
 struct CoverArtKey{
-    QString artist;
+    QStringList artists;
     QString albumName;
 
     bool operator==(const CoverArtKey &other) const {
-        return artist == other.artist && albumName == other.albumName;
+        return artists == other.artists && albumName == other.albumName;
+    }
+
+    QString toString() const {
+        return artists.join(',') + "|" + albumName;
+    }
+
+    static CoverArtKey fromString(const QString &str) {
+        QStringList parts = str.split("|");
+        CoverArtKey key;
+        key.artists = parts[0].split(",");  // Split artists by commas
+        key.albumName = parts[1];
+        return key;
     }
 };
 
 //simple hashing function
 inline uint qHash(const CoverArtKey &key, uint seed = 0){
-    return qHash(key.artist, seed) ^ qHash(key.albumName, seed);
+    uint hash = seed;
+
+    for(const QString &artist : key.artists){
+        hash ^= qHash(artist, seed);
+    }
+
+    return hash ^ qHash(key.albumName);
 }
 
 class CoverArtHolder
@@ -30,9 +48,12 @@ public:
     CoverArtHolder();
     static CoverArtHolder &instance();
 
-    void addCover(const QString &artist, const QString &albumName, QByteArray &coverArt);
-    QByteArray getCover(const QString &artist, const QString &albumName) const;
-    bool hasCover(const QString &artist, const QString &albumName) const;
+    void addCover(const QStringList &artists, const QString &albumName, QByteArray &coverArt);
+    QByteArray getCover(const QStringList &artists, const QString &albumName) const;
+    bool hasCover(const QStringList &artists, const QString &albumName) const;
+    void loadFromSettings();
+    QHash<CoverArtKey, QByteArray> getAllCovers();
+
 private:
     QHash<CoverArtKey, QByteArray> coverArts;
 };

@@ -2,6 +2,7 @@
 #define ALBUM_H
 
 #include <QHash>
+#include <QObject>
 #include <QStringList>
 
 #include <memory>

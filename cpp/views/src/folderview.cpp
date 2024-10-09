@@ -1,8 +1,14 @@
 #include "folderview.h"
+#include "folderlistmodel.h"
+#include "songlistmodel.h"
+#include "albumlistmodel.h"
+#include "musicscannerthread.h"
 
 FolderView::FolderView(QObject *parent)
     : QObject(parent)
-{}
+{
+    connect(this, &FolderView::deleteSongs, &SongListModel::instance(), &SongListModel::removeFolderSongs);
+}
 
 FolderView &FolderView::instance()
 {
@@ -10,9 +16,9 @@ FolderView &FolderView::instance()
     return folderView;
 }
 
-void FolderView::startFolderScanningThread(QUrl filePath)
+void FolderView::startFolderScanningThread(QUrl filePath, bool firstScan)
 {
-    if(!FolderListModel::instance().folderExists(filePath)){
+    if(!FolderListModel::instance().folderExists(filePath) || firstScan){
         MusicScannerThread *musicScannerThread = new MusicScannerThread(filePath, this);
         connect(musicScannerThread, &MusicScannerThread::scanningFinished, this, &FolderView::onScanningFinished);
         connect(musicScannerThread, &MusicScannerThread::songFetched, &SongListModel::instance(), &SongListModel::onSongAdded);
@@ -24,17 +30,28 @@ void FolderView::startFolderScanningThread(QUrl filePath)
 
 void FolderView::onScanningFinished(QString folderName, QString folderPath, int songCount)
 {
+    QUrl folderURL = QUrl::fromLocalFile(folderPath);
+    if(FolderListModel::instance().folderExists(folderURL)){
+        return;
+    }
+
     Folder folder(folderName, folderPath, songCount);
 
-    //clearing model since multiple folder support not added yet
     FolderListModel::instance().addFolder(folder);
 
 }
 
 void FolderView::removeFolder(int index, QString folderPath)
 {
+    //check for songs with matching folderPath (substring of filepath)
+    //can do this in respective models
+    //emit a signal that notifys the other objects of removed songs
     FolderListModel::instance().removeFolder(index, folderPath);
+    //need to delete in songlistmodel, playlistsongsmodel
+    emit deleteSongs(folderPath);
+
 }
+
 
 void FolderView::appendToFile(QUrl &folderPath)
 {

@@ -107,6 +107,7 @@ Popup {
 
                 onButtonClicked: {
                     ViewController.folderView.removeFolder(index, folderPath)
+                    folderPopup.close()
                 }
 
             }

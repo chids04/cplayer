@@ -1,19 +1,30 @@
 #include "mediaplayercontroller.h"
 
+#include <QMediaPlayer>
+#include <QAudioOutput>
+#include <QTextStream>
+#include <QMediaDevices>
+#include <QAudioDevice>
+#include <QMediaMetaData>
+
+#include "nowplaying.h"
+
 // Constructor and Destructor
 MediaPlayerController::MediaPlayerController(QObject *parent)
     : QObject(parent) {
     player = new QMediaPlayer;
     output = new QAudioOutput;
 
-    const QList<QAudioDevice> audioDevices = QMediaDevices::audioOutputs();
 
-    for (const QAudioDevice &device : audioDevices)
-    {
-        qDebug() << "ID: " << device.id() << Qt::endl;
-        qDebug() << "Description: " << device.description() << Qt::endl;
-        qDebug() << "Is default: " << (device.isDefault() ? "Yes" : "No") << Qt::endl;
-    }
+ //    to-do, audio device switching
+
+ //    const QList<QAudioDevice> audioDevices = QMediaDevices::audioOutputs();
+ //    for (const QAudioDevice &device : audioDevices)
+ //    {
+ //        qDebug() << "ID: " << device.id() << Qt::endl;
+ //        qDebug() << "Description: " << device.description() << Qt::endl;
+ //        qDebug() << "Is default: " << (device.isDefault() ? "Yes" : "No") << Qt::endl;
+ //    }
 
     connect(player, &QMediaPlayer::positionChanged, this, &MediaPlayerController::onPositionChanged);
     connect(player, &QMediaPlayer::durationChanged, this, &MediaPlayerController::durationChanged);
@@ -23,6 +34,8 @@ MediaPlayerController::MediaPlayerController(QObject *parent)
 
     connect(&NowPlaying::instance(), &NowPlaying::playSong, this, &MediaPlayerController::onPlaySong);
     connect(&NowPlaying::instance(), &NowPlaying::jumpToEnd, this, &MediaPlayerController::onJumpToEnd);
+    connect(&NowPlaying::instance(), &NowPlaying::positionLoaded, this, &MediaPlayerController::setPosition);
+    connect(&NowPlaying::instance(), &NowPlaying::songLoaded, this ,&MediaPlayerController::onSongLoaded);
 
     connect(player, &QMediaPlayer::mediaStatusChanged, this, &MediaPlayerController::onMediaStatusChanged);
 
@@ -165,6 +178,22 @@ void MediaPlayerController::onPlaySong(std::shared_ptr<Song> song) {
     m_playing = true;
     emit updateUI();
     player->play();
+}
+
+void MediaPlayerController::onSongLoaded(std::shared_ptr<Song> song)
+{
+
+    player->setSource(QUrl::fromLocalFile(song->filePath));
+    setTrackTitle(song->title);
+    setLeadingArtist(song->artist);
+    setFilePath(song->filePath);
+    setAlbum(song->album);
+    setFeatures(song->featuringArtists);
+
+    emit coverArtChanged();
+    emit leadingArtistChanged();
+    emit updateUI();
+
 }
 
 

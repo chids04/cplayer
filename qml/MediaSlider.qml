@@ -12,6 +12,7 @@ Item{
     Layout.fillWidth: true
     height: 100
 
+
     MultiEffect{
         source: mediaBar
         anchors.fill: mediaBar
@@ -52,7 +53,8 @@ Item{
                         Layout.preferredHeight: 80
                         Layout.preferredWidth: 80
                         Layout.alignment: Qt.AlignVCenter
-                        source: "qrc:/resource/ui/assets/unknownCover.png"
+                        //source: "qrc:/resource/ui/assets/unknownCover.png"
+                        source: "image://coverArt/" + MusicHandler.mediaPlayerController.album + "/" + MusicHandler.mediaPlayerController.leadingArtist
                         sourceSize.width: 80
                         sourceSize.height: 80
 
@@ -73,6 +75,7 @@ Item{
                             id: songName
                             color: "white"
                             font.bold: true
+                            text: MusicHandler.mediaPlayerController.trackTitle
                             Layout.preferredWidth: mediaInfo.width - songArt.width - 30
                             Layout.minimumWidth: 100
 
@@ -92,6 +95,7 @@ Item{
                             color: "white"
                             Layout.preferredWidth: mediaInfo.width - songArt.width - 30
                             Layout.minimumWidth: 100
+                            text: MusicHandler.mediaPlayerController.features.length === 0 ? MusicHandler.mediaPlayerController.leadingArtist  : MusicHandler.mediaPlayerController.leadingArtist + " feat. " + MusicHandler.mediaPlayerController.features.join(", ")
                             elide: Text.ElideRight
 
                             Connections{

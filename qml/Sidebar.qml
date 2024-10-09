@@ -72,7 +72,13 @@ Item{
                         hoverEnabled: true
 
                         onClicked: {
+                            songsWindow.state = ""
+                            albumWindow.state = ""
+                            playlistsWindow.state = ""
+
                             ViewController.settingsView()
+
+
                         }
 
                         onEntered: {

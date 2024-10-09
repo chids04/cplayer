@@ -4,7 +4,6 @@
 #include <QObject>
 
 #include "song.h"
-#include "albumlistmodel.h"
 
 class NowPlaying : public QObject
 {
@@ -13,10 +12,16 @@ class NowPlaying : public QObject
 public:
     explicit NowPlaying(QObject *parent = nullptr);
     static NowPlaying &instance();
-    static NowPlaying *create(QQmlEngine *engine, QJSEngine *);
+
+    QList<std::shared_ptr<Song>> getNowPlaying();
+    int getCurrentIndex();
+
+    void loadFromSettings();
 
 signals:
     void playSong(std::shared_ptr<Song> song);
+    void positionLoaded(qint64 position);
+    void songLoaded(std::shared_ptr<Song>);
     void jumpToEnd();
 
 public slots:

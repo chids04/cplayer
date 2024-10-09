@@ -24,6 +24,7 @@ public:
         AlbumRole,
         FeaturingArtistsRole,
         NumberInAlbumRole,
+        AlbumArtistsRole,
         SongObjectRole
 
     };
@@ -41,9 +42,14 @@ public:
     QString getSongAlbum(const QString &filePath) const;
     QStringList getSongFeatures(const QString &filePath) const;
     int getSongTrackNum(const QString &filePath) const;
+    QList<std::shared_ptr<Song>> getSongs();
+
+signals:
+    void deleteAlbum(QString &albumName, QStringList &albumArtists);
 
 public slots:
     void onSongAdded(std::shared_ptr<Song> song);
+    void removeFolderSongs(QString &folderPath);
 
 private:
     QList<std::shared_ptr<Song>> m_songs;

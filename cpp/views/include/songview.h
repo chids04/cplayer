@@ -3,7 +3,6 @@
 
 #include <QObject>
 
-#include "songholder.h"
 
 class SongView : public QObject
 {

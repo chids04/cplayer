@@ -12,7 +12,8 @@ Rectangle {
     property string songDelegateLeadingArtist
     property int songDelegateIndex
     property bool songFromAlbum
-    property var songObj;
+    property var songObj
+    property list<string> songFeatures
 
     property alias songDelegateColor: songRect.color
     property alias songDelegateWidth: songRect.width
@@ -137,7 +138,7 @@ Rectangle {
                     id: albumImage
                     width:60
                     height:60
-                    source: "image://coverArt/" + songDelegateAlbum + "/" + songDelegateLeadingArtist
+                    source: "image://coverArt/" + songDelegateAlbum + "/" + songFeatures.join('%')
                     sourceSize.width: 60
                     sourceSize.height: 60
                     Layout.rightMargin: 10

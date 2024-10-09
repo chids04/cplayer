@@ -1,5 +1,7 @@
 #include "albumfilterproxymodel.h"
 
+#include "songlistmodel.h"
+
 AlbumFilterProxyModel::AlbumFilterProxyModel(QObject *parent)
     : QSortFilterProxyModel{parent}
 {
@@ -25,7 +27,6 @@ bool AlbumFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &s
 {
     QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
     bool flag = sourceModel()->data(index, SongListModel::AlbumRole).toString() == m_currentAlbumName ? true: false;
-    qDebug() << flag;
     return sourceModel()->data(index, SongListModel::AlbumRole).toString() == m_currentAlbumName;
 }
 

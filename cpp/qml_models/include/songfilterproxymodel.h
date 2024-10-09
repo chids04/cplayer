@@ -1,10 +1,8 @@
 #ifndef SONGFILTERPROXYMODEL_H
 #define SONGFILTERPROXYMODEL_H
 
-#include <QSortFilterProxyModel>
-#include <QRegularExpression>
 #include <QString>
-#include <rapidfuzz/fuzz.hpp>
+#include <QSortFilterProxyModel>
 
 class SongFilterProxyModel : public QSortFilterProxyModel
 {

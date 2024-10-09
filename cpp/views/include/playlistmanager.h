@@ -6,10 +6,7 @@
 
 #include <memory>
 
-#include "playlist.h"
-#include "playlistmodel.h"
 #include "playlistsongsmodel.h"
-#include "modelhandler.h"
 
 class PlaylistManager : public QObject
 {
@@ -52,9 +49,6 @@ signals:
     void playlistIDChanged();
 
 private:
-    PlaylistModel *playlistModel;
-    SongListModel *songListModel;
-
     int playlistNum = 0;
     PlaylistSongsModel *m_playlistSongsModel;
     QString m_playlistName;

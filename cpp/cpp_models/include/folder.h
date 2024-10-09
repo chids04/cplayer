@@ -16,10 +16,12 @@ public:
     void setFolderName(QString &newFolderName);
     void setFolderPath(QString &newFolderPath);
     void setSongCount(int songCount);
+    void setStored();
 
     QString getFolderName() const;
     QString getFolderPath() const;
     int getSongCount() const;
+    bool isStored() const;
 
     friend QDataStream &operator<<(QDataStream &out, const Folder &folder);
 
@@ -29,6 +31,7 @@ private:
     QString folderName;
     QString folderPath;
     int songCount;
+    bool storedToFile;
 };
 
 Q_DECLARE_METATYPE(Folder)

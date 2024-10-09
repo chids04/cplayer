@@ -1,5 +1,8 @@
 #include "albumsearchfilter.h"
 
+#include <rapidfuzz/fuzz.hpp>
+#include "albumlistmodel.h"
+
 AlbumSearchFilter::AlbumSearchFilter(QObject *parent) : QSortFilterProxyModel(parent)
 {
     setSourceModel(&AlbumListModel::instance());
@@ -56,7 +59,6 @@ bool AlbumSearchFilter::lessThan(const QModelIndex &left, const QModelIndex &rig
 {
     //construct ALBUMNAME + ALBUM ARTISTS type filter string
 
-    qDebug() << "sorting";
     QString leftTitle = sourceModel()->data(left, AlbumListModel::AlbumNameRole).toString();
     QString rightTitle = sourceModel()->data(right, AlbumListModel::AlbumNameRole).toString();
 
