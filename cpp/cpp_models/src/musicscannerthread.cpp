@@ -49,10 +49,18 @@ void MusicScannerThread::run() {
         if(!f.isNull() && !f.tag()->isEmpty()){
             songCount++;
 
+
+
+#if defined(Q_OS_WIN)
+            QString title = QString::fromStdWString(f.tag()->title().toWString());
+            QString artists = QString::fromStdWString(f.tag()->artist().toWString());
+            QString albumName = QString::fromStdWString(f.tag()->album().toWString());
+#else
             QString title = QString::fromUtf8(f.tag()->title().to8Bit(true));
-            QString genre = QString::fromUtf8(f.tag()->genre().to8Bit(true));
             QString artists = QString::fromUtf8(f.tag()->artist().to8Bit(true));
             QString albumName = QString::fromUtf8(f.tag()->album().to8Bit(true));
+#endif
+            QString genre = QString::fromUtf8(f.tag()->genre().to8Bit(true));
             int year = f.tag()->year();
             //int length = f.audioProperties()->lengthInSeconds();
             int length = 0;

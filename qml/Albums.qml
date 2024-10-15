@@ -2,12 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 
-//import com.c.AlbumListModel
-//import com.c.ViewController
-//import com.c.AlbumSongsView
-//import com.c.AlbumFilterProxyModel
-//import com.c.AlbumSearchFilter
-
 import cplayer
 
 Item {
@@ -70,6 +64,7 @@ Item {
 
             cellWidth: itemWidth
             cellHeight: itemWidth
+            clip: true
 
 
             Component{

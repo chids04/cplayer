@@ -1,10 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls.Basic
-//import com.c.SongModel
-//import com.c.NowPlaying
-
-//import com.c.SongFilterProxyModel
 
 import cplayer
 

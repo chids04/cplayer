@@ -8,6 +8,7 @@ FolderView::FolderView(QObject *parent)
     : QObject(parent)
 {
     connect(this, &FolderView::deleteSongs, &SongListModel::instance(), &SongListModel::removeFolderSongs);
+    connect(this, &FolderView::deleteAlbums, &AlbumListModel::instance(), &AlbumListModel::deleteAlbums);
 }
 
 FolderView &FolderView::instance()
@@ -49,6 +50,7 @@ void FolderView::removeFolder(int index, QString folderPath)
     FolderListModel::instance().removeFolder(index, folderPath);
     //need to delete in songlistmodel, playlistsongsmodel
     emit deleteSongs(folderPath);
+    emit deleteAlbums();
 
 }
 

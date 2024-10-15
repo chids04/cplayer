@@ -45,7 +45,7 @@ public:
     QList<std::shared_ptr<Song>> getSongs();
 
 signals:
-    void deleteAlbum(QString &albumName, QStringList &albumArtists);
+    void decrementAlbum(QString &albumName, QStringList &albumArtists);
 
 public slots:
     void onSongAdded(std::shared_ptr<Song> song);

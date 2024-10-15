@@ -2,11 +2,8 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls.Basic
 import QtQuick.Effects
-//import com.c.MediaController
+
 import cplayer
-
-//import "./components"
-
 
 Item{
     Layout.fillWidth: true

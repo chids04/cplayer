@@ -2,10 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls.Basic
 
-//import com.c.ViewController
-//import com.c.SongView
-//import com.c.AlbumView
-
 import cplayer
 
 Item{

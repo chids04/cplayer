@@ -21,6 +21,7 @@ signals:
     void onSongsLoaded();
     void pathChanged();
     void deleteSongs(QString &folderPath);
+    void deleteAlbums();
 
 public slots:
     void startFolderScanningThread(QUrl filePath, bool firstScan);

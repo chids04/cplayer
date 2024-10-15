@@ -2,10 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 
-//import com.c.AlbumFilterProxyModel
-//import com.c.AlbumSongsView
-//import com.c.NowPlaying
-
 import cplayer
 
 import "./components"

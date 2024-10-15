@@ -18,6 +18,9 @@
 #include "musichandler.h"
 #include "viewcontroller.h"
 #include "utilitysingleton.h"
+#include "playlistfilter.h"
+
+#include <QDebug>
 
 int main(int argc, char *argv[])
 {
@@ -25,6 +28,7 @@ int main(int argc, char *argv[])
     //for now i just get list of folders and re-scan the directory
 
     QGuiApplication app(argc, argv);
+    qDebug() << "testing output";
 
     QCoreApplication::setOrganizationName("tecstars");
     QCoreApplication::setApplicationName("cplayer");
@@ -44,6 +48,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<QList<Folder>>();
     qRegisterMetaType<QList<int>>();
     qRegisterMetaType<QList<Song>>();
+    qRegisterMetaType<QList<Playlist>>();
 
     auto modelHandler = engine.singletonInstance<ModelHandler *>("cplayer", "ModelHandler");
     modelHandler->setSongList(&SongFilterProxyModel::instance());
@@ -52,6 +57,7 @@ int main(int argc, char *argv[])
     modelHandler->setPlaylistList(&PlaylistModel::instance());
     modelHandler->setFolderList(&FolderListModel::instance());
     modelHandler->setSettingsManager(&SettingsManager::instance());
+    modelHandler->setPlaylistFilter(&PlaylistFilter::instance());
 
 
     auto musicHandler = engine.singletonInstance<MusicHandler *>("cplayer", "MusicHandler");

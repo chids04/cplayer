@@ -25,6 +25,8 @@ QModelIndex AlbumListModel::findAlbumIndex(const QString &albumName, const QStri
             return index(row);
         }
     }
+
+    return QModelIndex();
 }
 
 void AlbumListModel::updateAlbum(std::shared_ptr<Song> song)
@@ -113,12 +115,22 @@ void AlbumListModel::clear()
     }
 }
 
-void AlbumListModel::deleteAlbum(QString &albumName, QStringList &albumArtists)
+void AlbumListModel::decrementAlbum(QString &albumName, QStringList &albumArtists)
 {
     for (int i = m_albums.size() - 1; i >= 0; --i) {
         if (m_albums[i].getName() == albumName && m_albums[i].getArtist() == albumArtists) {
+            m_albums[i].decrementCount();
+
+        }
+    }
+}
+
+void AlbumListModel::deleteAlbums()
+{
+    for (int i = m_albums.size() - 1; i >= 0; --i) {
+        if (m_albums[i].getSongCount() == 0) {
             beginRemoveRows(QModelIndex(), i, i);
-            m_albums.removeAt(i);  // Remove song if its path contains the folderPath
+            m_albums.removeAt(i);
             endRemoveRows();
         }
     }

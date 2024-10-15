@@ -90,3 +90,16 @@ void ModelHandler::setSettingsManager(SettingsManager *newSettingsManager)
     m_settingsManager = newSettingsManager;
     emit settingsManagerChanged();
 }
+
+PlaylistFilter *ModelHandler::playlistFilter() const
+{
+    return m_playlistFilter;
+}
+
+void ModelHandler::setPlaylistFilter(PlaylistFilter *newPlaylistFilter)
+{
+    if (m_playlistFilter == newPlaylistFilter)
+        return;
+    m_playlistFilter = newPlaylistFilter;
+    emit playlistFilterChanged();
+}

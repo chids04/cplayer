@@ -18,10 +18,13 @@ public:
     QString getName() const;
     QString getGenre() const;
     int getYear() const;
-    void addSong(std::shared_ptr<Song> song);
     int getSongCount() const;
     QStringList getArtist() const;
     QList<std::shared_ptr<Song>> getSongs() const;
+
+    void addSong(std::shared_ptr<Song> song);
+    void incrementCount();
+    void decrementCount();
 
 private:
     QString name;

@@ -6,6 +6,7 @@
 
 #include <memory>
 
+#include "playlist.h"
 #include "playlistsongsmodel.h"
 
 class PlaylistManager : public QObject
@@ -16,6 +17,7 @@ class PlaylistManager : public QObject
     Q_PROPERTY(int playlistID READ playlistID WRITE setPlaylistID NOTIFY playlistIDChanged)
     Q_PROPERTY(QString playlistName READ playlistName WRITE setPlaylistName NOTIFY playlistNameChanged)
     Q_PROPERTY(bool hasCover READ hasCover WRITE setHasCover NOTIFY hasCoverChanged)
+    Q_PROPERTY(Playlist currentPlaylist READ currentPlaylist WRITE setCurrentPlaylist NOTIFY currentPlaylistChanged)
 
 public:
     explicit PlaylistManager(QObject *parent=nullptr);
@@ -32,6 +34,10 @@ public:
 
     int playlistID() const;
     void setPlaylistID(int newPlaylistID);
+    void savePlaylists();
+
+    Playlist currentPlaylist() const;
+    void setCurrentPlaylist(const Playlist &newCurrentPlaylist);
 
 public slots:
     void addPlaylist(QString playlistName, bool hasCover = false);
@@ -41,12 +47,11 @@ public slots:
 
 signals:
     void playlistSongsModelChanged();
-
     void playlistNameChanged();
-
     void hasCoverChanged();
-
     void playlistIDChanged();
+
+    void currentPlaylistChanged();
 
 private:
     int playlistNum = 0;
@@ -54,6 +59,7 @@ private:
     QString m_playlistName;
     bool m_hasCover;
     int m_playlistID;
+    Playlist m_currentPlaylist;
 };
 
 #endif // PLAYLISTMANAGER_H

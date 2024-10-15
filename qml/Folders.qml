@@ -3,9 +3,6 @@ import QtQuick.Layouts
 import Qt.labs.platform
 import QtQuick.Controls.Basic
 
-//import com.c.FolderView
-//import com.c.FolderModel
-
 import cplayer
 import "./components"
 

@@ -4,6 +4,8 @@
 #include "songlistmodel.h"
 #include "mediaplayercontroller.h"
 
+#include <iostream>
+
 NowPlaying::NowPlaying(QObject *parent) :
     QObject(parent)
 {
@@ -43,13 +45,20 @@ void NowPlaying::loadFromSettings()
         }
     }
 
-    //if the song queue is empty
-    if(songQueue.isEmpty()){
+    int len = songQueue.length();
+
+    if (currentIndex < 0 || currentIndex >= len) {
+        // Invalid index or empty queue, reset to a safe state
+        currentIndex = 0; // or handle as necessary
+    }
+
+    if(len == 0){
         return;
     }
 
+
     emit songLoaded(songQueue[currentIndex]);
-    emit positionLoaded(position);
+    //emit positionLoaded(position);
 }
 
 
@@ -86,6 +95,38 @@ void NowPlaying::playAlbum(const QString &albumName, const QStringList &albumArt
 
 
 
+}
+
+void NowPlaying::playPlaylist(Playlist playlist, bool queue)
+{
+    QList<int> songIDs = playlist.getSongIDs();
+    QList<std::shared_ptr<Song>> songs = SongListModel::instance().getSongs();
+
+    int insertIndex = currentIndex + 1;
+    int numSongs = songQueue.count();
+
+    for(const auto &song: songs){
+        if(songIDs.contains(song->id)){
+            if(queue){
+                songQueue.append(song);
+            }
+            else if(numSongs == 0){
+                songQueue.append(song);
+            }
+            else{
+                songQueue.insert(insertIndex, song);
+                insertIndex++;
+            }
+        }
+    }
+
+    if(!queue){
+        currentIndex++;
+        emit playSong(songQueue[currentIndex]);
+    }
+    else if(numSongs == 0){
+        emit playSong(songQueue[currentIndex]);
+    }
 }
 
 void NowPlaying::onPreviousClicked(int duration)

@@ -8,6 +8,7 @@
 #include "coverartholder.h"
 #include "albumlistmodel.h"
 #include "mediaplayercontroller.h"
+#include "playlistmodel.h"
 
 #include <QDebug>
 
@@ -27,6 +28,7 @@ void SettingsManager::setup()
 {
     readFolders();
     readSongs();
+    readPlaylists();
     CoverArtHolder::instance().loadFromSettings();
     NowPlaying::instance().loadFromSettings();
 }
@@ -91,6 +93,21 @@ void SettingsManager::readSongs()
     }
 }
 
+void SettingsManager::readPlaylists()
+{
+    QSettings settings;
+    QList<Playlist> loadedPlaylists = settings.value("playlists").value<QList<Playlist>>();
+
+    QList<std::shared_ptr<Playlist>> playlistPtrs;
+
+    for(const Playlist &playlist : loadedPlaylists){
+        std::shared_ptr<Playlist> playlistPtr = std::make_shared<Playlist>(playlist);
+        playlistPtrs.append(playlistPtr);
+    }
+
+    PlaylistModel::instance().loadPlaylists(playlistPtrs);
+}
+
 void SettingsManager::removeFolder(QString &folderPath)
 {
     QSettings settings;
@@ -113,6 +130,8 @@ void SettingsManager::saveNowPlaying()
     //only need to store song id
     QList<std::shared_ptr<Song>> nowPlaying = NowPlaying::instance().getNowPlaying();
     int currentIndex = NowPlaying::instance().getCurrentIndex();
+
+    qDebug() << currentIndex << "song len" << nowPlaying.length();
     qint64 position = MediaPlayerController::instance().position();
 
     QList<int> idList;
@@ -168,12 +187,28 @@ void SettingsManager::saveCoverArts()
     settings.endGroup();
 }
 
+void SettingsManager::savePlaylists()
+{
+    QSettings settings;
+    QList<std::shared_ptr<Playlist>> playlists = PlaylistModel::instance().getPlaylists();
+    QList<Playlist> playlistObj;
+
+    for(const auto &playlist : playlists){
+        playlistObj.append(*playlist);
+    }
+
+    settings.setValue("playlists", QVariant::fromValue(playlistObj));
+}
+
+
+
 void SettingsManager::shutDown()
 {
     saveNowPlaying();
     saveSongs();
     saveCoverArts();
     saveFolders();
+    savePlaylists();
 }
 
 

@@ -4,10 +4,6 @@ import Qt.labs.platform
 import QtQuick.Dialogs
 import QtQuick.Controls.Basic
 
-//import com.c.PlaylistModel
-//import com.c.PlaylistView
-//import com.c.ViewController
-
 import cplayer
 
 import "./components"

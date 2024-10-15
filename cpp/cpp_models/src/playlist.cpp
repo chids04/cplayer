@@ -1,8 +1,11 @@
 #include "playlist.h"
 
 Playlist::Playlist(int id, const QString &playlistName, bool hasCover) : id(id), playlistName(playlistName), hasCover(hasCover)
+{}
+
+void Playlist::addSong(int songID)
 {
-    playlistSongsModel = new PlaylistSongsModel;
+    songs.append(songID);
 }
 
 void Playlist::setSongCount(int songCount)
@@ -36,13 +39,44 @@ QString Playlist::getPlaylistName() const
     return playlistName;
 }
 
-
-PlaylistSongsModel* Playlist::getSongModel() const
+QList<int> Playlist::getSongIDs() const
 {
-    return playlistSongsModel;
+    return songs;
 }
 
 bool Playlist::playlistHasCover() const
 {
     return hasCover;
+}
+
+bool Playlist::operator==(const Playlist &other) const
+{
+    return id == other.id &&
+           duration == other.duration &&
+           songCount == other.songCount &&
+           hasCover == other.hasCover &&
+           playlistName == other.playlistName &&
+           songs == other.songs;
+}
+
+QDataStream &operator<<(QDataStream &out, const Playlist &playlist)
+{
+    out << playlist.id;
+    out << playlist.duration;
+    out << playlist.songCount;
+    out << playlist.hasCover;
+    out << playlist.playlistName;
+    out << playlist.songs;
+    return out;
+}
+
+QDataStream &operator>>(QDataStream &in, Playlist &playlist)
+{
+    in >> playlist.id;
+    in >> playlist.duration;
+    in >> playlist.songCount;
+    in >> playlist.hasCover;
+    in >> playlist.playlistName;
+    in >> playlist.songs;
+    return in;
 }

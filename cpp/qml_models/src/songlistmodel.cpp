@@ -6,7 +6,7 @@
 #include "albumlistmodel.h"
 
 SongListModel::SongListModel(QObject *parent) : QAbstractListModel(parent) {
-    connect(this, &SongListModel::deleteAlbum, &AlbumListModel::instance(), &AlbumListModel::deleteAlbum);
+    connect(this, &SongListModel::decrementAlbum, &AlbumListModel::instance(), &AlbumListModel::decrementAlbum);
 }
 
 SongListModel &SongListModel::instance()
@@ -164,7 +164,7 @@ void SongListModel::removeFolderSongs(QString &folderPath)
     for (int i = m_songs.size() - 1; i >= 0; --i) {
         songPath = m_songs[i]->filePath;
         if (songPath.contains(folderPath, Qt::CaseSensitive)) {
-            emit deleteAlbum(m_songs[i]->album, m_songs[i]->albumArtists);
+            emit decrementAlbum(m_songs[i]->album, m_songs[i]->albumArtists);
             beginRemoveRows(QModelIndex(), i, i);
             m_songs.removeAt(i);  // Remove song if its path contains the folderPath
             endRemoveRows();

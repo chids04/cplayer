@@ -3,8 +3,6 @@ import QtQuick.Layouts
 import QtQuick.Effects
 import QtQuick.Controls.Basic
 
-//import com.c.ViewController
-
 import cplayer
 
 Item{

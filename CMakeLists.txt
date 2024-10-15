@@ -130,6 +130,9 @@ qt_add_qml_module(appcplayer
         cpp/qml_models/include/musichandler.h
         cpp/qml_models/src/musichandler.cpp
 
+        cpp/qml_models/src/playlistfilter.cpp
+        cpp/qml_models/include/playlistfilter.h
+
     #C++ QML View Controllers
     SOURCES
         cpp/views/include/albumsongsview.h

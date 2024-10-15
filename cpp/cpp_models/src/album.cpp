@@ -34,6 +34,16 @@ void Album::addSong(std::shared_ptr<Song> song)
     songCount++;
 }
 
+void Album::incrementCount()
+{
+    songCount++;
+}
+
+void Album::decrementCount()
+{
+    songCount--;
+}
+
 int Album::getSongCount() const
 {
     return songCount;

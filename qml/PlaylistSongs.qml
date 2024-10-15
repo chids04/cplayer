@@ -2,11 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 
-//import com.c.AlbumFilterProxyModel
-//import com.c.AlbumSongsView
-//import com.c.MediaController
-//import com.c.PlaylistView
-//import com.c.NowPlaying
 import cplayer
 
 import "./components"
@@ -47,7 +42,7 @@ Item {
                     Text{
                         id: loadedPlaylistName
                         color: "white"
-                        text: ViewController.playlistSongsView.playlistName
+                        text: MusicHandler.playlistManager.playlistName
                         font.bold: true
                         font.pointSize: 40
 
@@ -63,22 +58,29 @@ Item {
                 }
             }
         }
-
-        Item{
-            id: playlistControls
+        RowLayout{
 
             CButton{
                 id: playPlaylistBtn
                 buttonText: "Play Playlist"
 
                 onButtonClicked: {
-                    //PlaylistManager.playAlbum(AlbumSongsView.albumName, AlbumSongsView.albumArtists);
+                    MusicHandler.nowPlaying.playPlaylist(MusicHandler.playlistManager.currentPlaylist)
+
                 }
 
             }
 
+            CButton{
+                id: queuePlaylistBtn
+                buttonText: "Queue Playlist"
 
+                onButtonClicked: {
+                    MusicHandler.nowPlaying.playPlaylist(MusicHandler.playlistManager.currentPlaylist, true)
+                }
+            }
         }
+
 
         Rectangle{
             id: songList
@@ -113,7 +115,7 @@ Item {
                 }
 
                 //model: PlaylistView.playlistSongsModel
-                model: ModelHandler.playlistSongsList
+                model: ModelHandler.playlistFilter
 
                 delegate: SongDelegate{
                     id: songDelegate

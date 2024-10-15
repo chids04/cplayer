@@ -21,6 +21,7 @@ public:
     void writeFolder(const Folder &folder);
     void readFolders();
     void readSongs();
+    void readPlaylists();
     void removeFolder(QString &folderPath);
 
     void saveNowPlaying();
@@ -28,6 +29,7 @@ public:
     void saveSongs();
     void saveCoverArts();
     void saveAlbums();
+    void savePlaylists();
 
 public slots:
     void shutDown();

@@ -10,12 +10,24 @@ PlaylistModel &PlaylistModel::instance()
     return playlistModel;
 }
 
-void PlaylistModel::addPlaylist(const Playlist &playlist)
+void PlaylistModel::addPlaylist(std::shared_ptr<Playlist> playlist)
 {
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     m_playlists << playlist;
     endInsertRows();
 
+}
+
+QList<std::shared_ptr<Playlist> > PlaylistModel::getPlaylists()
+{
+    return m_playlists;
+}
+
+void PlaylistModel::loadPlaylists(QList<std::shared_ptr<Playlist>> playlists)
+{
+    beginResetModel();
+    m_playlists = playlists;
+    endResetModel();
 }
 
 int PlaylistModel::rowCount(const QModelIndex &parent) const
@@ -29,26 +41,26 @@ QVariant PlaylistModel::data(const QModelIndex &index, int role) const
     if(index.row() < 0 || index.row() >= m_playlists.count())
         return QVariant();
 
-    const Playlist &playlist = m_playlists[index.row()];
+    auto &playlist = m_playlists[index.row()];
 
     switch(role){
         case PlaylistIDRole:
-            return playlist.getID();
+            return playlist->getID();
 
         case PlaylistNameRole:
-            return playlist.getPlaylistName();
+            return playlist->getPlaylistName();
 
         case SongCountRole:
-            return playlist.getSongCount();
+            return playlist->getSongCount();
 
         case DurationRole:
-            return playlist.getDuration();
-
-        case SongModelRole:
-            return QVariant::fromValue(playlist.getSongModel());
+            return playlist->getDuration();
 
         case HasCoverRole:
-            return playlist.playlistHasCover();
+            return playlist->playlistHasCover();
+
+        case PlaylistObjRole:
+            return QVariant::fromValue(playlist);
 
         default:
             return QVariant();
@@ -63,8 +75,8 @@ QHash<int, QByteArray> PlaylistModel::roleNames() const
     roles[PlaylistNameRole] = "playlistName";
     roles[SongCountRole] = "songCount";
     roles[DurationRole] = "duration";
-    roles[SongModelRole] = "songModel";
     roles[HasCoverRole] = "playlistHasCover";
+    roles[PlaylistObjRole] = "playlistObject";
 
     return roles;
 }
@@ -83,7 +95,7 @@ QModelIndex PlaylistModel::index(int row, int column, const QModelIndex &parent)
 QModelIndex PlaylistModel::getIndexForID(int id) const
 {
     for (int row = 0; row < m_playlists.count(); ++row) {
-        if (m_playlists[row].getID() == id) {
+        if (m_playlists[row]->getID() == id) {
             return index(row, 0);
         }
     }

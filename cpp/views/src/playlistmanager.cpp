@@ -1,11 +1,13 @@
 #include "playlistmanager.h"
 
+#include <QSettings>
+
 #include "playlist.h"
 #include "playlistmodel.h"
+#include "playlistfilter.h"
 
 PlaylistManager::PlaylistManager(QObject *parent) : QObject(parent)
 {
-    //
 }
 
 PlaylistManager &PlaylistManager::instance()
@@ -17,7 +19,7 @@ PlaylistManager &PlaylistManager::instance()
 
 void PlaylistManager::addPlaylist(QString playlistName, bool hasCover)
 {
-    Playlist playlist(playlistNum, playlistName, hasCover);
+    std::shared_ptr<Playlist> playlist = std::make_shared<Playlist>(playlistNum, playlistName, hasCover);
     PlaylistModel::instance().addPlaylist(playlist);
 
     playlistNum++;
@@ -28,18 +30,17 @@ void PlaylistManager::loadPlaylistSongs(int id)
     QModelIndex index = PlaylistModel::instance().getIndexForID(id);
     QVariant idVariant = PlaylistModel::instance().data(index, PlaylistModel::PlaylistIDRole);
     QVariant nameVariant = PlaylistModel::instance().data(index, PlaylistModel::PlaylistNameRole);
-    QVariant modelVariant = PlaylistModel::instance().data(index, PlaylistModel::SongModelRole);
     QVariant hasCoverVariant = PlaylistModel::instance().data(index, PlaylistModel::HasCoverRole);
 
-    PlaylistSongsModel *playlistSongModel = modelVariant.value<PlaylistSongsModel*>();
+    std::shared_ptr<Playlist> playlist = PlaylistModel::instance().data(index, PlaylistModel::PlaylistObjRole).value<std::shared_ptr<Playlist>>();
+    QList<int> songIDs = playlist->getSongIDs();
 
     setPlaylistID(idVariant.toInt());
     setPlaylistName(nameVariant.toString());
     setHasCover(hasCoverVariant.toBool());
+    setCurrentPlaylist(*playlist);
 
-    //moved playlistsongs model to modelhandler.h
-    setPlaylistSongsModel(playlistSongModel);
-    //ModelHandler::instance().setPlaylistSongsList(playlistSongModel);
+    PlaylistFilter::instance().setFilterList(songIDs);
 }
 
 PlaylistSongsModel *PlaylistManager::playlistSongsModel()
@@ -72,11 +73,12 @@ void PlaylistManager::setPlaylistName(const QString &newPlaylistName)
 void PlaylistManager::addSongToPlaylist(int id, std::shared_ptr<Song> song)
 {
     QModelIndex index = PlaylistModel::instance().getIndexForID(id);
-    QVariant modelVariant = PlaylistModel::instance().data(index, PlaylistModel::SongModelRole);
-    PlaylistSongsModel *songModel = modelVariant.value<PlaylistSongsModel*>();
 
-    songModel->addSong(song);
+    QVariant playlistObj = PlaylistModel::instance().data(index, PlaylistModel::PlaylistObjRole);
+    std::shared_ptr<Playlist> playlist = playlistObj.value<std::shared_ptr<Playlist>>();
 
+    playlist->addSong(song->id);
+    qDebug() << playlist->getSongIDs();
 }
 
 bool PlaylistManager::hasCover() const
@@ -103,4 +105,23 @@ void PlaylistManager::setPlaylistID(int newPlaylistID)
         return;
     m_playlistID = newPlaylistID;
     emit playlistIDChanged();
+}
+
+void PlaylistManager::savePlaylists()
+{
+    QSettings settings;
+
+}
+
+Playlist PlaylistManager::currentPlaylist() const
+{
+    return m_currentPlaylist;
+}
+
+void PlaylistManager::setCurrentPlaylist(const Playlist &newCurrentPlaylist)
+{
+    if (m_currentPlaylist == newCurrentPlaylist)
+        return;
+    m_currentPlaylist = newCurrentPlaylist;
+    emit currentPlaylistChanged();
 }

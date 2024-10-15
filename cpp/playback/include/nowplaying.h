@@ -4,6 +4,7 @@
 #include <QObject>
 
 #include "song.h"
+#include "playlist.h"
 
 class NowPlaying : public QObject
 {
@@ -26,6 +27,7 @@ signals:
 
 public slots:
     void playAlbum(const QString &albumName, const QStringList &albumArtists, bool queue=false);
+    void playPlaylist(Playlist playlist, bool queue=false);
     void onPreviousClicked(int duration);
     void onNextClicked();
     void queueNext(std::shared_ptr<Song> song);

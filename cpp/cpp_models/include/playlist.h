@@ -3,16 +3,16 @@
 
 #include <QString>
 #include <QDebug>
-#include <QStringList>
+#include <QMetaType>
 
-#include "playlistsongsmodel.h"
 
 class Playlist
 {
 public:
+    Playlist() = default;
     Playlist(int id, const QString &playlistName, bool hasCover = false);
 
-    void addSong(const QString &url);
+    void addSong(int songID);
     void clearPlaylist();
     bool playlistHasCover() const;
 
@@ -23,17 +23,24 @@ public:
     int getDuration() const;
     int getSongCount() const;
     QString getPlaylistName() const;
-    PlaylistSongsModel* getSongModel() const;
+    QList<int> getSongIDs() const;
 
+    bool operator==(const Playlist &other) const;
+
+    friend QDataStream &operator<<(QDataStream &out, const Playlist &playlist);
+    friend QDataStream &operator>>(QDataStream &in, Playlist &playlist);
 
 private:
     int id;
     int duration;
     int songCount;
-    int currentIndex = 0;
     bool hasCover = false;
     QString playlistName;
-    PlaylistSongsModel *playlistSongsModel;
+    QList<int> songs;
 };
+
+Q_DECLARE_METATYPE(QList<Playlist>)
+Q_DECLARE_METATYPE(Playlist)
+Q_DECLARE_METATYPE(std::shared_ptr<Playlist>)
 
 #endif // PLAYLIST_H
