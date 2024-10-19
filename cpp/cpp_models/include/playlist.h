@@ -18,6 +18,7 @@ public:
 
     void setSongCount(int songCount);
     void setDuration(int duration);
+    void removeSong(int id);
 
     int getID() const;
     int getDuration() const;

@@ -46,6 +46,7 @@ public:
 
 signals:
     void decrementAlbum(QString &albumName, QStringList &albumArtists);
+    void removeFromPlaylist(int songID);
 
 public slots:
     void onSongAdded(std::shared_ptr<Song> song);

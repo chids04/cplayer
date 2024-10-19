@@ -6,6 +6,7 @@ AlbumFilterProxyModel::AlbumFilterProxyModel(QObject *parent)
     : QSortFilterProxyModel{parent}
 {
     setSourceModel(&SongListModel::instance());
+    sort(0, Qt::AscendingOrder);
 }
 
 AlbumFilterProxyModel &AlbumFilterProxyModel::instance()
@@ -30,7 +31,6 @@ bool AlbumFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &s
     return sourceModel()->data(index, SongListModel::AlbumRole).toString() == m_currentAlbumName;
 }
 
-//sorts the songs by album number
 bool AlbumFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
     QVariant leftData = sourceModel()->data(left, SongListModel::NumberInAlbumRole);

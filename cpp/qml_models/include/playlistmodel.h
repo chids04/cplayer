@@ -31,8 +31,12 @@ public:
     QModelIndex getIndexForID(int id) const;
     QHash<int, QByteArray> roleNames() const override;
 
+public slots:
+    void removeSongs(int songID);
+
 private:
     QList<std::shared_ptr<Playlist>> m_playlists;
+    QList<int> toRemove;
 };
 
 Q_DECLARE_METATYPE(PlaylistModel*)

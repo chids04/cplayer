@@ -81,6 +81,14 @@ QHash<int, QByteArray> PlaylistModel::roleNames() const
     return roles;
 }
 
+void PlaylistModel::removeSongs(int songID)
+{
+    //pretty ineffcient rn, will optimise later if needed
+    for(auto &playlist : m_playlists){
+        playlist->removeSong(songID);
+    }
+}
+
 QModelIndex PlaylistModel::index(int row, int column, const QModelIndex &parent) const {
     Q_UNUSED(parent)
 

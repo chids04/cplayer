@@ -4,9 +4,11 @@
 
 #include "folderview.h"
 #include "albumlistmodel.h"
+#include "playlistmodel.h"
 
 SongListModel::SongListModel(QObject *parent) : QAbstractListModel(parent) {
     connect(this, &SongListModel::decrementAlbum, &AlbumListModel::instance(), &AlbumListModel::decrementAlbum);
+    connect(this, &SongListModel::removeFromPlaylist, &PlaylistModel::instance(), &PlaylistModel::removeSongs);
 }
 
 SongListModel &SongListModel::instance()
@@ -165,6 +167,8 @@ void SongListModel::removeFolderSongs(QString &folderPath)
         songPath = m_songs[i]->filePath;
         if (songPath.contains(folderPath, Qt::CaseSensitive)) {
             emit decrementAlbum(m_songs[i]->album, m_songs[i]->albumArtists);
+            emit removeFromPlaylist(m_songs[i]->id);
+
             beginRemoveRows(QModelIndex(), i, i);
             m_songs.removeAt(i);  // Remove song if its path contains the folderPath
             endRemoveRows();

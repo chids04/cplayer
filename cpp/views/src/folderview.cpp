@@ -51,7 +51,6 @@ void FolderView::removeFolder(int index, QString folderPath)
     //need to delete in songlistmodel, playlistsongsmodel
     emit deleteSongs(folderPath);
     emit deleteAlbums();
-
 }
 
 

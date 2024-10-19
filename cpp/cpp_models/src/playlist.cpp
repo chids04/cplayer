@@ -18,6 +18,15 @@ void Playlist::setDuration(int duration)
     this->duration = duration;
 }
 
+void Playlist::removeSong(int id)
+{
+    for(int i=0; i<songs.count(); i++){
+        if(songs[i] == id){
+            songs.removeAt(i);
+        }
+    }
+}
+
 
 int Playlist::getID() const
 {

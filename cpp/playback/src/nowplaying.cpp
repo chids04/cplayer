@@ -100,6 +100,10 @@ void NowPlaying::playAlbum(const QString &albumName, const QStringList &albumArt
 void NowPlaying::playPlaylist(Playlist playlist, bool queue)
 {
     QList<int> songIDs = playlist.getSongIDs();
+
+    if(songIDs.count() == 0){
+        return;
+    }
     QList<std::shared_ptr<Song>> songs = SongListModel::instance().getSongs();
 
     int insertIndex = currentIndex + 1;
