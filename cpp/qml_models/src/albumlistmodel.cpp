@@ -1,6 +1,13 @@
 #include "albumlistmodel.h"
 
-AlbumListModel::AlbumListModel(QObject *parent) : QAbstractListModel(parent) {}
+AlbumListModel::AlbumListModel(QObject *parent) : QAbstractListModel(parent) {
+}
+
+AlbumListModel &AlbumListModel::instance()
+{
+    static AlbumListModel albumListModel;
+    return albumListModel;
+}
 
 void AlbumListModel::addAlbum(const Album &album)
 {
@@ -8,6 +15,33 @@ void AlbumListModel::addAlbum(const Album &album)
     m_albums << album;
     endInsertRows();
 
+}
+
+QModelIndex AlbumListModel::findAlbumIndex(const QString &albumName, const QStringList &albumArtists)
+{
+    for(int row=0; row<m_albums.count(); row++) {
+        const Album &album = m_albums.at(row);
+        if(album.getName() == albumName && album.getArtist() == albumArtists){
+            return index(row);
+        }
+    }
+
+    return QModelIndex();
+}
+
+void AlbumListModel::updateAlbum(std::shared_ptr<Song> song)
+{
+
+    for(Album &album: m_albums){
+        if(album.getName() == song->album && album.getArtist() == song->albumArtists){
+            album.addSong(song);
+            return;
+        }
+    }
+    //album doesnt exist, need to create a new one
+    Album album(song->album, song->albumArtists, song->genre, song->year);
+    album.addSong(song);
+    addAlbum(album);
 }
 
 int AlbumListModel::rowCount(const QModelIndex &parent) const
@@ -34,7 +68,7 @@ QVariant AlbumListModel::data(const QModelIndex &index, int role) const
             return album.getGenre();
 
         case AlbumSongsRole:
-            return album.getSongs();
+            return QVariant::fromValue(album.getSongs());
 
         case AlbumArtistRole:
             return album.getArtist();
@@ -66,6 +100,11 @@ QHash<int, QByteArray> AlbumListModel::roleNames() const
     return roles;
 }
 
+QList<Album> AlbumListModel::getAlbums()
+{
+    return m_albums;
+}
+
 void AlbumListModel::clear()
 {
     if(!m_albums.isEmpty()){
@@ -73,5 +112,26 @@ void AlbumListModel::clear()
         m_albums.clear();
         endRemoveRows();
 
+    }
+}
+
+void AlbumListModel::decrementAlbum(QString &albumName, QStringList &albumArtists)
+{
+    for (int i = m_albums.size() - 1; i >= 0; --i) {
+        if (m_albums[i].getName() == albumName && m_albums[i].getArtist() == albumArtists) {
+            m_albums[i].decrementCount();
+
+        }
+    }
+}
+
+void AlbumListModel::deleteAlbums()
+{
+    for (int i = m_albums.size() - 1; i >= 0; --i) {
+        if (m_albums[i].getSongCount() == 0) {
+            beginRemoveRows(QModelIndex(), i, i);
+            m_albums.removeAt(i);
+            endRemoveRows();
+        }
     }
 }

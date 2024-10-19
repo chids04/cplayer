@@ -10,7 +10,7 @@ class AlbumView : public QObject
     Q_OBJECT
 
 public:
-    explicit AlbumView(AlbumHolder *albumHolder, QObject *parent = nullptr);
+    explicit AlbumView(QObject *parent = nullptr);
 
 public slots:
     void loadAlbums();

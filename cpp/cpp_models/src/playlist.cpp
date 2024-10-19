@@ -1,13 +1,11 @@
 #include "playlist.h"
 
-Playlist::Playlist(int id, const QString &playlistName, SongListModel* songListModel, bool hasCover) : id(id), playlistName(playlistName), hasCover(hasCover)
-{
-    playlistSongsModel = new PlaylistSongsModel(songListModel);
-}
+Playlist::Playlist(int id, const QString &playlistName, bool hasCover) : id(id), playlistName(playlistName), hasCover(hasCover)
+{}
 
-void Playlist::addSong(const QString &url)
+void Playlist::addSong(int songID)
 {
-    songUrls << url;
+    songs.append(songID);
 }
 
 void Playlist::setSongCount(int songCount)
@@ -20,11 +18,15 @@ void Playlist::setDuration(int duration)
     this->duration = duration;
 }
 
-void Playlist::clearPlaylist()
+void Playlist::removeSong(int id)
 {
-    currentIndex = 0;
-    songUrls.clear();
+    for(int i=0; i<songs.count(); i++){
+        if(songs[i] == id){
+            songs.removeAt(i);
+        }
+    }
 }
+
 
 int Playlist::getID() const
 {
@@ -46,43 +48,44 @@ QString Playlist::getPlaylistName() const
     return playlistName;
 }
 
-QList<Song> Playlist::getSongs() const
+QList<int> Playlist::getSongIDs() const
 {
     return songs;
-}
-
-QString Playlist::getNextSong()
-{
-    if(currentIndex == 0){
-        return songUrls.at(currentIndex++);
-    }
-
-    else if(currentIndex < songUrls.size()-1){
-        currentIndex++;
-        QString nextSong = songUrls.at(currentIndex);
-        return nextSong;
-
-    }
-
-    return QString();
-}
-
-QString Playlist::getPreviousSong()
-{
-    if(currentIndex - 1 == -1){
-        return QString();
-    }
-    else{
-        return songUrls.at(--currentIndex);
-    }
-}
-
-PlaylistSongsModel* Playlist::getSongModel() const
-{
-    return playlistSongsModel;
 }
 
 bool Playlist::playlistHasCover() const
 {
     return hasCover;
+}
+
+bool Playlist::operator==(const Playlist &other) const
+{
+    return id == other.id &&
+           duration == other.duration &&
+           songCount == other.songCount &&
+           hasCover == other.hasCover &&
+           playlistName == other.playlistName &&
+           songs == other.songs;
+}
+
+QDataStream &operator<<(QDataStream &out, const Playlist &playlist)
+{
+    out << playlist.id;
+    out << playlist.duration;
+    out << playlist.songCount;
+    out << playlist.hasCover;
+    out << playlist.playlistName;
+    out << playlist.songs;
+    return out;
+}
+
+QDataStream &operator>>(QDataStream &in, Playlist &playlist)
+{
+    in >> playlist.id;
+    in >> playlist.duration;
+    in >> playlist.songCount;
+    in >> playlist.hasCover;
+    in >> playlist.playlistName;
+    in >> playlist.songs;
+    return in;
 }

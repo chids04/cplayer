@@ -2,23 +2,15 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 
-import com.c.AlbumFilterProxyModel
-import com.c.AlbumSongsView
-import com.c.MediaController
-import com.c.PlaylistManager
+import cplayer
 
 import "./components"
 
-
 Item {
-    anchors.fill: parent
-    anchors.topMargin: 20
-
-
-
 
     ColumnLayout{
         anchors.fill: parent
+        spacing: 0
 
         Rectangle{
             id: albumInfo
@@ -35,12 +27,10 @@ Item {
                 spacing: 10
                 Image{
                     id: albumCoverArt
-                    Layout.preferredHeight: parent.height - 10
-                    Layout.preferredWidth: parent.height - 10
 
-                    source: "image://coverArt/" + AlbumSongsView.albumName + "/" + AlbumSongsView.albumArtists[0]
-                    sourceSize.width: parent.height - 10
-                    sourceSize.height: parent.height - 10
+                    source: "image://coverArt/" + ViewController.albumSongsView.albumName + "/" + ViewController.albumSongsView.albumArtists[0]
+                    sourceSize.width: 170
+                    sourceSize.height: 170
 
                 }
 
@@ -51,30 +41,31 @@ Item {
                     Text{
                         id: loadedAlbumName
                         color: "white"
-                        text: AlbumSongsView.albumName
+                        text: ViewController.albumSongsView.albumName
+                        Layout.fillWidth: true
+                        elide: Text.ElideRight
                         font.bold: true
                         font.pointSize: 40
-
 
                     }
 
                     Text{
                         id: loadedAlbumArtists
-                        text: AlbumSongsView.albumArtists.join(", ")
+                        text: ViewController.albumSongsView.albumArtists.join(", ")
                         color:"white"
                         font.pointSize: 20
                     }
 
                     Text{
                         id: loadedAlbumGenre
-                        text: AlbumSongsView.genre
+                        text: ViewController.albumSongsView.genre
                         color: "white"
                         font.pointSize: 10
                     }
 
                     Text{
                         id: loadedAlbumYear
-                        text: AlbumSongsView.year
+                        text: ViewController.albumSongsView.year
                         color: "white"
                         font.pointSize: 10
                     }
@@ -88,17 +79,26 @@ Item {
             }
         }
 
-        Item{
+        RowLayout{
             id: albumControls
 
             CButton{
                 id: playAlbumBtn
-                buttonText: "Play Album"
+                buttonText: "Play Now"
 
                 onButtonClicked: {
-                    PlaylistManager.playAlbum(AlbumSongsView.albumName, AlbumSongsView.albumArtists);
+                    MusicHandler.nowPlaying.playAlbum(ViewController.albumSongsView.albumName, ViewController.albumSongsView.albumArtists, false);
                 }
 
+            }
+
+            CButton{
+                id: queueAlbumBtn
+                buttonText: "Add to Queue"
+
+                onButtonClicked: {
+                    MusicHandler.nowPlaying.playAlbum(ViewController.albumSongsView.albumName, ViewController.albumSongsView.albumArtists, true);
+                }
             }
 
 
@@ -108,7 +108,6 @@ Item {
             id: songList
             Layout.fillHeight: true
             Layout.fillWidth: true
-            Layout.topMargin: playAlbumBtn.height
 
             color: "transparent"
             ListView {
@@ -136,7 +135,7 @@ Item {
                     }
                 }
 
-                model: AlbumFilterModel
+                model: ModelHandler.albumSongs
 
                 delegate: SongDelegate{
                     id: songDelegate
@@ -146,14 +145,16 @@ Item {
                     songDelegateWidth: albumSongsListView.width - 23
                     songDelegateColor: index % 2 == 0 ? "#1e1f20" : "#131314"
 
+                    songObj: songObject
                     songDelegateNumber: albumNum
                     songDelegateTitle: title
                     songDelegateAuthors: features.length === 0 ? artist  : artist + " feat. " + features.join(", ")
                     songDelegateAlbum: album
                     songDelegateLeadingArtist: artist
+                    songFeatures: albumArtists
 
                     onSongDelegateDoubleClicked: {
-                        MediaPlayerController.setSong(filePath, title, artist, album, features)
+                        MusicHandler.nowPlaying.playNow(songObject)
                     }
 
                 }
@@ -165,3 +166,4 @@ Item {
         }
     }
 }
+

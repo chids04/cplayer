@@ -17,5 +17,14 @@
         <file>ui/assets/Roboto-Black.ttf</file>
         <file>ui/fonts/Satoshi-Medium.otf</file>
         <file>ui/assets/folderIcon.png</file>
+        <file>ui/assets/volumeLoud.png</file>
+        <file>ui/assets/volumeMute.png</file>
+        <file>ui/assets/playBtn.png</file>
+        <file>ui/assets/pauseBtn.png</file>
+        <file>ui/assets/playlistIcon.png</file>
+        <file>ui/assets/Library.png</file>
+        <file>ui/assets/album.png</file>
+        <file>ui/assets/settingsCog.png</file>
+        <file>ui/assets/x.png</file>
     </qresource>
 </RCC>

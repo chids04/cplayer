@@ -1,13 +1,13 @@
 #include "playlistsongsmodel.h"
+
 #include <QDebug>
+#include "folderview.h"
 
-PlaylistSongsModel::PlaylistSongsModel(SongListModel *songListModel, QObject *parent) : songListModel(songListModel), QAbstractListModel(parent) {}
+PlaylistSongsModel::PlaylistSongsModel(QObject *parent) :  QAbstractListModel(parent) {
+    connect(&FolderView::instance(), &FolderView::deleteSongs, this, &PlaylistSongsModel::removeFolderSongs);
+}
 
-void PlaylistSongsModel::addSong(int index){
-
-    QModelIndex idx = songListModel->index(index);
-    QVariant songVariant = songListModel->data(idx, SongListModel::SongObjectRole);
-    Song song = songVariant.value<Song>();
+void PlaylistSongsModel::addSong(std::shared_ptr<Song> song){
 
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     m_songs << song;
@@ -43,25 +43,31 @@ QVariant PlaylistSongsModel::data(const QModelIndex &index, int role) const {
     if(index.row() < 0 || index.row() >= m_songs.count())
         return QVariant();
 
-    const Song &song = m_songs[index.row()];
+    auto &song = m_songs[index.row()];
     switch(role){
     case FilePathRole:
-        return song.filePath;
+        return song->filePath;
 
     case TitleRole:
-        return song.title;
+        return song->title;
 
     case ArtistRole:
-        return song.artist;
+        return song->artist;
 
     case AlbumRole:
-        return song.album;
+        return song->album;
 
     case FeaturingArtistsRole:
-        return song.featuringArtists;
+        return song->featuringArtists;
 
     case NumberInAlbumRole:
-        return song.trackNum;
+        return song->trackNum;
+
+    case AlbumArtistsRole:
+        return song->albumArtists;
+
+    case SongObjectRole:
+        return QVariant::fromValue(song);
 
     default:
         return QVariant();
@@ -76,7 +82,22 @@ QHash<int, QByteArray> PlaylistSongsModel::roleNames() const {
     roles[AlbumRole] = "album";
     roles[FeaturingArtistsRole] = "features";
     roles[NumberInAlbumRole] = "albumNum";
+    roles[AlbumArtistsRole] = "albumArtists";
+    roles[SongObjectRole] = "songObject";
 
     return roles;
+}
+
+void PlaylistSongsModel::removeFolderSongs(QString &folderPath)
+{
+    for (int i = m_songs.size() - 1; i >= 0; --i) {
+        const QString& songPath = m_songs[i]->filePath;
+        if (songPath.contains(folderPath, Qt::CaseSensitive)) {
+            beginRemoveRows(QModelIndex(), i, i);
+            m_songs.removeAt(i);  // Remove song if its path contains the folderPath
+            endRemoveRows();
+
+        }
+    }
 }
 

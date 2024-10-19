@@ -1,15 +1,21 @@
 #ifndef SONGLISTMODEL_H
 #define SONGLISTMODEL_H
 
+#include <QtQml>
 #include <QAbstractListModel>
+
+
+#include <memory>
 
 #include "song.h"
 
 class SongListModel : public QAbstractListModel
 {
     Q_OBJECT
+
 public:
     explicit SongListModel(QObject *parent = nullptr);
+    static SongListModel &instance();
 
     enum SongRoles {
         FilePathRole = Qt::UserRole + 1,
@@ -18,11 +24,12 @@ public:
         AlbumRole,
         FeaturingArtistsRole,
         NumberInAlbumRole,
+        AlbumArtistsRole,
         SongObjectRole
 
     };
 
-    void addSong(const Song &song);
+    void addSong(std::shared_ptr<Song> song);
     void clear();
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -35,9 +42,20 @@ public:
     QString getSongAlbum(const QString &filePath) const;
     QStringList getSongFeatures(const QString &filePath) const;
     int getSongTrackNum(const QString &filePath) const;
+    QList<std::shared_ptr<Song>> getSongs();
+
+signals:
+    void decrementAlbum(QString &albumName, QStringList &albumArtists);
+    void removeFromPlaylist(int songID);
+
+public slots:
+    void onSongAdded(std::shared_ptr<Song> song);
+    void removeFolderSongs(QString &folderPath);
 
 private:
-    QList<Song> m_songs;
+    QList<std::shared_ptr<Song>> m_songs;
+    static SongListModel *modelInstance;
+
 };
 
 #endif // SONGLISTMODEL_H

@@ -7,10 +7,11 @@ import QtQuick.Effects
 import "./qml"
 import "./qml/components"
 
-import com.c.MediaController
-import com.c.MusicLibrary
+import cplayer
 
-Window {
+//import com.c.MediaController
+
+ApplicationWindow {
     width: 1280
     height: 720
     minimumWidth: 1024
@@ -20,6 +21,11 @@ Window {
 
     property alias mainWindow: mainContent
     property alias mainErrorPopup: errorPopup
+
+    onClosing : {
+        UtilitySingleton.settingsManager.shutDown()
+    }
+
     Rectangle {
         id: mainContent
         anchors.fill: parent

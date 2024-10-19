@@ -1,6 +1,14 @@
 #include "folderlistmodel.h"
+#include "settingsmanager.h"
+
 
 FolderListModel::FolderListModel(QObject *parent) : QAbstractListModel(parent) {}
+
+FolderListModel &FolderListModel::instance()
+{
+    static FolderListModel folderListModel;
+    return folderListModel;
+}
 
 void FolderListModel::addFolder(const Folder &folder)
 {
@@ -51,6 +59,41 @@ QHash<int, QByteArray> FolderListModel::roleNames() const
     roles[FolderSongCountRole] = "folderSongCount";
 
     return roles;
+}
+
+QList<Folder> FolderListModel::getFolders()
+{
+    return m_folders;
+}
+
+void FolderListModel::removeFolder(int index, QString &folderPath)
+{
+    if(index < 0 || index >=m_folders.count()){
+        return;
+    }
+
+    //if folder written to file then it needs to be deleted from there too
+    if(m_folders[index].isStored()){
+        SettingsManager::instance().removeFolder(folderPath);
+    }
+
+    beginRemoveRows(QModelIndex(), index, index);
+    m_folders.removeAt(index);
+    endRemoveRows();
+
+
+
+}
+
+bool FolderListModel::folderExists(QUrl &folderPath)
+{
+    for(const Folder &folder : m_folders) {
+        if(folder.getFolderPath() == folderPath.toLocalFile()){
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void FolderListModel::clear()

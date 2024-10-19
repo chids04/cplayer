@@ -1,27 +1,36 @@
 #include "albumfilterproxymodel.h"
 
+#include "songlistmodel.h"
+
 AlbumFilterProxyModel::AlbumFilterProxyModel(QObject *parent)
     : QSortFilterProxyModel{parent}
-{}
-
-void AlbumFilterProxyModel::setAlbumName(const QString &newAlbumName)
 {
-    if (m_albumName == newAlbumName)
+    setSourceModel(&SongListModel::instance());
+    sort(0, Qt::AscendingOrder);
+}
+
+AlbumFilterProxyModel &AlbumFilterProxyModel::instance()
+{
+    static AlbumFilterProxyModel albumFilterProxyModel;
+    return albumFilterProxyModel;
+}
+
+void AlbumFilterProxyModel::setCurrentAlbumName(const QString &newAlbumName)
+{
+    if (m_currentAlbumName == newAlbumName)
         return;
-    m_albumName = newAlbumName;
+    m_currentAlbumName = newAlbumName;
     invalidateFilter();
-    emit albumNameChanged();
+    emit currentAlbumNameChanged();
 }
 
 bool AlbumFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
     QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
-    bool flag = sourceModel()->data(index, SongListModel::AlbumRole).toString() == m_albumName ? true: false;
-    qDebug() << flag;
-    return sourceModel()->data(index, SongListModel::AlbumRole).toString() == m_albumName;
+    bool flag = sourceModel()->data(index, SongListModel::AlbumRole).toString() == m_currentAlbumName ? true: false;
+    return sourceModel()->data(index, SongListModel::AlbumRole).toString() == m_currentAlbumName;
 }
 
-//sorts the songs by album number
 bool AlbumFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
     QVariant leftData = sourceModel()->data(left, SongListModel::NumberInAlbumRole);
@@ -30,7 +39,7 @@ bool AlbumFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex 
     return leftData.toInt() < rightData.toInt();
 }
 
-QString AlbumFilterProxyModel::albumName() const
+QString AlbumFilterProxyModel::currentAlbumName() const
 {
-    return m_albumName;
+    return m_currentAlbumName;
 }

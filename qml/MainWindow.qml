@@ -2,59 +2,64 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls.Basic
 
-import com.c.MediaController
-import com.c.ViewController
-import com.c.SongView
-import com.c.AlbumView
+import cplayer
 
-Rectangle{
+Item{
 
     id: mainWindow
     Layout.fillWidth: true
     Layout.fillHeight: true
-    color: "transparent"
 
     Connections{
         target: ViewController
 
         function onSongViewSelected(){
-            viewLoader.source = "Songs.qml"
+            stackView.push("Songs.qml")
         }
 
         function onAlbumViewSelected(){
-            viewLoader.source = "Albums.qml"
+            stackView.push("Albums.qml")
         }
 
         function onAlbumSelected(){
-            viewLoader.source = "AlbumSongs.qml"
+            stackView.push("AlbumSongs.qml")
         }
 
         function onFoldersViewSelected(){
-            viewLoader.source = "Folders.qml"
+            stackView.push("Folders.qml")
         }
 
         function onPlaylistsViewSelected(){
-            viewLoader.source = "Playlists.qml"
+            stackView.push("Playlists.qml")
         }
 
         function onPlaylistSelected(){
-            viewLoader.source = "PlaylistSongs.qml"
+            stackView.push("PlaylistSongs.qml")
         }
 
+        function onSettingsViewSelected(){
+            stackView.push("Settings.qml")
+        }
     }
 
     RowLayout {
         anchors.fill: parent
-        spacing: 15
-        Sidebar{
+        spacing: 10
 
+        Sidebar{
         }
 
-        Loader {
-            id: viewLoader
-            source: "Folders.qml"
-            Layout.fillWidth: true
+        StackView{
+            id: stackView
             Layout.fillHeight: true
+            Layout.fillWidth: true
+            clip: true
+
+            pushEnter: null
+            pushExit: null
+
         }
     }
 }
+
+

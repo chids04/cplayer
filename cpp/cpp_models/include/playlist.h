@@ -3,45 +3,45 @@
 
 #include <QString>
 #include <QDebug>
-#include <QStringList>
+#include <QMetaType>
 
-#include "song.h"
-#include "playlistsongsmodel.h"
 
 class Playlist
 {
 public:
-    Playlist(int id, const QString &playlistName, SongListModel *songListModel, bool hasCover = false);
+    Playlist() = default;
+    Playlist(int id, const QString &playlistName, bool hasCover = false);
 
-    void addSong(const QString &url);
+    void addSong(int songID);
+    void clearPlaylist();
+    bool playlistHasCover() const;
 
     void setSongCount(int songCount);
     void setDuration(int duration);
+    void removeSong(int id);
 
     int getID() const;
     int getDuration() const;
     int getSongCount() const;
     QString getPlaylistName() const;
-    QList<Song> getSongs() const;
-    QString getNextSong();
-    QString getPreviousSong();
-    PlaylistSongsModel* getSongModel() const;
-    bool playlistHasCover() const;
+    QList<int> getSongIDs() const;
 
-    void clearPlaylist();
+    bool operator==(const Playlist &other) const;
+
+    friend QDataStream &operator<<(QDataStream &out, const Playlist &playlist);
+    friend QDataStream &operator>>(QDataStream &in, Playlist &playlist);
 
 private:
     int id;
     int duration;
     int songCount;
-    int currentIndex = 0;
     bool hasCover = false;
     QString playlistName;
-    QStringList songUrls;
-    PlaylistSongsModel *playlistSongsModel;
-
-    QList<Song> songs;
-
+    QList<int> songs;
 };
+
+Q_DECLARE_METATYPE(QList<Playlist>)
+Q_DECLARE_METATYPE(Playlist)
+Q_DECLARE_METATYPE(std::shared_ptr<Playlist>)
 
 #endif // PLAYLIST_H

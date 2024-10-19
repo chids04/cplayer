@@ -2,14 +2,13 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls.Basic
 import QtQuick.Effects
-import com.c.MediaController
 
-import "./components"
-
+import cplayer
 
 Item{
     Layout.fillWidth: true
     height: 100
+
 
     MultiEffect{
         source: mediaBar
@@ -19,6 +18,7 @@ Item{
         shadowColor: "#80000000"
         autoPaddingEnabled: true
         shadowVerticalOffset: -10
+
     }
 
 
@@ -28,21 +28,6 @@ Item{
         anchors.fill: parent
         radius: 8
         color: "#1e1f20"
-
-        // anchors {
-        //     left: parent.left
-        //     right: parent.right
-        //     bottom: parent.bottom
-        //     top: mainWindow.bottom
-        // }
-
-        // MultiEffect{
-        //     source: mediaBar
-        //     anchors.fill: mediaBar
-        //     shadowBlur: 1.0
-        //     shadowEnabled: true
-        //     shadowColor: "black"
-        // }
 
         RowLayout{
 
@@ -65,14 +50,15 @@ Item{
                         Layout.preferredHeight: 80
                         Layout.preferredWidth: 80
                         Layout.alignment: Qt.AlignVCenter
-                        source: "qrc:/resource/ui/assets/pika.png"
+                        //source: "qrc:/resource/ui/assets/unknownCover.png"
+                        source: "image://coverArt/" + MusicHandler.mediaPlayerController.album + "/" + MusicHandler.mediaPlayerController.leadingArtist
                         sourceSize.width: 80
                         sourceSize.height: 80
 
                         Connections{
-                            target: MediaPlayerController
+                            target: MusicHandler.mediaPlayerController
                             function onCoverArtChanged(){
-                                songArt.source = "image://coverArt/" + MediaPlayerController.album + "/" + MediaPlayerController.leadingArtist
+                                songArt.source = "image://coverArt/" + MusicHandler.mediaPlayerController.album + "/" + MusicHandler.mediaPlayerController.leadingArtist
                             }
                         }
                     }
@@ -84,18 +70,18 @@ Item{
 
                         Text {
                             id: songName
-                            text: "line 1"
                             color: "white"
                             font.bold: true
+                            text: MusicHandler.mediaPlayerController.trackTitle
                             Layout.preferredWidth: mediaInfo.width - songArt.width - 30
                             Layout.minimumWidth: 100
 
                             elide: Text.ElideRight
 
                             Connections{
-                                target: MediaPlayerController
+                                target: MusicHandler.mediaPlayerController
                                 function onTrackTitleChanged(){
-                                    songName.text = MediaPlayerController.trackTitle
+                                    songName.text = MusicHandler.mediaPlayerController.trackTitle
                                 }
 
                             }
@@ -103,16 +89,16 @@ Item{
 
                         Text{
                             id: songAuthors
-                            text: "line 2"
                             color: "white"
                             Layout.preferredWidth: mediaInfo.width - songArt.width - 30
                             Layout.minimumWidth: 100
+                            text: MusicHandler.mediaPlayerController.features.length === 0 ? MusicHandler.mediaPlayerController.leadingArtist  : MusicHandler.mediaPlayerController.leadingArtist + " feat. " + MusicHandler.mediaPlayerController.features.join(", ")
                             elide: Text.ElideRight
 
                             Connections{
-                                target: MediaPlayerController
+                                target: MusicHandler.mediaPlayerController
                                 function onLeadingArtistChanged(){
-                                    songAuthors.text = MediaPlayerController.features.length === 0 ? MediaPlayerController.leadingArtist  : MediaPlayerController.leadingArtist + " feat. " + MediaPlayerController.features.join(", ")
+                                    songAuthors.text = MusicHandler.mediaPlayerController.features.length === 0 ? MusicHandler.mediaPlayerController.leadingArtist  : MusicHandler.mediaPlayerController.leadingArtist + " feat. " + MusicHandler.mediaPlayerController.features.join(", ")
                                 }
                             }
                         }
@@ -174,26 +160,32 @@ Item{
 
                                 MouseArea{
                                     anchors.fill: parent
-
+                                    hoverEnabled: true
+                                    onEntered: previousBtn.scale = 1.2
+                                    onExited: previousBtn.scale = 1.0
                                     onClicked: {
-                                        MediaPlayerController.queuePrevious()
+                                        MusicHandler.mediaPlayerController.previousClicked()
+                                    }
+
+                                    onPressedChanged:{
+                                        if(pressed){
+                                            previousBtn.scale = 0.9
+                                        }
+                                        else{
+                                            previousBtn.scale = 1.2
+                                        }
                                     }
                                 }
+
+                                Behavior on scale {
+                                    NumberAnimation{
+                                        duration: 200
+                                        easing.type: Easing.InOutQuad
+                                    }
+                                }
+
                             }
                         }
-
-
-
-                        // MultiEffect{
-                        //     source: playBtn
-                        //     anchors.fill: playBtn
-                        //     shadowBlur: 1
-                        //     shadowEnabled: true
-                        //     shadowColor: "#80000000"
-                        //     autoPaddingEnabled: true
-                        //     shadowHorizontalOffset: 15
-                        //     shadowVerticalOffset: 11
-                        // }
 
                         Item{
                             Layout.fillHeight: true
@@ -201,28 +193,50 @@ Item{
 
                             Image {
                                 id: playBtn
-                                source: "qrc:/resource/ui/assets/play.png"
-                                width: 30
-                                height: 30
+                                //source: "qrc:/resource/ui/assets/playBtn.png"
+                                source: "qrc:/resource/ui/assets/playBtn.png"
 
+                                sourceSize.width: 40
+                                sourceSize.height: 40
                                 anchors.centerIn: parent
 
-                                MouseArea {
-                                    anchors.fill: parent
 
+                                MouseArea {
+                                    id: playBtnMA
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    onEntered: playBtn.scale = 1.2
+                                    onExited: playBtn.scale = 1.0
                                     onClicked: {
-                                        MediaPlayerController.togglePlayState()
+                                        MusicHandler.mediaPlayerController.togglePlayState()
+                                    }
+
+                                    onPressedChanged: {
+                                        if(pressed){
+                                            playBtn.scale = 0.9
+                                        }
+                                        else{
+                                            playBtn.scale = 1.2
+                                        }
                                     }
                                 }
 
+                                Behavior on scale {
+                                    NumberAnimation{
+                                        duration: 200
+                                        easing.type: Easing.InOutQuad
+                                    }
+                                }
+
+
                                 Connections {
-                                    target: MediaPlayerController
+                                    target: MusicHandler.mediaPlayerController
                                     function onUpdateUI(){
-                                        if(MediaPlayerController.playing) {
-                                            playBtn.source = "qrc:/resource/ui/assets/play.png"
+                                        if(MusicHandler.mediaPlayerController.playing) {
+                                            playBtn.source = "qrc:/resource/ui/assets/pauseBtn.png"
                                         }
                                         else{
-                                            playBtn.source = "qrc:/resource/ui/assets/pause.png"
+                                            playBtn.source = "qrc:/resource/ui/assets/playBtn.png"
                                         }
                                     }
                                 }
@@ -245,11 +259,30 @@ Item{
                                 anchors.verticalCenter: parent.verticalCenter
                                 MouseArea {
                                     anchors.fill: parent
-
+                                    hoverEnabled: true
+                                    onEntered: nextBtn.scale = 1.2
+                                    onExited: nextBtn.scale = 1.0
                                     onClicked:{
-                                        MediaPlayerController.queueNext()
+                                        MusicHandler.mediaPlayerController.nextClicked()
+                                    }
+
+                                    onPressedChanged: {
+                                        if(pressed){
+                                            nextBtn.scale = 0.9
+                                        }
+                                        else{
+                                            nextBtn.scale = 1.2
+                                        }
                                     }
                                 }
+
+                                Behavior on scale {
+                                    NumberAnimation{
+                                        duration: 200
+                                        easing.type: Easing.InOutQuad
+                                    }
+                                }
+
                             }
                         }
 
@@ -285,9 +318,9 @@ Item{
                                 color: "white"
 
                                 Connections{
-                                    target: MediaPlayerController
+                                    target: MusicHandler.mediaPlayerController
                                     function onPositionChanged(){
-                                        elapsedTime.text = MediaPlayerController.genTime(MediaPlayerController.position)
+                                        elapsedTime.text = MusicHandler.mediaPlayerController.genTime(MusicHandler.mediaPlayerController.position)
                                     }
                                 }
 
@@ -295,22 +328,15 @@ Item{
                             }
                         }
 
-
-
                         Slider {
                             id: control
                             from: 0
-                            to: MediaPlayerController.duration
-                            value: MediaPlayerController.position
-                            // anchors{
-                            //     top: playbackControls.bottom
-                            //     topMargin: 15
-                            //     horizontalCenter: parent.horizontalCenter
-                            // }
+                            to: MusicHandler.mediaPlayerController.duration
+                            value: MusicHandler.mediaPlayerController.position
 
                             Layout.preferredWidth: mediaControls.width-60
                             onValueChanged: {
-                                MediaPlayerController.position = value
+                                MusicHandler.mediaPlayerController.position = value
                             }
 
                             background: Rectangle {
@@ -354,223 +380,17 @@ Item{
                                 color: "white"
 
                                 Connections{
-                                    target: MediaPlayerController
+                                    target: MusicHandler.mediaPlayerController
                                     function onDurationChanged(){
-                                        songDuration.text = MediaPlayerController.genTime(MediaPlayerController.duration)
+                                        songDuration.text = MusicHandler.mediaPlayerController.genTime(MusicHandler.mediaPlayerController.duration)
 
                                     }
                                 }
                             }
                         }
-
                     }
 
                 }
-
-                // Rectangle{
-                //     id: controlHolder
-                //     height: childrenRect.height
-
-                //     anchors.centerIn: parent
-
-                //     RowLayout {
-                //         id: playbackControls
-                //         anchors{
-                //             top: parent.top
-                //             horizontalCenter: parent.horizontalCenter
-                //         }
-
-                //         spacing: 40
-
-                //         Image {
-                //             id: shuffleSongs
-                //             height: 30
-                //             width: 30
-                //             source: "qrc:/resource/ui/assets/shuffle.png"
-
-                //         }
-
-                //         Image {
-                //             id: previousBtn
-                //             height: 30
-                //             width: 30
-                //             source: "qrc:/resource/ui/assets/previous.png"
-
-                //             MouseArea{
-                //                 anchors.fill: parent
-
-                //                 onClicked: {
-                //                     MediaPlayerController.queuePrevious()
-                //                 }
-                //             }
-                //         }
-
-                //         // MultiEffect{
-                //         //     source: playBtn
-                //         //     anchors.fill: playBtn
-                //         //     shadowBlur: 1
-                //         //     shadowEnabled: true
-                //         //     shadowColor: "#80000000"
-                //         //     autoPaddingEnabled: true
-                //         //     shadowHorizontalOffset: 15
-                //         //     shadowVerticalOffset: 11
-                //         // }
-
-                //         Image {
-                //             id: playBtn
-                //             source: "qrc:/resource/ui/assets/play.png"
-
-                //             MouseArea {
-                //                 anchors.fill: parent
-
-                //                 onClicked: {
-                //                     MediaPlayerController.togglePlayState()
-                //                 }
-                //             }
-
-                //             Connections {
-                //                 target: MediaPlayerController
-                //                 function onUpdateUI(){
-                //                     if(MediaPlayerController.playing) {
-                //                         playBtn.source = "qrc:/resource/ui/assets/play.png"
-                //                     }
-                //                     else{
-                //                         playBtn.source = "qrc:/resource/ui/assets/pause.png"
-                //                     }
-                //                 }
-                //             }
-
-                //         }
-
-                //         Image {
-                //             id: nextBtn
-                //             height: 30
-                //             width: 30
-                //             source: "qrc:/resource/ui/assets/next.png"
-
-                //             MouseArea {
-                //                 anchors.fill: parent
-
-                //                 onClicked:{
-                //                     MediaPlayerController.queueNext()
-                //                 }
-                //             }
-                //         }
-
-                //         Image{
-                //             id: repeatSongs
-                //             height: 30
-                //             width: 30
-                //             source: "qrc:/resource/ui/assets/repeat.png"
-                //         }
-                //     }
-
-                //     RowLayout{
-
-                //         anchors{
-                //             top: playbackControls.bottom
-                //             topMargin: 15
-                //             horizontalCenter: parent.horizontalCenter
-                //         }
-
-                //         spacing: 10
-
-
-                //         Item{
-                //             width: 30
-
-                //             Text{
-                //                 id: elapsedTime
-                //                 text: "00:00"
-                //                 anchors.centerIn: parent
-                //                 color: "white"
-
-                //                 Connections{
-                //                     target: MediaPlayerController
-                //                     function onPositionChanged(){
-                //                         elapsedTime.text = MediaPlayerController.genTime(MediaPlayerController.position)
-                //                     }
-                //                 }
-
-
-                //             }
-                //         }
-
-
-
-                //         Slider {
-                //             id: control
-                //             from: 0
-                //             to: MediaPlayerController.duration
-                //             value: MediaPlayerController.position
-                //             // anchors{
-                //             //     top: playbackControls.bottom
-                //             //     topMargin: 15
-                //             //     horizontalCenter: parent.horizontalCenter
-                //             // }
-
-                //             Layout.preferredWidth: 400
-                //             onValueChanged: {
-                //                 MediaPlayerController.position = value
-                //             }
-
-                //             background: Rectangle {
-                //                     x: control.leftPadding
-                //                     y: control.topPadding + control.availableHeight / 2 - height / 2
-                //                     implicitWidth: 200
-                //                     implicitHeight: 4
-                //                     width: control.availableWidth
-                //                     height: implicitHeight
-                //                     radius: 2
-                //                     color: "#2e2e2e"
-
-                //                     Rectangle {
-                //                         width: control.visualPosition * parent.width
-                //                         height: parent.height
-                //                         color: "#606060"
-                //                         radius: 2
-                //                     }
-                //                 }
-
-                //                 handle: Rectangle {
-                //                     x: control.leftPadding + control.visualPosition * (control.availableWidth - width)
-                //                     y: control.topPadding + control.availableHeight / 2 - height / 2
-                //                     implicitWidth: 16
-                //                     implicitHeight: 16
-                //                     radius: 8
-                //                     color: "#606060"
-                //                 }
-
-                //             }
-
-
-                //         Item{
-                //             width: 30
-
-                //             Text{
-                //                 height: 20
-                //                 id: songDuration
-                //                 text : "00:00"
-                //                 anchors.centerIn: parent
-                //                 color: "white"
-
-                //                 Connections{
-                //                     target: MediaPlayerController
-                //                     function onDurationChanged(){
-                //                         songDuration.text = MediaPlayerController.genTime(MediaPlayerController.duration)
-
-                //                     }
-                //                 }
-                //             }
-                //         }
-
-                //     }
-
-
-                // }
-
-
-
             }
 
             Rectangle{
@@ -587,7 +407,9 @@ Item{
 
                     Image {
                         id: volumeStatus
-                        source: volumeSlider.value === 0 ? "qrc:/resource/ui/assets/mute.png" : "qrc:/resource/ui/assets/volume.png"
+                        source: volumeSlider.value === 0 ? "qrc:/resource/ui/assets/volumeMute.png" : "qrc:/resource/ui/assets/volumeLoud.png"
+                        sourceSize.height: 20
+                        sourceSize.width: 20
 
                         anchors{
                             right: volumeSlider.left
@@ -598,7 +420,7 @@ Item{
                     Slider{
                         id: volumeSlider
                         implicitWidth: parent.width * 0.3
-                        value: MediaPlayerController.volume
+                        value: MusicHandler.mediaPlayerController.volume
                         from: 0
                         to: 1
 
@@ -636,24 +458,20 @@ Item{
                         }
 
                         onValueChanged: {
-                            MediaPlayerController.setVolume(volumeSlider.value)
+                            MusicHandler.mediaPlayerController.setVolume(volumeSlider.value)
                         }
 
                     }
 
                     Connections{
-                        target: MediaPlayerController
+                        target: MusicHandler.mediaPlayerController
                         function onVolumeChanged(){
-                            volumeSlider.value = MediaPlayerController.volume
+                            volumeSlider.value = MusicHandler.mediaPlayerController.volume
                         }
                     }
                 }
-
             }
-
-
         }
-
     }
 }
 

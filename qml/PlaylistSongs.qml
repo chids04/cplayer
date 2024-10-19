@@ -2,17 +2,11 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 
-import com.c.AlbumFilterProxyModel
-import com.c.AlbumSongsView
-import com.c.MediaController
-import com.c.PlaylistManager
-import com.c.PlaylistView
+import cplayer
 
 import "./components"
 
 Item {
-    anchors.fill: parent
-    anchors.topMargin: 20
 
     ColumnLayout{
         anchors.fill: parent
@@ -35,7 +29,7 @@ Item {
                     Layout.preferredHeight: parent.height - 10
                     Layout.preferredWidth: parent.height - 10
 
-                    source: PlaylistView.hasCover ? "img://coverArt" + PlaylistView.playlistName + "/" + PlaylistView.playlistID : "qrc:/resource/ui/assets/unknownCover.png"
+                    source: ViewController.playlistSongsView.hasCover ? "img://coverArt" + ViewController.playlistsSongsView.playlistName + "/" + ViewController.playlistSongsView.playlistID : "qrc:/resource/ui/assets/unknownCover.png"
                     sourceSize.width: parent.height - 10
                     sourceSize.height: parent.height - 10
 
@@ -48,7 +42,7 @@ Item {
                     Text{
                         id: loadedPlaylistName
                         color: "white"
-                        text: PlaylistView.playlistName
+                        text: MusicHandler.playlistManager.playlistName
                         font.bold: true
                         font.pointSize: 40
 
@@ -64,22 +58,29 @@ Item {
                 }
             }
         }
-
-        Item{
-            id: playlistControls
+        RowLayout{
 
             CButton{
                 id: playPlaylistBtn
                 buttonText: "Play Playlist"
 
                 onButtonClicked: {
-                    //PlaylistManager.playAlbum(AlbumSongsView.albumName, AlbumSongsView.albumArtists);
+                    MusicHandler.nowPlaying.playPlaylist(MusicHandler.playlistManager.currentPlaylist)
+
                 }
 
             }
 
+            CButton{
+                id: queuePlaylistBtn
+                buttonText: "Queue Playlist"
 
+                onButtonClicked: {
+                    MusicHandler.nowPlaying.playPlaylist(MusicHandler.playlistManager.currentPlaylist, true)
+                }
+            }
         }
+
 
         Rectangle{
             id: songList
@@ -113,7 +114,8 @@ Item {
                     }
                 }
 
-                model: PlaylistView.playlistSongsModel
+                //model: PlaylistView.playlistSongsModel
+                model: ModelHandler.playlistFilter
 
                 delegate: SongDelegate{
                     id: songDelegate
@@ -128,9 +130,10 @@ Item {
                     songDelegateAuthors: features.length === 0 ? artist  : artist + " feat. " + features.join(", ")
                     songDelegateAlbum: album
                     songDelegateLeadingArtist: artist
+                    songFeatures: albumArtists
 
                     onSongDelegateDoubleClicked: {
-                        MediaPlayerController.setSong(filePath, title, artist, album, features)
+                        MusicHandler.nowPlaying.playNow(songObject)
                     }
 
                 }

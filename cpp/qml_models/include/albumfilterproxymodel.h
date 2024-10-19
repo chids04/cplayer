@@ -4,20 +4,21 @@
 #include <QString>
 #include <QSortFilterProxyModel>
 
-#include "songlistmodel.h"
 
 class AlbumFilterProxyModel : public QSortFilterProxyModel
 {
+
     Q_OBJECT
-    Q_PROPERTY(QString albumName READ albumName WRITE setAlbumName NOTIFY albumNameChanged)
+    Q_PROPERTY(QString currentAlbumName READ currentAlbumName WRITE setCurrentAlbumName NOTIFY currentAlbumNameChanged)
+
 public:
     explicit AlbumFilterProxyModel(QObject *parent = nullptr);
+    static AlbumFilterProxyModel &instance();
 
-
-    QString albumName() const;
+    QString currentAlbumName() const;
 
 public slots:
-    void setAlbumName(const QString &newAlbumName);
+    void setCurrentAlbumName(const QString &newAlbumName);
 
 protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
@@ -25,9 +26,9 @@ protected:
 
 
 signals:
-    void albumNameChanged();
+    void currentAlbumNameChanged();
 private:
-    QString m_albumName;
+    QString m_currentAlbumName;
 };
 
 #endif // ALBUMFILTERPROXYMODEL_H

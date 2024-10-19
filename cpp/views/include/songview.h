@@ -3,20 +3,18 @@
 
 #include <QObject>
 
-#include "songholder.h"
 
 class SongView : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit SongView(SongHolder *songHolder, QObject *parent = nullptr);
+    explicit SongView(QObject *parent = nullptr);
 
 public slots:
     void loadSongs();
 
 private:
-    SongHolder *songHolder;
 };
 
 

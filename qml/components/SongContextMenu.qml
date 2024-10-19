@@ -1,35 +1,43 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import com.c.PlaylistModel
-import com.c.PlaylistView
+
+import cplayer
 
 Menu {
     id: mainMenu
     title: qsTr("Tools")
 
-    property int songIndex
+    property var songObj
+
+    MenuItem{
+        id: queueNext
+        text: "Queue Next"
+
+        onTriggered: {
+            MusicHandler.nowPlaying.queueNext(songObj)
+        }
+    }
 
     Menu {
         id: addToPlaylistMenu
         title: "Add to playlist"
         Instantiator {
             id: playlistInstantiator
-            model: PlaylistModel  // Assuming PlaylistModel is exposed from C++
+            model: ModelHandler.playlistList // Assuming PlaylistModel is exposed from C++
 
             delegate: MenuItem {
                 id: menuItemDelegate
-                text: playlistName  // Assuming playlistName is the role in PlaylistModel
-                //onTriggered: addToPlaylist(model.playlistName)
+                text: playlistName
                 onTriggered: {
-                    console.log(playlistID)
-                    console.log(songIndex)
-                    PlaylistView.addSongToPlaylist(playlistID, songIndex)
+                    MusicHandler.playlistManager.addSongToPlaylist(playlistID, songObj)
                 }
-                            }
+            }
+
             onObjectAdded: (index, object) => addToPlaylistMenu.insertItem(index, object)
             onObjectRemoved: (index, object) => addToPlaylistMenu.removeItem(object)
         }
     }
+
     enter: Transition {
                 ParallelAnimation {
                     id: popIn
@@ -73,8 +81,8 @@ Menu {
                 }
             }
 
-    function openContextMenu(index){
-        songIndex = index
+    function openContextMenu(song){
+        songObj = song
         mainMenu.popup()
 
     }

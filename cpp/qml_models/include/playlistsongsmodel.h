@@ -5,13 +5,12 @@
 #include <QAbstractListModel>
 
 #include "song.h"
-#include "songlistmodel.h"
 
 class PlaylistSongsModel : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    explicit PlaylistSongsModel(SongListModel *songListModel, QObject *parent = nullptr);
+    explicit PlaylistSongsModel(QObject *parent = nullptr);
 
     enum SongRoles {
         FilePathRole = Qt::UserRole + 1,
@@ -19,20 +18,24 @@ public:
         ArtistRole,
         AlbumRole,
         FeaturingArtistsRole,
-        NumberInAlbumRole
+        NumberInAlbumRole,
+        AlbumArtistsRole,
+        SongObjectRole
 
     };
 
-    void addSong(int index);
+    void addSong(std::shared_ptr<Song> song);
     void clear();
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QModelIndex index(int row, int column=0, const QModelIndex &parent = QModelIndex()) const override;
     QHash<int, QByteArray> roleNames() const override;
 
+public slots:
+    void removeFolderSongs(QString &folderPath);
+
 private:
-    QList<Song> m_songs;
-    SongListModel *songListModel;
+    QList<std::shared_ptr<Song>> m_songs;
 };
 
 Q_DECLARE_METATYPE(PlaylistSongsModel*)

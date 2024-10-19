@@ -2,7 +2,10 @@
 #define ALBUM_H
 
 #include <QHash>
+#include <QObject>
 #include <QStringList>
+
+#include <memory>
 
 #include "songlistmodel.h"
 
@@ -15,16 +18,19 @@ public:
     QString getName() const;
     QString getGenre() const;
     int getYear() const;
-    void addSong(QString &url);
     int getSongCount() const;
     QStringList getArtist() const;
-    QStringList getSongs() const;
+    QList<std::shared_ptr<Song>> getSongs() const;
+
+    void addSong(std::shared_ptr<Song> song);
+    void incrementCount();
+    void decrementCount();
 
 private:
     QString name;
     QString genre;
-    QStringList songs;
     QStringList artist;
+    QList<std::shared_ptr<Song>> songList;
     int year;
     int songCount = 0;
 
