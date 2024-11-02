@@ -135,14 +135,51 @@ Item{
                             Layout.fillHeight: true
 
                             Image {
+                                property bool shuffle: false
+
                                 id: shuffleSongs
                                 anchors.centerIn: parent
                                 height: 30
                                 width: 30
                                 source: "qrc:/resource/ui/assets/shuffle.png"
 
+                                MouseArea{
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    onEntered: shuffleSongs.scale = 1.2
+                                    onExited: shuffleSongs.scale = 1.0
+
+                                    onClicked : {
+                                        if(!shuffleSongs.shuffle){
+                                            shuffleSongs.source = "qrc:/resource/ui/assets/shuffle_on.png"
+                                            shuffleSongs.shuffle = true
+                                        }
+                                        else{
+                                            shuffleSongs.source = "qrc:/resource/ui/assets/shuffle.png"
+                                            shuffleSongs.shuffle = false
+                                        }
+                                    }
+
+                                    onPressedChanged: {
+                                        if(pressed){
+                                            shuffleSongs.scale = 0.9
+                                        }
+                                        else{
+                                            shuffleSongs.scale = 1.2
+                                        }
+                                    }
+
+                                }
+
+                                Behavior on scale{
+                                    NumberAnimation{
+                                        duration: 200
+                                        easing.type: Easing.InOutQuad
+                                    }
+                                }
+
                             }
-                        }
+                    }
 
 
 
@@ -293,11 +330,52 @@ Item{
                             Layout.fillWidth: true
 
                             Image{
+                                property bool shuffle : false
+
                                 id: repeatSongs
                                 height: 30
                                 width: 30
                                 source: "qrc:/resource/ui/assets/repeat.png"
                                 anchors.centerIn: parent
+
+                                MouseArea{
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    onEntered: repeatSongs.scale = 1.2
+                                    onExited: repeatSongs.scale = 1.0
+
+                                    onClicked  : {
+                                        if(!repeatSongs.shuffle){
+                                            repeatSongs.source = "qrc:/resource/ui/assets/repeat_individual.png"
+                                            repeatSongs.shuffle = true
+                                            MusicHandler.mediaPlayerController.onRepeatChanged(repeatSongs.shuffle)
+
+                                        }
+                                        else{
+                                            repeatSongs.source = "qrc:/resource/ui/assets/repeat.png"
+                                            repeatSongs.shuffle = false
+                                            MusicHandler.mediaPlayerController.onRepeatChanged(repeatSongs.shuffle)
+                                        }
+
+                                    }
+
+                                    onPressedChanged: {
+                                        if(pressed){
+                                            repeatSongs.scale = 0.9
+                                        }
+                                        else{
+                                            repeatSongs.scale = 1.2
+                                        }
+                                    }
+
+                                }
+
+                                Behavior on scale{
+                                    NumberAnimation{
+                                        duration: 200
+                                        easing.type: Easing.InOutQuad
+                                    }
+                                }
                             }
                         }
 
@@ -321,6 +399,7 @@ Item{
                                     target: MusicHandler.mediaPlayerController
                                     function onPositionChanged(){
                                         elapsedTime.text = MusicHandler.mediaPlayerController.genTime(MusicHandler.mediaPlayerController.position)
+
                                     }
                                 }
 
@@ -384,6 +463,10 @@ Item{
                                     function onDurationChanged(){
                                         songDuration.text = MusicHandler.mediaPlayerController.genTime(MusicHandler.mediaPlayerController.duration)
 
+                                    }
+
+                                    function onResetDuration(){
+                                        songDuration.text = "00:00"
                                     }
                                 }
                             }

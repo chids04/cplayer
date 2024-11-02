@@ -29,9 +29,11 @@ int NowPlaying::getCurrentIndex()
 
 void NowPlaying::loadFromSettings()
 {
+
     QSettings settings;
     currentIndex = settings.value("nowPlayingCurrentIndex", 0).toInt();
     qint64 position = settings.value("nowPlayingSongPosition", 0).toLongLong();
+    qint64 duration = settings.value("nowPlayingSongDuration", 0).toLongLong();
     QList<int> songIDs = settings.value("nowPlayingList").value<QList<int>>();
 
     //no songs
@@ -56,8 +58,9 @@ void NowPlaying::loadFromSettings()
         return;
     }
 
-
+    emit positionLoaded(position);
     emit songLoaded(songQueue[currentIndex]);
+
     //emit positionLoaded(position);
 }
 

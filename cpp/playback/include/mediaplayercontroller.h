@@ -21,9 +21,10 @@ class MediaPlayerController : public QObject {
     Q_PROPERTY(QString leadingArtist READ leadingArtist NOTIFY leadingArtistChanged)
     Q_PROPERTY(QString album READ album WRITE setAlbum NOTIFY albumChanged)
     Q_PROPERTY(QStringList features READ features WRITE setFeatures NOTIFY featuresChanged)
-    Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
+    Q_PROPERTY(qint64 duration READ duration  WRITE onDurationChanged NOTIFY durationChanged)
     Q_PROPERTY(qint64 position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(QString filePath READ filePath WRITE setFilePath NOTIFY filePathChanged)
+    Q_PROPERTY(bool repeat READ repeat WRITE setRepeat NOTIFY repeatChanged)
     Q_PROPERTY(float volume READ volume WRITE setVolume NOTIFY volumeChanged)
 
 public:
@@ -52,6 +53,13 @@ public:
 
     void setFeatures(const QStringList &newFeatures);
 
+
+    bool repeat() const;
+
+    void setRepeat(bool newRepeat);
+
+    void onDurationChanged(qint64 newDuration);
+
 signals:
     void leadingArtistChanged();
     void trackTitleChanged();
@@ -68,6 +76,8 @@ signals:
     void albumChanged();
     void volumeChanged();
     void featuresChanged();
+    void repeatChanged();
+    void resetDuration();
 
 public slots:
     void onPositionChanged();
@@ -80,6 +90,9 @@ public slots:
 
     void onPlaySong(std::shared_ptr<Song> song);
     void onSongLoaded(std::shared_ptr<Song> song);
+    void onRepeatChanged(bool repeat);
+    void onPositionLoaded(qint64 position);
+    void onRemoveCurrentPlaying(QString &filePath);
     void setVolume(float newVolume);
     void setPosition(qint64 newPosition);
 
@@ -106,8 +119,12 @@ private:
     float m_volume;
     qint64 m_position;
     qint64 m_duration;
+    qint64 posFromFile;
+
+    bool firstSong = true;
 
 
+    bool m_repeat;
 };
 
 #endif // MEDIAPLAYERCONTROLLER_H

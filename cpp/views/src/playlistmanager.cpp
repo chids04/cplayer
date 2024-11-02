@@ -78,7 +78,6 @@ void PlaylistManager::addSongToPlaylist(int id, std::shared_ptr<Song> song)
     std::shared_ptr<Playlist> playlist = playlistObj.value<std::shared_ptr<Playlist>>();
 
     playlist->addSong(song->id);
-    qDebug() << playlist->getSongIDs();
 }
 
 bool PlaylistManager::hasCover() const

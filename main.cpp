@@ -28,7 +28,6 @@ int main(int argc, char *argv[])
     //for now i just get list of folders and re-scan the directory
 
     QGuiApplication app(argc, argv);
-    qDebug() << "testing output";
 
     QCoreApplication::setOrganizationName("tecstars");
     QCoreApplication::setApplicationName("cplayer");

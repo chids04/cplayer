@@ -43,10 +43,13 @@ public:
     QStringList getSongFeatures(const QString &filePath) const;
     int getSongTrackNum(const QString &filePath) const;
     QList<std::shared_ptr<Song>> getSongs();
+    void removeSong(const QString &filePath);
 
 signals:
     void decrementAlbum(QString &albumName, QStringList &albumArtists);
     void removeFromPlaylist(int songID);
+    void removeCurrentPlaying(QString &path);
+
 
 public slots:
     void onSongAdded(std::shared_ptr<Song> song);

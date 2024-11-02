@@ -34,8 +34,9 @@ MediaPlayerController::MediaPlayerController(QObject *parent)
 
     connect(&NowPlaying::instance(), &NowPlaying::playSong, this, &MediaPlayerController::onPlaySong);
     connect(&NowPlaying::instance(), &NowPlaying::jumpToEnd, this, &MediaPlayerController::onJumpToEnd);
-    connect(&NowPlaying::instance(), &NowPlaying::positionLoaded, this, &MediaPlayerController::setPosition);
+    connect(&NowPlaying::instance(), &NowPlaying::positionLoaded, this, &MediaPlayerController::onPositionLoaded);
     connect(&NowPlaying::instance(), &NowPlaying::songLoaded, this ,&MediaPlayerController::onSongLoaded);
+    connect(&NowPlaying::instance(), &NowPlaying::durationLoaded, this, &MediaPlayerController::onDurationChanged);
 
     connect(player, &QMediaPlayer::mediaStatusChanged, this, &MediaPlayerController::onMediaStatusChanged);
 
@@ -69,6 +70,15 @@ void MediaPlayerController::onMediaStatusChanged(QMediaPlayer::MediaStatus statu
             //getNext song
             nextClicked();
             break;
+
+        case QMediaPlayer::LoadedMedia:
+            //only set position if this is the first song that has been loaded
+            qDebug() << "setting pos";
+            if(firstSong){
+                player->setPosition(posFromFile);
+                firstSong = false;
+                break;
+            }
     }
 }
 
@@ -184,6 +194,10 @@ void MediaPlayerController::onSongLoaded(std::shared_ptr<Song> song)
 {
 
     player->setSource(QUrl::fromLocalFile(song->filePath));
+
+    qDebug() << "setting position to " << posFromFile;
+
+    qDebug() << "player is at position" << player->position();
     setTrackTitle(song->title);
     setLeadingArtist(song->artist);
     setFilePath(song->filePath);
@@ -193,18 +207,72 @@ void MediaPlayerController::onSongLoaded(std::shared_ptr<Song> song)
     emit coverArtChanged();
     emit leadingArtistChanged();
     emit updateUI();
+    emit positionChanged();
+
+}
+
+void MediaPlayerController::onRepeatChanged(bool repeat)
+{
+    if(repeat){
+        player->setLoops(QMediaPlayer::Infinite);
+        m_repeat = true;
+    }
+    else{
+        player->setLoops(QMediaPlayer::Once);
+        m_repeat = false;
+    }
+}
+
+void MediaPlayerController::onPositionLoaded(qint64 position)
+{
+    posFromFile = position;
+}
+
+void MediaPlayerController::onRemoveCurrentPlaying(QString &filePath)
+{
+    qDebug() << "removing from mediaPlayerController";
+    if(filePath == m_filePath){
+        player->setSource(QUrl());
+
+        QString str = " ";
+        setTrackTitle(str);
+        setLeadingArtist(str);
+        setFilePath(str);
+        setAlbum(str);
+        setFeatures(QStringList());
+        m_duration = 0;
+
+        emit coverArtChanged();
+        emit leadingArtistChanged();
+        emit updateUI();
+        emit resetDuration();
+    }
+
+
+
+
 
 }
 
 
 void MediaPlayerController::nextClicked()
 {
-    emit nextSong();
+    if(m_repeat){
+        player->setPosition(0);
+    }
+    else{
+        emit nextSong();
+    }
 }
 
 void MediaPlayerController::previousClicked()
 {
-    emit previousSong(player->position());
+    if(m_repeat){
+        player->setPosition(0);
+    }
+    else{
+        emit previousSong(player->position());
+    }
 }
 
 void MediaPlayerController::onJumpToEnd(){
@@ -256,3 +324,24 @@ QString MediaPlayerController::genTime(qint64 currentTime)
 }
 
 
+
+bool MediaPlayerController::repeat() const
+{
+    return m_repeat;
+}
+
+void MediaPlayerController::setRepeat(bool newRepeat)
+{
+    if (m_repeat == newRepeat)
+        return;
+    m_repeat = newRepeat;
+    emit repeatChanged();
+}
+
+void MediaPlayerController::onDurationChanged(qint64 newDuration)
+{
+    if (m_duration == newDuration)
+        return;
+    m_duration = newDuration;
+    emit durationChanged();
+}

@@ -16,6 +16,7 @@ SettingsManager::SettingsManager(QObject *parent)
 {
     connect(this ,&SettingsManager::songLoaded, &SongListModel::instance(), &SongListModel::onSongAdded);
     connect(this, &SettingsManager::songLoaded, &AlbumListModel::instance(), &AlbumListModel::updateAlbum);
+    connect(this, &SettingsManager::folderLoaded, &FolderListModel::instance(), &FolderListModel::onFolderLoaded);
 }
 
 SettingsManager &SettingsManager::instance()
@@ -26,8 +27,9 @@ SettingsManager &SettingsManager::instance()
 
 void SettingsManager::setup()
 {
-    readFolders();
     readSongs();
+    readFileFolderMap();
+    readFolders();
     readPlaylists();
     CoverArtHolder::instance().loadFromSettings();
     NowPlaying::instance().loadFromSettings();
@@ -74,7 +76,10 @@ void SettingsManager::readFolders()
     QList<Folder> folders = settings.value("foldersToScan").value<QList<Folder>>();
 
     for(const Folder &folder : folders){
-        FolderListModel::instance().addFolder(folder);
+        //change herex
+        emit folderLoaded(folder);
+
+        //add logic to recheck folders on login to make sure files still there
         //FolderView::instance().startFolderScanningThread(QUrl::fromLocalFile(folder.getFolderPath()), true);
     }
 
@@ -108,10 +113,44 @@ void SettingsManager::readPlaylists()
     PlaylistModel::instance().loadPlaylists(playlistPtrs);
 }
 
-void SettingsManager::removeFolder(QString &folderPath)
+void SettingsManager::readFileFolderMap()
 {
     QSettings settings;
+    settings.beginGroup("folderFileMap");
+
+    QHash<QString, QStringList> folderFileMap;
+
+
+
+    // Iterate through all keys (folder paths) in the settings group
+    QStringList folderHashes = settings.childKeys();
+
+    qDebug() << "folder file map keys" << folderHashes;
+
+    for (const QString &folderHash : folderHashes) {
+        QString folderPath = settings.value(folderHash + "_path").toString();
+        QString fileListString = settings.value(folderHash).toString();
+
+        // Split the stored string back into a list of files
+        QStringList files = fileListString.split("%10", Qt::SkipEmptyParts);
+
+        // Store in the QHash
+        folderFileMap.insert(folderPath, files);
+    }
+
+
+    FolderView::instance().setFolderDirHash(folderFileMap);
+    settings.endGroup();
+
+}
+
+void SettingsManager::removeFolder(QString &folderPath)
+{
+    //need to remove the entry in hashmap too in folderview.cpp
+    QSettings settings;
     settings.sync(); //committing all changes
+
+    //FolderView::instance().removeFolderFromMap(folderPath);
 
     QList<Folder> folders = settings.value("foldersToScan").value<QList<Folder>>();
 
@@ -125,14 +164,20 @@ void SettingsManager::removeFolder(QString &folderPath)
 
 }
 
+QHash<QString, QStringList> SettingsManager::getFolderFileMap()
+{
+    return loadedFileFolderMap;
+}
+
 void SettingsManager::saveNowPlaying()
 {
     //only need to store song id
     QList<std::shared_ptr<Song>> nowPlaying = NowPlaying::instance().getNowPlaying();
     int currentIndex = NowPlaying::instance().getCurrentIndex();
 
-    qDebug() << currentIndex << "song len" << nowPlaying.length();
     qint64 position = MediaPlayerController::instance().position();
+    qDebug() << "position saved to file" << position;
+    qint64 duration = MediaPlayerController::instance().duration();
 
     QList<int> idList;
 
@@ -144,6 +189,7 @@ void SettingsManager::saveNowPlaying()
     settings.setValue("nowPlayingList", QVariant::fromValue(idList));
     settings.setValue("nowPlayingCurrentIndex", currentIndex);
     settings.setValue("nowPlayingSongPosition", QVariant::fromValue(position));
+    settings.setValue("nowPlayingSongDuration", duration);
 }
 
 void SettingsManager::saveFolders()
@@ -200,6 +246,38 @@ void SettingsManager::savePlaylists()
     settings.setValue("playlists", QVariant::fromValue(playlistObj));
 }
 
+void SettingsManager::saveFileFolderMap()
+{
+    QSettings settings;
+
+    settings.remove("folderFileMap");
+
+    settings.sync();
+
+    settings.beginGroup("folderFileMap");
+
+    QHash<QString, QStringList> folderFileMap = FolderView::instance().getFolderFileMap();
+
+    for (auto it = folderFileMap.begin(); it != folderFileMap.end(); ++it) {
+        QString folderPath = it.key();
+        QStringList files = it.value();
+
+        QString fileListString = files.join("%10");
+        QString key = QString::number(qHash(folderPath));
+        qDebug() << "writing folder" << folderPath << "to file";
+
+        //keys in qsettings cannot contain forward or backslahes so will store hash
+
+        // Join files into a single comma-separated string
+
+        // Save the folder path and corresponding file list
+        settings.setValue(key, fileListString);
+        settings.setValue(key + "_path", folderPath);
+    }
+
+    settings.endGroup();
+}
+
 
 
 void SettingsManager::shutDown()
@@ -207,6 +285,7 @@ void SettingsManager::shutDown()
     saveNowPlaying();
     saveSongs();
     saveCoverArts();
+    saveFileFolderMap();
     saveFolders();
     savePlaylists();
 }

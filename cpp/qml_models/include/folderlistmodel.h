@@ -30,8 +30,12 @@ public:
     bool folderExists(QUrl &folderPath);
     void clear();
 
+public slots:
+    void onFolderLoaded(Folder folder);
+
 private:
     QList<Folder> m_folders;
+
 };
 
 #endif // FOLDERLISTMODEL_H

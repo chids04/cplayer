@@ -26,14 +26,12 @@ void PlaylistFilter::setFilterList(const QList<int> &newFilterList)
     m_filterList = newFilterList;
     invalidate();
     emit filterListChanged();
-    qDebug() << "filter set";
 }
 
 bool PlaylistFilter::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
     QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
     int songID = sourceModel()->data(index, SongListModel::SongObjectRole).value<std::shared_ptr<Song>>()->id;
-    qDebug() << songID << m_filterList;
     if(m_filterList.contains(songID)){
         return true;
     }

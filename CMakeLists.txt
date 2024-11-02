@@ -82,6 +82,9 @@ qt_add_qml_module(appcplayer
         cpp/cpp_models/include/folder.h
         cpp/cpp_models/src/folder.cpp
 
+        cpp/cpp_models/include/songaddthread.h
+        cpp/cpp_models/src/songaddthread.cpp
+
     #C++ Playback Control
     SOURCES
         cpp/playback/include/mediaplayercontroller.h
@@ -157,7 +160,6 @@ qt_add_qml_module(appcplayer
 
         cpp/utility/include/utilitysingleton.h
         cpp/utility/src/utilitysingleton.cpp
-
 )
 
 

@@ -4,6 +4,7 @@
 #include <memory>
 
 #include <QObject>
+#include <QHash>
 
 #include "folder.h"
 #include "song.h"
@@ -22,7 +23,9 @@ public:
     void readFolders();
     void readSongs();
     void readPlaylists();
+    void readFileFolderMap();
     void removeFolder(QString &folderPath);
+    QHash<QString,QStringList> getFolderFileMap();
 
     void saveNowPlaying();
     void saveFolders();
@@ -30,13 +33,17 @@ public:
     void saveCoverArts();
     void saveAlbums();
     void savePlaylists();
+    void saveFileFolderMap();
 
 public slots:
     void shutDown();
 
 signals:
     void songLoaded(std::shared_ptr<Song>);
+    void folderLoaded(Folder folder);
 
+private:
+    QHash<QString, QStringList> loadedFileFolderMap;
 
 };
 

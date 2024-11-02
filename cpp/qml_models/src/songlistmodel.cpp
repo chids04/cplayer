@@ -5,10 +5,12 @@
 #include "folderview.h"
 #include "albumlistmodel.h"
 #include "playlistmodel.h"
+#include "mediaplayercontroller.h"
 
 SongListModel::SongListModel(QObject *parent) : QAbstractListModel(parent) {
     connect(this, &SongListModel::decrementAlbum, &AlbumListModel::instance(), &AlbumListModel::decrementAlbum);
     connect(this, &SongListModel::removeFromPlaylist, &PlaylistModel::instance(), &PlaylistModel::removeSongs);
+    connect(this, &SongListModel::removeCurrentPlaying, &MediaPlayerController::instance(), &MediaPlayerController::onRemoveCurrentPlaying);
 }
 
 SongListModel &SongListModel::instance()
@@ -159,6 +161,23 @@ QList<std::shared_ptr<Song> > SongListModel::getSongs()
     return m_songs;
 }
 
+void SongListModel::removeSong(const QString &filePath)
+{
+    for(int i=m_songs.size() - 1; i>= 0; --i){
+        if(m_songs[i]->filePath == filePath){
+            emit decrementAlbum(m_songs[i]->album, m_songs[i]->albumArtists);
+            emit removeFromPlaylist(m_songs[i]->id);
+            emit removeCurrentPlaying(m_songs[i]->filePath);
+
+            beginRemoveRows(QModelIndex(), i, i);
+            m_songs.removeAt(i);
+            endRemoveRows();
+
+            return;
+        }
+    }
+}
+
 void SongListModel::removeFolderSongs(QString &folderPath)
 {
     QString songPath;
@@ -168,6 +187,7 @@ void SongListModel::removeFolderSongs(QString &folderPath)
         if (songPath.contains(folderPath, Qt::CaseSensitive)) {
             emit decrementAlbum(m_songs[i]->album, m_songs[i]->albumArtists);
             emit removeFromPlaylist(m_songs[i]->id);
+            emit removeCurrentPlaying(m_songs[i]->filePath);
 
             beginRemoveRows(QModelIndex(), i, i);
             m_songs.removeAt(i);  // Remove song if its path contains the folderPath

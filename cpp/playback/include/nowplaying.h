@@ -22,6 +22,7 @@ public:
 signals:
     void playSong(std::shared_ptr<Song> song);
     void positionLoaded(qint64 position);
+    void durationLoaded(qint64 duration);
     void songLoaded(std::shared_ptr<Song>);
     void jumpToEnd();
 
