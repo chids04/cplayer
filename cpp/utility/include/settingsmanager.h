@@ -24,6 +24,7 @@ public:
     void readSongs();
     void readPlaylists();
     void readFileFolderMap();
+    void readPlaylistCovers();
     void removeFolder(QString &folderPath);
     QHash<QString,QStringList> getFolderFileMap();
 
@@ -34,6 +35,7 @@ public:
     void saveAlbums();
     void savePlaylists();
     void saveFileFolderMap();
+    void savePlaylistCovers();
 
 public slots:
     void shutDown();

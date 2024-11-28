@@ -11,12 +11,12 @@ Item {
     ColumnLayout{
         anchors.fill: parent
 
-        Rectangle{
+        Item{
             id: playlistInfo
             Layout.preferredHeight: parent.height * 0.3
             Layout.fillWidth: true
+            Layout.topMargin: 10
 
-            color: "transparent"
             clip: true
 
 
@@ -29,7 +29,7 @@ Item {
                     Layout.preferredHeight: parent.height - 10
                     Layout.preferredWidth: parent.height - 10
 
-                    source: ViewController.playlistSongsView.hasCover ? "img://coverArt" + ViewController.playlistsSongsView.playlistName + "/" + ViewController.playlistSongsView.playlistID : "qrc:/resource/ui/assets/unknownCover.png"
+                    source: MusicHandler.playlistManager.hasCover ? "image://playlistCovers" + "/" +MusicHandler.playlistManager.playlistID : "qrc:/resource/ui/assets/unknownCover.png"
                     sourceSize.width: parent.height - 10
                     sourceSize.height: parent.height - 10
 

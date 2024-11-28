@@ -12,6 +12,8 @@ import "../.."
 
 Item {
     id: playlistsView
+    property bool hasCover
+
 
     ColumnLayout{
         anchors.fill: parent
@@ -102,10 +104,21 @@ Item {
                     //anchors.fill: parent
 
                     Image{
+                        id: playlistImg
                         source: "qrc:/resource/ui/assets/unknownCover.png"
                         Layout.preferredHeight: 300
                         Layout.preferredWidth: 300
                         Layout.alignment: Qt.AlignHCenter
+                        Layout.bottomMargin: 10
+                    }
+
+                    CButton {
+                        buttonText: "Add Image"
+                        Layout.alignment: Qt.AlignHCenter
+
+                        onButtonClicked: {
+                            imageFileDialog.open()
+                        }
                     }
 
                     TextField {
@@ -140,15 +153,21 @@ Item {
                             }
                             else{
                                 //PlaylistView.addPlaylist(inputField.text)
-                                MusicHandler.playlistManager.addPlaylist(inputField.text)
-                                popUp.close()
+                                if(hasCover){
+                                    MusicHandler.playlistManager.addPlaylist(inputField.text, playlistImg.source, true)
+                                    popUp.close()
+                                }
+                                else{
+                                    MusicHandler.playlistManager.addPlaylist(inputField.text)
+                                    popUp.close()
+                                }
+
                             }
                         }
                     }
                 }
 
 
-                // Blurring the main window when the pop-up is open
             }
 
         }
@@ -174,6 +193,11 @@ Item {
                 }
             }
 
+
+            PlaylistContextMenu{
+                id: playlistContextMenu
+            }
+
             GridView {
                 id: gridView
                 anchors.fill: parent
@@ -197,6 +221,7 @@ Item {
                         MouseArea {
                             anchors.fill: parent
                             hoverEnabled: true
+                            acceptedButtons: Qt.LeftButton | Qt.RightButton
 
                             onEntered: {
                                 playlistCard.color = "#0b0b0b"
@@ -216,6 +241,13 @@ Item {
                                 ViewController.selectPlaylist()
                             }
 
+                            onClicked: mouse => {
+                                if(mouse.button === Qt.RightButton){
+                                    playlistContextMenu.openContextMenu(playlistID)
+                                }
+                            }
+
+
                         }
 
                         ColumnLayout{
@@ -224,7 +256,7 @@ Item {
                             anchors.bottomMargin: 5
 
                             Image {
-                                source: playlistHasCover ? "img://coverArt" + playlistName + "/" + playlistID : "qrc:/resource/ui/assets/unknownCover.png"
+                                source: playlistHasCover ? "image://playlistCovers" + "/" + playlistID : "qrc:/resource/ui/assets/unknownCover.png"
                                 sourceSize.width: playlistCard.width - 100
                                 sourceSize.height: playlistCard.width - 100
                                 Layout.alignment: Qt.AlignHCenter
@@ -258,6 +290,17 @@ Item {
             }
         }
 
+    }
+
+    FileDialog{
+        id: imageFileDialog
+        title: "Select Playlist Cover Image"
+        nameFilters: ["Image files (*.png *.jpg *.jpeg *.bmp)"]
+
+        onAccepted: {
+            playlistImg.source = selectedFile
+            hasCover = true
+        }
     }
 
 }

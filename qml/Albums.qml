@@ -16,12 +16,13 @@ Item {
         interval: 200
         repeat: false
         onTriggered: {
-            itemWidth = Math.max(gridView.width / maxColumns, gridView.width / minColumns)
-            gridView.cellWidth = itemWidth
-            gridView.cellHeight = itemWidth
+            albumWindow.itemWidth = Math.max(gridView.width / albumWindow.maxColumns, gridView.width / albumWindow.minColumns)
+            gridView.cellWidth = albumWindow.itemWidth
+            gridView.cellHeight = albumWindow.itemWidth
 
         }
     }
+
 
     ColumnLayout {
         anchors.fill: parent
@@ -62,8 +63,8 @@ Item {
             Layout.fillHeight: true
             Layout.fillWidth: true
 
-            cellWidth: itemWidth
-            cellHeight: itemWidth
+            cellWidth: albumWindow.itemWidth
+            cellHeight: albumWindow.itemWidth
             clip: true
 
 

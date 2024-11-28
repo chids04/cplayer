@@ -12,12 +12,12 @@ Item {
         anchors.fill: parent
         spacing: 0
 
-        Rectangle{
+        Item{
             id: albumInfo
             Layout.preferredHeight: parent.height * 0.3
             Layout.fillWidth: true
+            Layout.topMargin: 10
 
-            color: "transparent"
             clip: true
 
 

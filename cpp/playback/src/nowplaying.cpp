@@ -2,7 +2,6 @@
 
 #include "albumlistmodel.h"
 #include "songlistmodel.h"
-#include "mediaplayercontroller.h"
 
 #include <iostream>
 
@@ -107,13 +106,16 @@ void NowPlaying::playPlaylist(Playlist playlist, bool queue)
     if(songIDs.count() == 0){
         return;
     }
+
     QList<std::shared_ptr<Song>> songs = SongListModel::instance().getSongs();
+    QList<std::shared_ptr<Song>> toQueue;
 
     int insertIndex = currentIndex + 1;
     int numSongs = songQueue.count();
 
     for(const auto &song: songs){
         if(songIDs.contains(song->id)){
+            toQueue.append(song);
             if(queue){
                 songQueue.append(song);
             }
@@ -127,6 +129,7 @@ void NowPlaying::playPlaylist(Playlist playlist, bool queue)
         }
     }
 
+
     if(!queue){
         currentIndex++;
         emit playSong(songQueue[currentIndex]);
@@ -134,6 +137,18 @@ void NowPlaying::playPlaylist(Playlist playlist, bool queue)
     else if(numSongs == 0){
         emit playSong(songQueue[currentIndex]);
     }
+
+
+    //new implementation
+//    Queue newQueue(playlist.getPlaylistName(), toQueue);
+//    if(queue){
+//        m_queues.append(newQueue);
+//    }
+//    else{
+//        m_queues.insert(1, newQueue);
+
+//    }
+
 }
 
 void NowPlaying::onPreviousClicked(int duration)

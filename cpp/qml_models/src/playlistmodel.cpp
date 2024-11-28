@@ -18,6 +18,18 @@ void PlaylistModel::addPlaylist(std::shared_ptr<Playlist> playlist)
 
 }
 
+void PlaylistModel::removePlaylist(int playlistID)
+{
+    for (int row = 0; row < m_playlists.count(); ++row) {
+        if (m_playlists[row]->getID() == playlistID) {
+            beginRemoveRows(QModelIndex(), row, row);
+            m_playlists.removeAt(row);
+            endRemoveRows();
+            return;
+        }
+    }
+}
+
 QList<std::shared_ptr<Playlist> > PlaylistModel::getPlaylists()
 {
     return m_playlists;

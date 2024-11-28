@@ -5,6 +5,7 @@
 #include "playlist.h"
 #include "playlistmodel.h"
 #include "playlistfilter.h"
+#include "playlistimageprovider.h"
 
 PlaylistManager::PlaylistManager(QObject *parent) : QObject(parent)
 {
@@ -17,12 +18,22 @@ PlaylistManager &PlaylistManager::instance()
 }
 
 
-void PlaylistManager::addPlaylist(QString playlistName, bool hasCover)
+void PlaylistManager::addPlaylist(QString playlistName, QUrl coverPath, bool hasCover)
 {
     std::shared_ptr<Playlist> playlist = std::make_shared<Playlist>(playlistNum, playlistName, hasCover);
     PlaylistModel::instance().addPlaylist(playlist);
 
+    if(hasCover){
+        PlaylistImageProvider::instance().addCover(playlistNum, coverPath.toLocalFile());
+    }
+
     playlistNum++;
+}
+
+void PlaylistManager::removePlaylist(int playlistID)
+{
+    PlaylistModel::instance().removePlaylist(playlistID);
+    PlaylistImageProvider::instance().removeCover(playlistID);
 }
 
 void PlaylistManager::loadPlaylistSongs(int id)
@@ -110,6 +121,16 @@ void PlaylistManager::savePlaylists()
 {
     QSettings settings;
 
+}
+
+int PlaylistManager::getPlaylistNum()
+{
+    return playlistNum;
+}
+
+void PlaylistManager::loadPlaylistNum(int num)
+{
+    playlistNum = num;
 }
 
 Playlist PlaylistManager::currentPlaylist() const

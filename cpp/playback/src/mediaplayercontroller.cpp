@@ -247,13 +247,7 @@ void MediaPlayerController::onRemoveCurrentPlaying(QString &filePath)
         emit updateUI();
         emit resetDuration();
     }
-
-
-
-
-
 }
-
 
 void MediaPlayerController::nextClicked()
 {

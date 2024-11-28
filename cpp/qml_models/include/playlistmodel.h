@@ -22,6 +22,7 @@ public:
     };
 
     void addPlaylist(std::shared_ptr<Playlist>);
+    void removePlaylist(int playlistID);
     void clear();
     QList<std::shared_ptr<Playlist>> getPlaylists();
     void loadPlaylists(QList<std::shared_ptr<Playlist>> playlists);

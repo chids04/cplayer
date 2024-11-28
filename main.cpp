@@ -19,6 +19,7 @@
 #include "viewcontroller.h"
 #include "utilitysingleton.h"
 #include "playlistfilter.h"
+#include "playlistimageprovider.h"
 
 #include <QDebug>
 
@@ -73,7 +74,9 @@ int main(int argc, char *argv[])
     utilitySingleton->setSettingsManager(&SettingsManager::instance());
 
     MediaImageProvider *mediaImageProvider = new MediaImageProvider;
+
     engine.addImageProvider(QLatin1String("coverArt"), mediaImageProvider);
+    engine.addImageProvider(QLatin1String("playlistCovers"), &PlaylistImageProvider::instance());
 
     if(SettingsManager::instance().hasFolder()){
         SettingsManager::instance().setup();

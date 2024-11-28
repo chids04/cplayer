@@ -1,10 +1,12 @@
 #ifndef NOWPLAYING_H
 #define NOWPLAYING_H
 
-#include <QObject>
-
 #include "song.h"
+#include "queue.h"
+
 #include "playlist.h"
+
+#include <QObject>
 
 class NowPlaying : public QObject
 {
@@ -16,7 +18,6 @@ public:
 
     QList<std::shared_ptr<Song>> getNowPlaying();
     int getCurrentIndex();
-
     void loadFromSettings();
 
 signals:
@@ -36,8 +37,12 @@ public slots:
     void playNow(std::shared_ptr<Song> song);
 
 private:
+    QList<Queue> m_queues;
     QList<std::shared_ptr<Song>> songQueue;
     int currentIndex = 0;
+
+    int currentQueueIndex;
+
 
 };
 

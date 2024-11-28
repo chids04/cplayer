@@ -35,12 +35,15 @@ public:
     int playlistID() const;
     void setPlaylistID(int newPlaylistID);
     void savePlaylists();
+    int getPlaylistNum();
+    void loadPlaylistNum(int num);
 
     Playlist currentPlaylist() const;
     void setCurrentPlaylist(const Playlist &newCurrentPlaylist);
 
 public slots:
-    void addPlaylist(QString playlistName, bool hasCover = false);
+    void addPlaylist(QString playlistName, QUrl coverPath = QUrl(), bool hasCover = false);
+    void removePlaylist(int playlistID);
     void loadPlaylistSongs(int id);
     void setPlaylistName(const QString &newPlaylistName);
     void addSongToPlaylist(int id, std::shared_ptr<Song> song);

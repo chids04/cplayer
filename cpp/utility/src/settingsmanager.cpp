@@ -9,6 +9,8 @@
 #include "albumlistmodel.h"
 #include "mediaplayercontroller.h"
 #include "playlistmodel.h"
+#include "playlistmanager.h"
+#include "playlistimageprovider.h"
 
 #include <QDebug>
 
@@ -32,6 +34,7 @@ void SettingsManager::setup()
     readFolders();
     readPlaylists();
     CoverArtHolder::instance().loadFromSettings();
+    PlaylistImageProvider::instance().loadCovers();
     NowPlaying::instance().loadFromSettings();
 }
 
@@ -102,6 +105,7 @@ void SettingsManager::readPlaylists()
 {
     QSettings settings;
     QList<Playlist> loadedPlaylists = settings.value("playlists").value<QList<Playlist>>();
+    int playlistNum = settings.value("playlistNum", 0).toInt();
 
     QList<std::shared_ptr<Playlist>> playlistPtrs;
 
@@ -111,6 +115,7 @@ void SettingsManager::readPlaylists()
     }
 
     PlaylistModel::instance().loadPlaylists(playlistPtrs);
+    PlaylistManager::instance().loadPlaylistNum(playlistNum);
 }
 
 void SettingsManager::readFileFolderMap()
@@ -141,6 +146,14 @@ void SettingsManager::readFileFolderMap()
 
     FolderView::instance().setFolderDirHash(folderFileMap);
     settings.endGroup();
+
+}
+
+void SettingsManager::readPlaylistCovers()
+{
+    QSettings settings;
+    settings.beginGroup("playlistCovers");
+
 
 }
 
@@ -235,8 +248,10 @@ void SettingsManager::saveCoverArts()
 
 void SettingsManager::savePlaylists()
 {
+    //saves playlists and the playlistNum, since playlistNum is used as the id, this prevents duplicate playlists ids;
     QSettings settings;
     QList<std::shared_ptr<Playlist>> playlists = PlaylistModel::instance().getPlaylists();
+    int playlistNum = PlaylistManager::instance().getPlaylistNum();
     QList<Playlist> playlistObj;
 
     for(const auto &playlist : playlists){
@@ -244,16 +259,16 @@ void SettingsManager::savePlaylists()
     }
 
     settings.setValue("playlists", QVariant::fromValue(playlistObj));
+    settings.setValue("playlistNum", playlistNum);
 }
 
 void SettingsManager::saveFileFolderMap()
 {
     QSettings settings;
 
+    //remove the current info since the saved folders may have been removed in main program
     settings.remove("folderFileMap");
-
     settings.sync();
-
     settings.beginGroup("folderFileMap");
 
     QHash<QString, QStringList> folderFileMap = FolderView::instance().getFolderFileMap();
@@ -278,6 +293,25 @@ void SettingsManager::saveFileFolderMap()
     settings.endGroup();
 }
 
+void SettingsManager::savePlaylistCovers()
+{
+    QSettings settings;
+    settings.remove("playlistCovers");
+    settings.sync();
+    settings.beginGroup("playlistCovers");
+
+    QHash<int, QPixmap> playlistCovers = PlaylistImageProvider::instance().getCovers();
+
+    for(auto it = playlistCovers.begin(); it != playlistCovers.end(); ++it){
+        int coverKey = it.key();
+        QPixmap coverArt = it.value();
+
+        settings.setValue(QString::number(coverKey), coverArt);
+    }
+
+    settings.endGroup();
+}
+
 
 
 void SettingsManager::shutDown()
@@ -288,6 +322,7 @@ void SettingsManager::shutDown()
     saveFileFolderMap();
     saveFolders();
     savePlaylists();
+    savePlaylistCovers();
 }
 
 

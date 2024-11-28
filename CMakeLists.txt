@@ -5,7 +5,7 @@ project(cplayer VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt6 6.7 REQUIRED COMPONENTS Multimedia Quick Widgets Core)
+find_package(Qt6 6.8 REQUIRED COMPONENTS Multimedia Quick Widgets Core)
 # find_package(TagLib 2.0.1 REQUIRED)
 
 
@@ -61,6 +61,7 @@ qt_add_qml_module(appcplayer
         qml/components/SongContextMenu.qml
         qml/components/FolderDelegate.qml
         qml/components/FolderDelPopUp.qml
+        qml/components/PlaylistContextMenu.qml
 
     #C++ Models
     SOURCES
@@ -93,10 +94,16 @@ qt_add_qml_module(appcplayer
         cpp/playback/include/nowplaying.h
         cpp/playback/src/nowplaying.cpp
 
+        cpp/playback/include/queue.h
+        cpp/playback/src/queue.cpp
+
     #C++ Image Providers
     SOURCES
         cpp/image_providers/include/mediaimageprovider.h
         cpp/image_providers/src/mediaimageprovider.cpp
+
+        cpp/image_providers/include/playlistimageprovider.h
+        cpp/image_providers/src/playlistimageprovider.cpp
 
     #C++ QML Models
     SOURCES
