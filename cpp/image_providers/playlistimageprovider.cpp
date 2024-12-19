@@ -3,6 +3,7 @@
 #include <QSettings>
 #include <QPixmap>
 #include <QString>
+#include <QGlobalStatic>
 
 PlaylistImageProvider::PlaylistImageProvider() : QQuickImageProvider(QQuickImageProvider::Pixmap)
 {}
@@ -10,8 +11,8 @@ PlaylistImageProvider::PlaylistImageProvider() : QQuickImageProvider(QQuickImage
 PlaylistImageProvider &PlaylistImageProvider::instance()
 {
     static PlaylistImageProvider playlistImageProvider;
-
     return playlistImageProvider;
+
 }
 
 QPixmap PlaylistImageProvider::requestPixmap(const QString &id, QSize *size, const QSize &requestedSize)

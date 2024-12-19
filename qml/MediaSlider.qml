@@ -1,9 +1,14 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls.Basic
 import QtQuick.Effects
 
 import cplayer
+
+import "./components"
+
+
 
 Item{
     Layout.fillWidth: true
@@ -33,6 +38,7 @@ Item{
 
             anchors.fill: parent
 
+            //SONG IMAGE AND COVER ART
             Rectangle{
                 id: mediaInfo
                 color: "transparent"
@@ -112,6 +118,7 @@ Item{
 
             }
 
+            //SONG CONTROLS
             Rectangle{
                 id: mediaControls
                 color: "transparent"
@@ -180,8 +187,6 @@ Item{
 
                             }
                     }
-
-
 
                         Item{
                             Layout.fillWidth: true
@@ -476,6 +481,7 @@ Item{
                 }
             }
 
+            //VOLUME ADJUSTMENT, NOW PLAYING AND AUDIO DEVICE SELECTION
             Rectangle{
                 id: extraControls
                 color: "transparent"
@@ -488,6 +494,179 @@ Item{
                     anchors.centerIn: parent
                     color:"transparent"
 
+
+                    Popup{
+                        id: popup
+                        x: volumeStatus.x-100
+                        y: -100
+                        width: 215
+                        height: 100
+                        padding: 0
+                        contentItem: Rectangle{
+
+                            id: audioDevices
+                            width: 200
+                            height: 100
+                            //x: volumeStatus.x-100
+                            //y: -100
+                            //visible: false
+
+                            color: "#303132"
+                            border.color: "#6e7173"
+                            border.width: 2
+
+                            Text{
+                                id: selectAudioText
+                                anchors.top: parent.top
+                                anchors.topMargin: 5
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                text: "Select Audio Device"
+                                font.bold: true
+                                font.pointSize: 16
+                                color: "white"
+                            }
+
+                            Rectangle{
+                                id: seperator
+                                height: 1
+                                border.color: "white"
+                                border.width: 1
+                                anchors.top: selectAudioText.bottom
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+
+                                anchors.topMargin: 5
+                                anchors.bottomMargin: 5
+                                anchors.leftMargin: 10
+                                anchors.rightMargin: 10
+                            }
+
+                            ListView {
+                                id: audioDeviceList
+                                anchors.top: seperator.bottom
+                                anchors.bottom: parent.bottom
+                                anchors.bottomMargin: 3
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                anchors.leftMargin: 5
+                                anchors.topMargin: 5
+
+                                model: MusicHandler.mediaPlayerController.audioDeviceModel
+                                clip: true
+
+                                ScrollBar.vertical: ScrollBar {
+                                    id:optionScrollbar
+                                    policy: ScrollBar.AlwaysOn
+
+                                    width: 10
+
+                                    contentItem: Rectangle {
+                                        implicitWidth: 10
+                                        radius: 3
+                                        color: "#2e2e2e"
+                                    }
+
+                                    background: Rectangle {
+                                        implicitWidth: 10
+                                        color: "#7a7a7a"
+                                        radius: 3
+                                    }
+                                }
+
+                                delegate: Rectangle {
+                                    id: deviceDelegate
+                                    width: audioDeviceList.width - 14
+                                    height: 20
+
+                                    required property string deviceName
+                                    required property int index
+                                    required property bool isSelected
+
+                                    color: isSelected ? "#6e7173" : "transparent"
+
+
+                                    Text{
+                                        text: deviceDelegate.deviceName
+                                        color: "white"
+                                        width: deviceDelegate.width
+                                        elide: Text.ElideRight
+                                        anchors.leftMargin: 4
+                                    }
+
+    //                                TapHandler{
+    //                                    gesturePolicy: TapHandler.ReleaseWithinBounds
+    //                                    onTapped: MusicHandler.mediaPlayerController.audioDeviceModel.selectDevice(deviceDelegate.index)
+    //                                }
+
+                                    MouseArea{
+                                        anchors.fill: parent
+                                        onClicked: MusicHandler.mediaPlayerController.audioDeviceModel.selectDevice(deviceDelegate.index)
+
+                                        onPressedChanged: {
+                                            if(pressed){
+                                                deviceDelegate.scale = 0.7
+                                            }
+                                            else{
+                                                deviceDelegate.scale = 1
+                                            }
+                                        }
+
+                                    }
+
+                                    Behavior on scale {
+                                        NumberAnimation {
+                                            duration: 200
+                                            easing.type: Easing.InOutQuad
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Image{
+                        id: audioImage
+                        source: "qrc:/resource/ui/assets/audio_output.png"
+
+                        anchors{
+                            right: volumeStatus.left
+                            rightMargin: 5
+                            verticalCenter: parent.verticalCenter
+                        }
+
+                        Behavior on scale{
+                            NumberAnimation{
+                                duration: 400
+                                easing.type: Easing.OutBack
+                            }
+                        }
+
+                        MouseArea{
+                            anchors.fill: parent
+                            onClicked :{
+//                                if(audioDevices.visible == false){
+//                                    audioDevices.visible = true
+//                                }
+//                                else{
+//                                    audioDevices.visible = false
+//                                }
+                                popup.open()
+                            }
+
+                            onPressedChanged :{
+                                if(pressed){
+                                    audioImage.scale = 0.7
+                                }
+                                else{
+                                    audioImage.scale = 1.0
+                                }
+                            }
+
+
+
+                        }
+                    }
+
                     Image {
                         id: volumeStatus
                         source: volumeSlider.value === 0 ? "qrc:/resource/ui/assets/volumeMute.png" : "qrc:/resource/ui/assets/volumeLoud.png"
@@ -499,6 +678,7 @@ Item{
                             verticalCenter: parent.verticalCenter
                         }
                     }
+
 
                     Slider{
                         id: volumeSlider

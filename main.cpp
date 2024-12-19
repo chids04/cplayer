@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
     }
 
 
-    const QUrl url(QStringLiteral("qrc:/cplayer/Main.qml"));
+    const QUrl url(QStringLiteral("qrc:/qt/qml/cplayer/Main.qml"));
     QObject::connect(
         &engine,
         &QQmlApplicationEngine::objectCreationFailed,

@@ -5,7 +5,6 @@
 
 class PlaylistImageProvider : public QQuickImageProvider
 {
-
 public:
     PlaylistImageProvider();
     static PlaylistImageProvider &instance();

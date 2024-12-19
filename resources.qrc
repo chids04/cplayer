@@ -27,5 +27,6 @@
         <file>ui/assets/settingsCog.png</file>
         <file>ui/assets/x.png</file>
         <file>ui/assets/shuffle_on.png</file>
+        <file>ui/assets/audio_output.png</file>
     </qresource>
 </RCC>

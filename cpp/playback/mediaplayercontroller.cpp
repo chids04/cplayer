@@ -14,7 +14,9 @@ MediaPlayerController::MediaPlayerController(QObject *parent)
     : QObject(parent) {
     player = new QMediaPlayer;
     output = new QAudioOutput;
+    mediaDevices = new QMediaDevices;
 
+    setAudioDeviceModel(new AudioDeviceModel);
 
  //    to-do, audio device switching
 
@@ -28,6 +30,8 @@ MediaPlayerController::MediaPlayerController(QObject *parent)
 
     connect(player, &QMediaPlayer::positionChanged, this, &MediaPlayerController::onPositionChanged);
     connect(player, &QMediaPlayer::durationChanged, this, &MediaPlayerController::durationChanged);
+    connect(mediaDevices, &QMediaDevices::audioOutputsChanged, this, &MediaPlayerController::onAudioDeviceChanged);
+    connect(m_audioDeviceModel, &AudioDeviceModel::audioDeviceChanged, this, &MediaPlayerController::setAudioDevice);
     connect(this, &MediaPlayerController::playingChanged, this, &MediaPlayerController::onPlayingChanged);
     connect(this, &MediaPlayerController::nextSong, &NowPlaying::instance(), &NowPlaying::onNextClicked);
     connect(this, &MediaPlayerController::previousSong, &NowPlaying::instance(), &NowPlaying::onPreviousClicked);
@@ -79,7 +83,29 @@ void MediaPlayerController::onMediaStatusChanged(QMediaPlayer::MediaStatus statu
                 firstSong = false;
                 break;
             }
+        }
+}
+
+void MediaPlayerController::onAudioDeviceChanged(){
+    if(player->playbackState() == QMediaPlayer::PlayingState){
+        m_playing = false;
+        emit playingChanged();
+        emit updateUI();
     }
+
+    const QList<QAudioDevice> audioDevices = QMediaDevices::audioOutputs();
+
+    if(!audioDevices.isEmpty()){
+        QAudioDevice default_device = QMediaDevices::defaultAudioOutput();
+        output->setDevice(default_device);
+
+    }
+
+}
+
+void MediaPlayerController::setAudioDevice(const QAudioDevice &device)
+{
+    output->setDevice(device);
 }
 
 void MediaPlayerController::onPlayingChanged() {
@@ -103,14 +129,14 @@ QString MediaPlayerController::trackTitle() const {
     return m_trackTitle;
 }
 
-void MediaPlayerController::setTrackTitle(QString &title) {
+void MediaPlayerController::setTrackTitle(const QString &title) {
     if (m_trackTitle != title) {
         m_trackTitle = title;
         emit trackTitleChanged();
     }
 }
 
-void MediaPlayerController::setLeadingArtist(QString &leadingArtist) {
+void MediaPlayerController::setLeadingArtist(const QString &leadingArtist) {
     if (m_leadingArtist != leadingArtist) {
         m_leadingArtist = leadingArtist;
         emit leadingArtistChanged();
@@ -228,7 +254,7 @@ void MediaPlayerController::onPositionLoaded(qint64 position)
     posFromFile = position;
 }
 
-void MediaPlayerController::onRemoveCurrentPlaying(QString &filePath)
+void MediaPlayerController::onRemoveCurrentPlaying(const QString &filePath)
 {
     qDebug() << "removing from mediaPlayerController";
     if(filePath == m_filePath){
@@ -338,4 +364,17 @@ void MediaPlayerController::onDurationChanged(qint64 newDuration)
         return;
     m_duration = newDuration;
     emit durationChanged();
+}
+
+AudioDeviceModel *MediaPlayerController::audioDeviceModel() const
+{
+    return m_audioDeviceModel;
+}
+
+void MediaPlayerController::setAudioDeviceModel(AudioDeviceModel *newAudioDeviceModel)
+{
+    if (m_audioDeviceModel == newAudioDeviceModel)
+        return;
+    m_audioDeviceModel = newAudioDeviceModel;
+    emit audioDeviceModelChanged();
 }

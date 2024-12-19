@@ -28,6 +28,9 @@ add_subdirectory(3rdparty/RapidFuzz)
 
 
 qt_standard_project_setup()
+qt_policy(
+        SET QTP0001 NEW
+        SET QTP0004 NEW)
 
 qt_add_executable(appcplayer
     main.cpp
@@ -65,108 +68,113 @@ qt_add_qml_module(appcplayer
 
     #C++ Models
     SOURCES
-        cpp/cpp_models/include/album.h
-        cpp/cpp_models/src/album.cpp
+        cpp/cpp_models/album.h
+        cpp/cpp_models/album.cpp
 
-        cpp/cpp_models/include/coverartholder.h
-        cpp/cpp_models/src/coverartholder.cpp
+        cpp/cpp_models/coverartholder.h
+        cpp/cpp_models/coverartholder.cpp
 
-        cpp/cpp_models/include/musicscannerthread.h
-        cpp/cpp_models/src/musicscannerthread.cpp
+        cpp/cpp_models/musicscannerthread.h
+        cpp/cpp_models/musicscannerthread.cpp
 
-        cpp/cpp_models/include/playlist.h
-        cpp/cpp_models/src/playlist.cpp
 
-        cpp/cpp_models/include/song.h
-        cpp/cpp_models/src/song.cpp
+        cpp/cpp_models/playlist.h
+        cpp/cpp_models//playlist.cpp
 
-        cpp/cpp_models/include/folder.h
-        cpp/cpp_models/src/folder.cpp
+        cpp/cpp_models/song.h
+        cpp/cpp_models/song.cpp
 
-        cpp/cpp_models/include/songaddthread.h
-        cpp/cpp_models/src/songaddthread.cpp
+
+        cpp/cpp_models/folder.h
+        cpp/cpp_models/folder.cpp
+
+        cpp/cpp_models/songaddthread.h
+        cpp/cpp_models/songaddthread.cpp
 
     #C++ Playback Control
     SOURCES
-        cpp/playback/include/mediaplayercontroller.h
-        cpp/playback/src/mediaplayercontroller.cpp
+        cpp/playback/mediaplayercontroller.h
+        cpp/playback/mediaplayercontroller.cpp
 
-        cpp/playback/include/nowplaying.h
-        cpp/playback/src/nowplaying.cpp
+        cpp/playback/nowplaying.h
+        cpp/playback/nowplaying.cpp
 
-        cpp/playback/include/queue.h
-        cpp/playback/src/queue.cpp
+        cpp/playback/queue.h
+        cpp/playback/queue.cpp
 
     #C++ Image Providers
     SOURCES
-        cpp/image_providers/include/mediaimageprovider.h
-        cpp/image_providers/src/mediaimageprovider.cpp
+        cpp/image_providers/mediaimageprovider.h
+        cpp/image_providers/mediaimageprovider.cpp
 
-        cpp/image_providers/include/playlistimageprovider.h
-        cpp/image_providers/src/playlistimageprovider.cpp
+        cpp/image_providers/playlistimageprovider.h
+        cpp/image_providers/playlistimageprovider.cpp
 
     #C++ QML Models
     SOURCES
-        cpp/qml_models/include/albumfilterproxymodel.h
-        cpp/qml_models/src/albumfilterproxymodel.cpp
+        cpp/qml_models/albumfilterproxymodel.h
+        cpp/qml_models/albumfilterproxymodel.cpp
 
-        cpp/qml_models/include/albumlistmodel.h
-        cpp/qml_models/src/albumlistmodel.cpp
+        cpp/qml_models/albumlistmodel.h
+        cpp/qml_models/albumlistmodel.cpp
 
-        cpp/qml_models/include/songlistmodel.h
-        cpp/qml_models/src/songlistmodel.cpp
+        cpp/qml_models/songlistmodel.h
+        cpp/qml_models/songlistmodel.cpp
 
-        cpp/qml_models/include/folderlistmodel.h
-        cpp/qml_models/src/folderlistmodel.cpp
+        cpp/qml_models/folderlistmodel.h
+        cpp/qml_models/folderlistmodel.cpp
 
-        cpp/qml_models/include/playlistmodel.h
-        cpp/qml_models/src/playlistmodel.cpp
+        cpp/qml_models/playlistmodel.h
+        cpp/qml_models/playlistmodel.cpp
 
-        cpp/qml_models/include/playlistsongsmodel.h
-        cpp/qml_models/src/playlistsongsmodel.cpp
+        cpp/qml_models/playlistsongsmodel.h
+        cpp/qml_models/playlistsongsmodel.cpp
 
-        cpp/qml_models/include/songfilterproxymodel.h
-        cpp/qml_models/src/songfilterproxymodel.cpp
+        cpp/qml_models/songfilterproxymodel.h
+        cpp/qml_models/songfilterproxymodel.cpp
 
-        cpp/qml_models/include/albumsearchfilter.h
-        cpp/qml_models/src/albumsearchfilter.cpp
+        cpp/qml_models/albumsearchfilter.h
+        cpp/qml_models/albumsearchfilter.cpp
 
-        cpp/views/include/playlistmanager.h
-        cpp/views/src/playlistmanager.cpp
+        cpp/qml_models/modelhandler.h
+        cpp/qml_models/modelhandler.cpp
 
-        cpp/qml_models/include/modelhandler.h
-        cpp/qml_models/src/modelhandler.cpp
+        cpp/qml_models/musichandler.h
+        cpp/qml_models/musichandler.cpp
 
-        cpp/qml_models/include/musichandler.h
-        cpp/qml_models/src/musichandler.cpp
+        cpp/qml_models/playlistfilter.cpp
+        cpp/qml_models/playlistfilter.h
 
-        cpp/qml_models/src/playlistfilter.cpp
-        cpp/qml_models/include/playlistfilter.h
+		cpp/qml_models/audiodevicemodel.h
+		cpp/qml_models/audiodevicemodel.cpp
 
     #C++ QML View Controllers
     SOURCES
-        cpp/views/include/albumsongsview.h
-        cpp/views/include/albumview.h
-        cpp/views/include/folderview.h
-        cpp/views/include/songview.h
-        cpp/views/include/viewcontroller.h
+        cpp/views/albumsongsview.h
+        cpp/views/albumview.h
+        cpp/views/folderview.h
+        cpp/views/songview.h
+        cpp/views/viewcontroller.h
 
-        cpp/views/src/albumsongsview.cpp
-        cpp/views/src/albumview.cpp
-        cpp/views/src/folderview.cpp
-        cpp/views/src/songview.cpp
-        cpp/views/src/viewcontroller.cpp
+        cpp/views/albumsongsview.cpp
+        cpp/views/albumview.cpp
+        cpp/views/folderview.cpp
+        cpp/views/songview.cpp
+        cpp/views/viewcontroller.cpp
 
-        cpp/views/src/playlistsongsview.cpp
-        cpp/views/include/playlistsongsview.h
+        cpp/views/playlistsongsview.cpp
+        cpp/views/playlistsongsview.h
+
+        cpp/views/playlistmanager.h
+        cpp/views/playlistmanager.cpp
 
     #C++ utlities
     SOURCES
-        cpp/utility/src/settingsmanager.cpp
-        cpp/utility/include/settingsmanager.h
+        cpp/utility/settingsmanager.cpp
+        cpp/utility/settingsmanager.h
 
-        cpp/utility/include/utilitysingleton.h
-        cpp/utility/src/utilitysingleton.cpp
+        cpp/utility/utilitysingleton.h
+        cpp/utility/utilitysingleton.cpp
 )
 
 
@@ -192,14 +200,14 @@ if(WIN32)
     )
 
     #target_include_directories(appcplayer PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cpp/taglib/include ${TAGLIB_INCLUDE_DIR})
-    target_include_directories(appcplayer PRIVATE
-        ${TAGLIB_INCLUDE_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/cpp_models/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/image_providers/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/qml_models/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/views/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/playback/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/utility/include)
+#    target_include_directories(appcplayer PRIVATE
+#        ${TAGLIB_INCLUDE_DIR}
+#        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/cpp_models
+#        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/image_providers
+#        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/qml_models
+#        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/views
+#        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/playback
+#        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/utility)
 
 
 elseif(UNIX)
@@ -209,16 +217,26 @@ elseif(UNIX)
         rapidfuzz::rapidfuzz
     )
 
-    target_include_directories(appcplayer PRIVATE
-        ${TAGLIB_INCLUDE_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/cpp_models/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/image_providers/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/qml_models/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/views/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/playback/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/utility/include)
+#    target_include_directories(appcplayer PRIVATE
+#        ${TAGLIB_INCLUDE_DIR}
+#        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/cpp_models/include
+#        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/image_providers/include
+#        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/qml_models/include
+#        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/views/include
+#        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/playback/include
+#        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/utility/include)
 
 endif()
+
+target_include_directories(appcplayer PRIVATE
+        ${TAGLIB_INCLUDE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/cpp_models
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/image_providers
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/qml_models
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/views
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/playback
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/utility)
+
 
 include(GNUInstallDirs)
 install(TARGETS appcplayer

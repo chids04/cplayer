@@ -4,10 +4,13 @@
 #include <QString>
 #include <QObject>
 #include <QStringList>
+#include <QtQml/qqmlregistration.h>
+
 
 class AlbumSongsView : public QObject
 {
     Q_OBJECT
+    QML_ANONYMOUS
     Q_PROPERTY(QString albumName READ albumName WRITE setAlbumName NOTIFY albumNameChanged)
     Q_PROPERTY(QStringList albumArtists READ albumArtists WRITE setAlbumArtists NOTIFY albumArtistsChanged)
     Q_PROPERTY(QString year READ year WRITE setYear NOTIFY yearChanged)

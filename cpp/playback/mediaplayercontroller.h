@@ -8,17 +8,23 @@
 #include <QString>
 #include <QStringList>
 #include <QMediaPlayer>
+#include <QMediaDevices>
 
 #include "song.h"
+#include "audiodevicemodel.h"
+#include <QtQml/qqmlregistration.h>
 
 class MediaPlayerController : public QObject {
 
     Q_OBJECT
+    QML_UNCREATABLE("MediaPlayerController cannot be intatiated")
+    QML_ELEMENT
+
 
     Q_PROPERTY(bool playing READ playing WRITE playPause NOTIFY playingChanged)
 
-    Q_PROPERTY(QString trackTitle READ trackTitle NOTIFY trackTitleChanged)
-    Q_PROPERTY(QString leadingArtist READ leadingArtist NOTIFY leadingArtistChanged)
+    Q_PROPERTY(QString trackTitle READ trackTitle WRITE setTrackTitle NOTIFY trackTitleChanged)
+    Q_PROPERTY(QString leadingArtist READ leadingArtist WRITE setLeadingArtist NOTIFY leadingArtistChanged)
     Q_PROPERTY(QString album READ album WRITE setAlbum NOTIFY albumChanged)
     Q_PROPERTY(QStringList features READ features WRITE setFeatures NOTIFY featuresChanged)
     Q_PROPERTY(qint64 duration READ duration  WRITE onDurationChanged NOTIFY durationChanged)
@@ -26,6 +32,8 @@ class MediaPlayerController : public QObject {
     Q_PROPERTY(QString filePath READ filePath WRITE setFilePath NOTIFY filePathChanged)
     Q_PROPERTY(bool repeat READ repeat WRITE setRepeat NOTIFY repeatChanged)
     Q_PROPERTY(float volume READ volume WRITE setVolume NOTIFY volumeChanged)
+    Q_PROPERTY(AudioDeviceModel* audioDeviceModel READ audioDeviceModel WRITE setAudioDeviceModel NOTIFY audioDeviceModelChanged)
+
 
 public:
     //could use signal and slot instead of passing around object pointers
@@ -48,8 +56,8 @@ public:
 
     void playPause(bool newPlaying);
     void setAlbum(const QString &newAlbum);
-
-
+    void setTrackTitle(const QString &title);
+    void setLeadingArtist(const QString &leadingArtist);
 
     void setFeatures(const QStringList &newFeatures);
 
@@ -59,6 +67,9 @@ public:
     void setRepeat(bool newRepeat);
 
     void onDurationChanged(qint64 newDuration);
+
+    AudioDeviceModel *audioDeviceModel() const;
+    void setAudioDeviceModel(AudioDeviceModel *newAudioDeviceModel);
 
 signals:
     void leadingArtistChanged();
@@ -79,6 +90,8 @@ signals:
     void repeatChanged();
     void resetDuration();
 
+    void audioDeviceModelChanged();
+
 public slots:
     void onPositionChanged();
     void onPlayingChanged();
@@ -87,16 +100,19 @@ public slots:
     void onJumpToEnd();
     void togglePlayState();
     void onMediaStatusChanged(QMediaPlayer::MediaStatus status);
+    void onAudioDeviceChanged();
+    void setAudioDevice(const QAudioDevice &device);
 
     void onPlaySong(std::shared_ptr<Song> song);
     void onSongLoaded(std::shared_ptr<Song> song);
     void onRepeatChanged(bool repeat);
     void onPositionLoaded(qint64 position);
-    void onRemoveCurrentPlaying(QString &filePath);
+    void onRemoveCurrentPlaying(const QString &filePath);
     void setVolume(float newVolume);
     void setPosition(qint64 newPosition);
-
     QString genTime(qint64 currentTime);
+
+
 
 
 private:
@@ -109,10 +125,8 @@ private:
 
     QMediaPlayer *player;
     QAudioOutput *output;
+    QMediaDevices *mediaDevices;
 
-    void setTrackTitle(QString &title);
-    void setLeadingArtist(QString &leadingArtist);
-    void setCoverArt(QPixmap coverArt);
 
     bool m_playing = false;
     qreal currentDuration;
@@ -125,6 +139,7 @@ private:
 
 
     bool m_repeat;
+    AudioDeviceModel *m_audioDeviceModel = nullptr;
 };
 
 #endif // MEDIAPLAYERCONTROLLER_H
