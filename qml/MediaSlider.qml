@@ -242,6 +242,11 @@ Item{
                                 sourceSize.height: 40
                                 anchors.centerIn: parent
 
+                                Shortcut{
+                                    sequence: "Space"
+                                    onActivated: MusicHandler.mediaPlayerController.togglePlayState()
+                                }
+
 
                                 MouseArea {
                                     id: playBtnMA
@@ -502,6 +507,11 @@ Item{
                         width: 215
                         height: 100
                         padding: 0
+
+                        background: Item{
+
+                        }
+
                         contentItem: Rectangle{
 
                             id: audioDevices
@@ -514,6 +524,7 @@ Item{
                             color: "#303132"
                             border.color: "#6e7173"
                             border.width: 2
+                            radius: 5
 
                             Text{
                                 id: selectAudioText
@@ -584,7 +595,6 @@ Item{
 
                                     color: isSelected ? "#6e7173" : "transparent"
 
-
                                     Text{
                                         text: deviceDelegate.deviceName
                                         color: "white"
@@ -593,10 +603,6 @@ Item{
                                         anchors.leftMargin: 4
                                     }
 
-    //                                TapHandler{
-    //                                    gesturePolicy: TapHandler.ReleaseWithinBounds
-    //                                    onTapped: MusicHandler.mediaPlayerController.audioDeviceModel.selectDevice(deviceDelegate.index)
-    //                                }
 
                                     MouseArea{
                                         anchors.fill: parent
@@ -604,7 +610,7 @@ Item{
 
                                         onPressedChanged: {
                                             if(pressed){
-                                                deviceDelegate.scale = 0.7
+                                                deviceDelegate.scale = 0.95
                                             }
                                             else{
                                                 deviceDelegate.scale = 1
@@ -625,8 +631,58 @@ Item{
                     }
 
                     Image{
+                        id: nowPlayingImage
+                        source: "qrc:/resource/ui/assets/now_playing.png"
+
+                        anchors {
+                            right: audioImage.left
+                            rightMargin: 5
+                            verticalCenter: parent.verticalCenter
+                        }
+
+                        Behavior on scale{
+                            NumberAnimation{
+                                duration: 400
+                                easing.type: Easing.OutBack
+                            }
+                        }
+
+                        MouseArea{
+                            anchors.fill: parent
+                            onPressedChanged: {
+                                if(pressed){
+                                    nowPlayingImage.scale = 0.9
+                                }
+                                else{
+                                    nowPlayingImage.scale = 1
+                                }
+                            }
+
+                            onClicked: nowPlayingPopup.open()
+                        }
+
+                        Popup{
+                            id: nowPlayingPopup
+                            x: nowPlayingImage.x - 300
+                            y: nowPlayingImage.y - 500
+                            width: 300
+                            height: 400
+                            padding: 0
+                            modal: true
+                            focus: true
+
+                            background: Item{}
+                            contentItem: NowPlayingRect{}
+
+
+                        }
+                    }
+
+                    Image{
                         id: audioImage
                         source: "qrc:/resource/ui/assets/audio_output.png"
+                        sourceSize.height: 20
+                        sourceSize.width: 20
 
                         anchors{
                             right: volumeStatus.left
@@ -644,12 +700,6 @@ Item{
                         MouseArea{
                             anchors.fill: parent
                             onClicked :{
-//                                if(audioDevices.visible == false){
-//                                    audioDevices.visible = true
-//                                }
-//                                else{
-//                                    audioDevices.visible = false
-//                                }
                                 popup.open()
                             }
 

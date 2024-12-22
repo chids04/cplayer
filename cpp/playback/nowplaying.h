@@ -5,12 +5,14 @@
 #include "queue.h"
 
 #include "playlist.h"
+#include "queuemodel.h"
 
 #include <QObject>
 
 class NowPlaying : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QueueModel* queueModel READ queueModel WRITE setQueueModel NOTIFY queueModelChanged)
 
 public:
     explicit NowPlaying(QObject *parent = nullptr);
@@ -20,12 +22,17 @@ public:
     int getCurrentIndex();
     void loadFromSettings();
 
+    QueueModel *queueModel() const;
+    void setQueueModel(QueueModel *newQueueModel);
+
 signals:
     void playSong(std::shared_ptr<Song> song);
     void positionLoaded(qint64 position);
     void durationLoaded(qint64 duration);
     void songLoaded(std::shared_ptr<Song>);
     void jumpToEnd();
+
+    void queueModelChanged();
 
 public slots:
     void playAlbum(const QString &albumName, const QStringList &albumArtists, bool queue=false);
@@ -44,6 +51,7 @@ private:
     int currentQueueIndex;
 
 
+    QueueModel *m_queueModel = nullptr;
 };
 
 #endif // NOWPLAYING_H

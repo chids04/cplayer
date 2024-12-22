@@ -28,5 +28,9 @@
         <file>ui/assets/x.png</file>
         <file>ui/assets/shuffle_on.png</file>
         <file>ui/assets/audio_output.png</file>
+        <file>ui/assets/now_playing.png</file>
+    </qresource>
+    <qresource prefix="/">
+        <file>qml/components/NowPlayingRect.qml</file>
     </qresource>
 </RCC>

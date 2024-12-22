@@ -8,6 +8,7 @@
 NowPlaying::NowPlaying(QObject *parent) :
     QObject(parent)
 {
+    setQueueModel(new QueueModel);
 }
 
 NowPlaying &NowPlaying::instance()
@@ -108,6 +109,7 @@ void NowPlaying::playPlaylist(Playlist playlist, bool queue)
     }
 
     QList<std::shared_ptr<Song>> songs = SongListModel::instance().getSongs();
+    QList<std::shared_ptr<Song>> nowPlayingQueue;
     QList<std::shared_ptr<Song>> toQueue;
 
     int insertIndex = currentIndex + 1;
@@ -126,6 +128,10 @@ void NowPlaying::playPlaylist(Playlist playlist, bool queue)
                 songQueue.insert(insertIndex, song);
                 insertIndex++;
             }
+
+            nowPlayingQueue.push_back(song);
+            m_queueModel->addToQueue(nowPlayingQueue);
+
         }
     }
 
@@ -210,7 +216,15 @@ void NowPlaying::playNow(std::shared_ptr<Song> song)
 
 }
 
+QueueModel *NowPlaying::queueModel() const
+{
+    return m_queueModel;
+}
 
-
-
-
+void NowPlaying::setQueueModel(QueueModel *newQueueModel)
+{
+    if (m_queueModel == newQueueModel)
+        return;
+    m_queueModel = newQueueModel;
+    emit queueModelChanged();
+}

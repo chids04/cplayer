@@ -65,6 +65,7 @@ qt_add_qml_module(appcplayer
         qml/components/FolderDelegate.qml
         qml/components/FolderDelPopUp.qml
         qml/components/PlaylistContextMenu.qml
+		qml/components/NowPlayingRect.qml
 
     #C++ Models
     SOURCES
@@ -101,6 +102,9 @@ qt_add_qml_module(appcplayer
 
         cpp/playback/queue.h
         cpp/playback/queue.cpp
+
+		cpp/playback/queuemodel.h
+		cpp/playback/queuemodel.cpp
 
     #C++ Image Providers
     SOURCES

@@ -58,6 +58,10 @@ Item{
             pushEnter: null
             pushExit: null
 
+            Component.onCompleted:{
+                stackView.push("Songs.qml")
+            }
+
         }
     }
 }
