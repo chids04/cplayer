@@ -106,6 +106,9 @@ qt_add_qml_module(appcplayer
 		cpp/playback/queuemodel.h
 		cpp/playback/queuemodel.cpp
 
+		cpp/playback/queuemodelfilter.h
+		cpp/playback/queuemodelfilter.cpp
+
     #C++ Image Providers
     SOURCES
         cpp/image_providers/mediaimageprovider.h

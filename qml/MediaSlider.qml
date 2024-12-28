@@ -668,8 +668,6 @@ Item{
                             width: 300
                             height: 400
                             padding: 0
-                            modal: true
-                            focus: true
 
                             background: Item{}
                             contentItem: NowPlayingRect{}

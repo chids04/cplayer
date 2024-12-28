@@ -57,7 +57,6 @@ Rectangle {
             required property list<string> albumArtists
             required property list<string> features
 
-
             anchors {
                 left: parent?.left
                 right: parent?.right
@@ -173,58 +172,9 @@ Rectangle {
                                 }
                             }
                         }
-
-
-
-
-//                        Image{
-//                        	source: "image://coverArt/" + dragArea.album + "/" + dragArea.albumArtists.join('%')
-//							sourceSize.height: 60
-//							sourceSize.width: 60
-//                            Layout.preferredWidth: 60
-//                            Layout.preferredHeight: 60
-//                        }
-
-//                        ColumnLayout{
-
-//                        }
-
-
                     }
-
-//                    Image{
-//                        source: "image://coverArt/" + dragArea.album + "/" + dragArea.albumArtists.join('%')
-//                        sourceSize.height: 60
-//                        sourceSize.width: 60
-//                        anchors.left: parent.left
-//                        anchors.verticalCenter: parent.verticalCenter
-//                    }
-
-//                    Item{
-//                        anchors.verticalCenter: parent.verticalCenter
-//                        anchors.horizontalCenter: parent.horizontalCenter
-//                        width: 100
-//                        height: 100
-
-//                        Text{
-//                            id: songTitle
-//                            text: dragArea.title
-//                            anchors.centerIn: parent
-//                        }
-
-//                        Text{
-//                            id: songArtist
-//                            text: dragArea.artist
-//                            anchors.top: songTitle.bottom
-//                            anchors.horizontalCenter: parent.horizontalCenter
-//                        }
-
-//                    }
                 }
-
-//![2]
             }
-//![3]
             DropArea {
                 anchors {
                     fill: parent
@@ -232,22 +182,24 @@ Rectangle {
                 }
 
                 onEntered: (drag) => {
-                    visualModel.items.move(
-                            drag.source.DelegateModel.itemsIndex,
-                            dragArea.DelegateModel.itemsIndex)
+                    let src_index = drag.source.DelegateModel.itemsIndex
+                    let target_index = dragArea.DelegateModel.itemsIndex
+                    visualModel.items.move(src_index, target_index)
+
+                    MusicHandler.nowPlaying.moveSong(src_index, target_index)
+
+
 
                 }
             }
-//![3]
         }
     }
-//![2]
-//![4]
     DelegateModel {
         id: visualModel
 
         model: MusicHandler.nowPlaying.queueModel
         delegate: dragDelegate
+
     }
 
     ListView {
@@ -266,7 +218,6 @@ Rectangle {
         model: visualModel
 
         spacing: 4
-        cacheBuffer: 50
         clip: true
 
         ScrollBar.vertical: ScrollBar {
@@ -288,7 +239,4 @@ Rectangle {
             }
         }
     }
-//![4]
-//![5]
 }
-//![5]

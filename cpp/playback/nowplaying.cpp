@@ -3,12 +3,13 @@
 #include "albumlistmodel.h"
 #include "songlistmodel.h"
 
-#include <iostream>
-
 NowPlaying::NowPlaying(QObject *parent) :
     QObject(parent)
 {
-    setQueueModel(new QueueModel);
+    QueueModel *queue_model = new QueueModel;
+    QueueModelFilter *queue_proxy = new QueueModelFilter(queue_model);
+    setQueueModel(queue_model);
+    setQueueProxyModel(queue_proxy);
 }
 
 NowPlaying &NowPlaying::instance()
@@ -17,51 +18,66 @@ NowPlaying &NowPlaying::instance()
     return nowPlaying;
 }
 
-QList<std::shared_ptr<Song> > NowPlaying::getNowPlaying()
+QList<std::shared_ptr<QueueEntry> > NowPlaying::getPlayedSongs()
 {
-    return songQueue;
+    return m_playedSongs;
 }
 
-int NowPlaying::getCurrentIndex()
+QList<std::shared_ptr<QueueEntry> > NowPlaying::getNowPlaying()
 {
-    return currentIndex;
+    return m_queueModel->getQueue();
+
 }
 
 void NowPlaying::loadFromSettings()
 {
-
     QSettings settings;
-    currentIndex = settings.value("nowPlayingCurrentIndex", 0).toInt();
+    settings.beginGroup("nowPlaying");
+
     qint64 position = settings.value("nowPlayingSongPosition", 0).toLongLong();
-    qint64 duration = settings.value("nowPlayingSongDuration", 0).toLongLong();
-    QList<int> songIDs = settings.value("nowPlayingList").value<QList<int>>();
 
-    //no songs
-    if(songIDs.isEmpty()){
-        return;
+    QList<int> queue_IDs   = settings.value("queue").value<QList<int>>();
+    QList<int> played_IDs  = settings.value("queueHistory").value<QList<int>>();
+
+    const auto allSongs = SongListModel::instance().getSongs();
+    QHash<int, std::shared_ptr<Song>> song_map;
+    for (const auto &s : allSongs) {
+        song_map[s->id] = s;
     }
 
-    for (const auto &song : SongListModel::instance().getSongs()){
-        if(songIDs.contains(song->id)){
-            songQueue.append(song);
+    QList<std::shared_ptr<QueueEntry>> queue_entries;
+    for (int songID : queue_IDs) {
+        if (!song_map.contains(songID)) {
+            qWarning() << "Song with ID" << songID << "not found. Skipping.";
+            continue;
         }
+        auto entry = std::make_shared<QueueEntry>();
+        entry->songID = songID;
+        entry->song   = song_map[songID];
+        queue_entries << entry;
     }
 
-    int len = songQueue.length();
-
-    if (currentIndex < 0 || currentIndex >= len) {
-        // Invalid index or empty queue, reset to a safe state
-        currentIndex = 0; // or handle as necessary
+    QList<std::shared_ptr<QueueEntry>> played_entries;
+    for (int songID : played_IDs) {
+        if (!song_map.contains(songID)) {
+            qWarning() << "Song with ID" << songID << "not found. Skipping.";
+            continue;
+        }
+        auto entry = std::make_shared<QueueEntry>();
+        entry->songID = songID;
+        entry->song   = song_map[songID];
+        played_entries << entry;
     }
 
-    if(len == 0){
-        return;
+    m_queueModel->setQueue(queue_entries);
+    m_playedSongs = played_entries;
+
+    settings.endGroup();
+
+    if (!queue_entries.isEmpty()) {
+        emit positionLoaded(position);
+        emit songLoaded(m_queueModel->getSongAtIndex(0));
     }
-
-    emit positionLoaded(position);
-    emit songLoaded(songQueue[currentIndex]);
-
-    //emit positionLoaded(position);
 }
 
 
@@ -77,30 +93,31 @@ void NowPlaying::playAlbum(const QString &albumName, const QStringList &albumArt
 
 
     if(queue){
-        songQueue.append(songs);
+        m_queueModel->addToQueue(songs);
     }
-
-    else if(songQueue.count() == 0){
-        songQueue.append(songs);
-        emit playSong(songQueue[currentIndex]);
+    else if(m_queueModel->getLen() == 0){
+        //songQueue.append(songs);
+        m_queueModel->addToQueue(songs);
+        emit playSong(m_queueModel->getSongAtIndex(0));
     }
-
     else{
-        int index = currentIndex + 1;
+        //int index = currentIndex + 1;
+        int index = 1;
         for(const auto &song : songs){
-            songQueue.insert(index, song);
+            //songQueue.insert(index, song);
+            m_queueModel->insertAtIndex(index, song);
             index++;
         }
-        currentIndex++;
-
-        emit playSong(songQueue[currentIndex]);
+//        currentIndex++;
+//        emit playSong(songQueue[currentIndex]);
+        onNextClicked();
     }
 
 
 
 }
 
-void NowPlaying::playPlaylist(Playlist playlist, bool queue)
+void NowPlaying::playPlaylist(const Playlist &playlist, bool queue)
 {
     QList<int> songIDs = playlist.getSongIDs();
 
@@ -108,112 +125,125 @@ void NowPlaying::playPlaylist(Playlist playlist, bool queue)
         return;
     }
 
-    QList<std::shared_ptr<Song>> songs = SongListModel::instance().getSongs();
-    QList<std::shared_ptr<Song>> nowPlayingQueue;
-    QList<std::shared_ptr<Song>> toQueue;
 
-    int insertIndex = currentIndex + 1;
-    int numSongs = songQueue.count();
+    QList<std::shared_ptr<Song>> songs = SongListModel::instance().getSongs();
+
+    //int insertIndex = currentIndex + 1;
+    int insertIndex = 1;
+    int numSongs = m_queueModel->getLen();
 
     for(const auto &song: songs){
         if(songIDs.contains(song->id)){
-            toQueue.append(song);
             if(queue){
-                songQueue.append(song);
+                //songQueue.append(song);
+                m_queueModel->addSong(song);
             }
             else if(numSongs == 0){
-                songQueue.append(song);
+                //songQueue.append(song);
+                m_queueModel->addSong(song);
             }
             else{
-                songQueue.insert(insertIndex, song);
+                //songQueue.insert(insertIndex, song);
+                m_queueModel->insertAtIndex(insertIndex, song);
                 insertIndex++;
             }
-
-            nowPlayingQueue.push_back(song);
-            m_queueModel->addToQueue(nowPlayingQueue);
 
         }
     }
 
 
-    if(!queue){
-        currentIndex++;
-        emit playSong(songQueue[currentIndex]);
+    if(!queue || m_queueModel->getLen() == 0){
+        if(m_queueModel->getLen() == 0){
+            playingSong = m_queueModel->popEntry(0);
+            emit playSong(playingSong->song);
+        }
+        else{
+            m_playedSongs.push_back(m_queueModel->popEntry(0));
+            playingSong = m_queueModel->popEntry(0);
+            emit playSong(playingSong->song);
+        }
     }
-    else if(numSongs == 0){
-        emit playSong(songQueue[currentIndex]);
-    }
-
-
-    //new implementation
-//    Queue newQueue(playlist.getPlaylistName(), toQueue);
-//    if(queue){
-//        m_queues.append(newQueue);
-//    }
-//    else{
-//        m_queues.insert(1, newQueue);
-
-//    }
-
 }
 
 void NowPlaying::onPreviousClicked(int duration)
 {
-    if(currentIndex - 1 == -1 && songQueue.count() != 0) {
-        emit playSong(songQueue[0]);
+    if(m_playedSongs.size() == 0 || duration >= 3000){
+        emit playSong(playingSong->song);
     }
-    else if(songQueue.count() != 0){
-        if(duration >= 3000){
-            emit playSong(songQueue[currentIndex]);
-        }
-        else{
-            currentIndex--;
-            emit playSong(songQueue[currentIndex]);
-        }
+    else{
+        auto prev_song = m_playedSongs.takeLast();
+        m_queueModel->pushFront(playingSong);
+        playingSong = prev_song;
+        emit playSong(playingSong->song);
     }
 }
 
 void NowPlaying::onNextClicked()
 {
-    if(currentIndex + 1 == songQueue.count()){
+    if(m_queueModel->getLen() == 0){
         emit jumpToEnd();
+        return;
     }
+    else{
+        if(playingSong == nullptr){
+            return;
+        }
 
-    else if(songQueue.count() != 0){
-        currentIndex++;
-        emit playSong(songQueue[currentIndex]);
+        m_playedSongs.push_back(playingSong);
+
+        //limit size of history, reduce mem usage
+        if(m_playedSongs.size() > 100){
+            m_playedSongs.pop_front();
+        }
+
+        playingSong = m_queueModel->popEntry(0);
+        emit playSong(playingSong->song);
     }
-
 }
 
 void NowPlaying::queueNext(std::shared_ptr<Song> song)
 {
-    if(songQueue.count() == 0) {
-        songQueue.append(song);
+
+    if(m_queueModel->getLen() == 0) {
+        m_queueModel->addSong(song);
     }
     else{
-        songQueue.insert(currentIndex + 1, song);
+        m_queueModel->insertAtIndex(1, song);
     }
 }
 
 void NowPlaying::addToQueue(std::shared_ptr<Song> song)
 {
-    songQueue.append(song);
+    m_queueModel->addSong(song);
 }
 
 void NowPlaying::playNow(std::shared_ptr<Song> song)
 {
-    if(songQueue.count() == 0){
-        songQueue.append(song);
-        emit playSong(songQueue[currentIndex]);
-    }
 
+    if(m_queueModel->getLen() == 0){
+        //too lazy to make queue entry obj lol
+        m_queueModel->insertAtIndex(0, song);
+        playingSong = m_queueModel->popEntry(0);
+        emit playSong(playingSong->song);
+        m_playedSongs.push_back(playingSong);
+
+    }
     else{
-        songQueue.insert(currentIndex + 1, song);
-        currentIndex++;
-        emit playSong(songQueue[currentIndex]);
+        if(playingSong != nullptr){
+            m_playedSongs.push_back(playingSong);
+        }
+
+        m_queueModel->insertAtIndex(0, song);
+        playingSong = m_queueModel->popEntry(0);
+        emit playSong(playingSong->song);
+        m_playedSongs.push_back(playingSong);
     }
 
+}
+
+void NowPlaying::moveSong(int from, int to)
+{
+    m_queueModel->moveSong(from, to);
 }
 
 QueueModel *NowPlaying::queueModel() const
@@ -227,4 +257,18 @@ void NowPlaying::setQueueModel(QueueModel *newQueueModel)
         return;
     m_queueModel = newQueueModel;
     emit queueModelChanged();
+}
+
+
+QueueModelFilter *NowPlaying::queueProxyModel() const
+{
+    return m_queueProxyModel;
+}
+
+void NowPlaying::setQueueProxyModel(QueueModelFilter *newQueueProxyModel)
+{
+    if (m_queueProxyModel == newQueueProxyModel)
+        return;
+    m_queueProxyModel = newQueueProxyModel;
+    emit queueProxyModelChanged();
 }

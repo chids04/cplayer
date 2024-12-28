@@ -25,13 +25,16 @@
 
 int main(int argc, char *argv[])
 {
-    //implement serilzation
-    //for now i just get list of folders and re-scan the directory
+    //need to remove the use of static instances, makes app harder to test
+    //will have a global model with a static reference to itself
+    //classes to will be able access other classes thru this one global model
 
     QGuiApplication app(argc, argv);
 
     QCoreApplication::setOrganizationName("tecstars");
     QCoreApplication::setApplicationName("cplayer");
+
+    QSettings settings;
 
     int fontId = QFontDatabase::addApplicationFont(":/resource/ui/fonts/Satoshi-Medium.otf");
 
@@ -40,6 +43,9 @@ int main(int argc, char *argv[])
         // Set the application-wide font
         QGuiApplication::setFont(QFont(fontFamily));
     }
+
+    //image provider needs to be intatitated before application engine to prevent crash
+    PlaylistImageProvider::instance();
 
     QQmlApplicationEngine engine;
 

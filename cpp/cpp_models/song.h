@@ -22,12 +22,12 @@ struct Song {
     int trackNum;
     int year;
     int id;
-    QString songHash;
+    bool visibleInQueue;
 
     Song() {}
 
     Song(const QString &filePath, const QString &title, const QString &artist, const QString &album, const QString &genre,
-         const QStringList &featuringArtists, const QStringList &albumArtists, int year, int length, int trackNum, int id);
+         const QStringList &featuringArtists, const QStringList &albumArtists, int year, int length, int trackNum, int id, bool visibleInQueue=true);
 
     void generateSongHash();
     friend QDataStream &operator<<(QDataStream &out, const Song &song);

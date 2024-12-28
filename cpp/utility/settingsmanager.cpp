@@ -185,24 +185,31 @@ QHash<QString, QStringList> SettingsManager::getFolderFileMap()
 void SettingsManager::saveNowPlaying()
 {
     //only need to store song id
-    QList<std::shared_ptr<Song>> nowPlaying = NowPlaying::instance().getNowPlaying();
-    int currentIndex = NowPlaying::instance().getCurrentIndex();
+    QList<std::shared_ptr<QueueEntry>> queue = NowPlaying::instance().getNowPlaying();
+    QList<std::shared_ptr<QueueEntry>> played_songs = NowPlaying::instance().getPlayedSongs();
 
     qint64 position = MediaPlayerController::instance().position();
-    qDebug() << "position saved to file" << position;
-    qint64 duration = MediaPlayerController::instance().duration();
 
-    QList<int> idList;
+    QList<int> queue_IDs;
+    QList<int> played_IDs;
 
-    for(const auto &song : nowPlaying){
-        idList << song->id;
+    for(auto &queue_entry : queue){
+        queue_IDs << queue_entry->songID;
+    }
+
+    for(auto &played_entry : played_songs){
+        played_IDs << played_entry->songID;
     }
 
     QSettings settings;
-    settings.setValue("nowPlayingList", QVariant::fromValue(idList));
-    settings.setValue("nowPlayingCurrentIndex", currentIndex);
+    settings.beginGroup("nowPlaying");
+
+    settings.setValue("queue", QVariant::fromValue(queue_IDs));
+    settings.setValue("queueHistory", QVariant::fromValue(played_IDs));
     settings.setValue("nowPlayingSongPosition", QVariant::fromValue(position));
-    settings.setValue("nowPlayingSongDuration", duration);
+    settings.setValue("lastQueueID", NowPlaying::instance().queueModel()->getLastQueueID());
+
+    settings.endGroup();
 }
 
 void SettingsManager::saveFolders()
