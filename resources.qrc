@@ -32,5 +32,6 @@
     </qresource>
     <qresource prefix="/">
         <file>qml/components/NowPlayingRect.qml</file>
+        <file>qml/components/MsgPopup.qml</file>
     </qresource>
 </RCC>

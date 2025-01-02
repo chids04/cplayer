@@ -34,7 +34,7 @@ void SettingsManager::setup()
     readFolders();
     readPlaylists();
     CoverArtHolder::instance().loadFromSettings();
-    PlaylistImageProvider::instance().loadCovers();
+    playlistImageProvider->loadCovers();
     NowPlaying::instance().loadFromSettings();
 }
 
@@ -187,6 +187,7 @@ void SettingsManager::saveNowPlaying()
     //only need to store song id
     QList<std::shared_ptr<QueueEntry>> queue = NowPlaying::instance().getNowPlaying();
     QList<std::shared_ptr<QueueEntry>> played_songs = NowPlaying::instance().getPlayedSongs();
+    int curr_song_id = NowPlaying::instance().getCurrentSongID();
 
     qint64 position = MediaPlayerController::instance().position();
 
@@ -206,8 +207,8 @@ void SettingsManager::saveNowPlaying()
 
     settings.setValue("queue", QVariant::fromValue(queue_IDs));
     settings.setValue("queueHistory", QVariant::fromValue(played_IDs));
+    settings.setValue("playingSong", curr_song_id);
     settings.setValue("nowPlayingSongPosition", QVariant::fromValue(position));
-    settings.setValue("lastQueueID", NowPlaying::instance().queueModel()->getLastQueueID());
 
     settings.endGroup();
 }
@@ -307,7 +308,7 @@ void SettingsManager::savePlaylistCovers()
     settings.sync();
     settings.beginGroup("playlistCovers");
 
-    QHash<int, QPixmap> playlistCovers = PlaylistImageProvider::instance().getCovers();
+    QHash<int, QPixmap> playlistCovers = playlistImageProvider->getCovers();
 
     for(auto it = playlistCovers.begin(); it != playlistCovers.end(); ++it){
         int coverKey = it.key();
@@ -317,6 +318,11 @@ void SettingsManager::savePlaylistCovers()
     }
 
     settings.endGroup();
+}
+
+void SettingsManager::setPlaylistImageProvider(PlaylistImageProvider *img_provider)
+{
+    playlistImageProvider = img_provider;
 }
 
 

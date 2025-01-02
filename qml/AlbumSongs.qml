@@ -98,6 +98,8 @@ Item {
 
                 onButtonClicked: {
                     MusicHandler.nowPlaying.playAlbum(ViewController.albumSongsView.albumName, ViewController.albumSongsView.albumArtists, true);
+                    let albumNameBold = "<b>" + ViewController.albumSongsView.albumName + "</b>";
+                    ViewController.showMsg(albumNameBold + " added to queue")
                 }
             }
 

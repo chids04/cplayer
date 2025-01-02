@@ -8,16 +8,17 @@ Popup {
     id: popup
     //width: errorPopUpDelegate.width + 20
     //height: errorPopUpDelegate.height + 20
-    modal: true
-    focus: true
 
-    anchors.centerIn: Overlay.overlay
+    parent: Overlay.overlay
+    x: Math.round((parent.width - width) / 2)
+    y: parent.height - height - 20
+
     dim: true
 
-    property string errorText
+    property string msg
 
     function openPopup(text){
-        errorText = text
+        msg = text
         popup.open()
     }
 
@@ -76,8 +77,9 @@ Popup {
         }
 
     contentItem: Text{
-        text: "<b><u>Error:</u></b> " + errorText
+        text: popup.msg
         font.pointSize: 14
+        textFormat: Text.RichText
         color: "white"
     }
 

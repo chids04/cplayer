@@ -66,6 +66,7 @@ qt_add_qml_module(appcplayer
         qml/components/FolderDelPopUp.qml
         qml/components/PlaylistContextMenu.qml
 		qml/components/NowPlayingRect.qml
+		qml/components/MsgPopup.qml
 
     #C++ Models
     SOURCES

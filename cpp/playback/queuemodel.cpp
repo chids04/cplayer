@@ -11,16 +11,67 @@ QueueModel::QueueModel(QObject *parent)
     queueID = settings.value("lastQueueID", 0).toInt();
 }
 
-void QueueModel::addToQueue(QVector<std::shared_ptr<Song>> queue_songs)
+void QueueModel::insertAtIndex(int index, std::shared_ptr<Song> song)
 {
-    beginResetModel();
-    for (const auto &song : queue_songs) {
+    if (!song || index < 0 || index > m_queue.size()) return;
+
+    auto entry = std::make_shared<QueueEntry>();
+    entry->song = song;
+    entry->songID = ++queueID;
+
+    beginInsertRows(QModelIndex(), index, index);
+    m_queue.insert(index, entry);
+    endInsertRows();
+}
+
+void QueueModel::insertAtIndex(int index, QList<std::shared_ptr<Song> > songs)
+{
+    if (songs.isEmpty() || index < 0 || index > m_queue.size()) return;
+
+    int startIndex = index;
+    int endIndex = startIndex + songs.size() - 1;
+
+    beginInsertRows(QModelIndex(), startIndex, endIndex);
+
+    for (const auto &song : songs) {
+        if (!song) continue;
+
         auto entry = std::make_shared<QueueEntry>();
         entry->song = song;
-        entry->songID = song->id;
-        m_queue.append(entry);
+        entry->songID = ++queueID;
+        m_queue.insert(index++, entry); // Increment index for each song
     }
-    endResetModel();
+
+    endInsertRows();
+}
+
+void QueueModel::appendToQueue(std::shared_ptr<Song> song)
+{
+    auto entry = std::make_shared<QueueEntry>();
+    entry->song = song;
+    entry->songID = ++queueID;
+
+    beginInsertRows(QModelIndex(), m_queue.size(), m_queue.size());
+    m_queue.append(entry);
+    endInsertRows();
+}
+
+void QueueModel::appendToQueue(QList<std::shared_ptr<Song>> songs)
+{
+    if (songs.isEmpty()) return;
+
+    for (auto it = songs.cbegin(); it != songs.cend(); ++it) {
+        int newIndex = m_queue.size();
+
+        beginInsertRows(QModelIndex(), newIndex, newIndex);
+
+        auto entry = std::make_shared<QueueEntry>();
+        entry->song = *it;
+        entry->songID = ++queueID;
+        m_queue.append(entry);
+
+        endInsertRows();
+    }
 }
 
 
@@ -38,15 +89,6 @@ std::shared_ptr<QueueEntry> QueueModel::popEntry(int index)
     endRemoveRows();
 
     return removed_song;
-}
-
-void QueueModel::addSong(std::shared_ptr<Song> song) {
-    beginInsertRows(QModelIndex(), rowCount(), rowCount());
-    auto entry = std::make_shared<QueueEntry>();
-    entry->song = song;
-    entry->songID = song->id;
-    m_queue << entry;
-    endInsertRows();
 }
 
 void QueueModel::clear()
@@ -137,83 +179,9 @@ std::shared_ptr<Song> QueueModel::getSongAtIndex(int index)
     }
 }
 
-QString QueueModel::getSongTitle(const QString &filePath) const
-{
-    for (const auto &entry : m_queue) {
-        if (entry->song->filePath == filePath) {
-            return entry->song->title;
-        }
-    }
-
-    return QString();
-}
-
-QString QueueModel::getSongArtist(const QString &filePath) const
-{
-    for (const auto &entry : m_queue) {
-        if (entry->song->filePath == filePath) {
-            return entry->song->artist;
-        }
-    }
-
-    return QString();
-}
-
-QString QueueModel::getSongAlbum(const QString &filePath) const
-{
-    for (const auto &entry : m_queue) {
-        if (entry->song->filePath == filePath) {
-            return entry->song->album;
-        }
-    }
-
-    return QString();
-}
-
-QStringList QueueModel::getSongFeatures(const QString &filePath) const
-{
-    for (const auto &entry : m_queue) {
-        if (entry->song->filePath == filePath) {
-            return entry->song->featuringArtists;
-        }
-    }
-
-    return QStringList();
-}
-
-int QueueModel::getSongTrackNum(const QString &filePath) const
-{
-    for (const auto &entry : m_queue) {
-        if (entry->song->filePath == filePath) {
-            return entry->song->trackNum;
-        }
-    }
-
-    return 0;
-}
-
 QList<std::shared_ptr<QueueEntry>> QueueModel::getQueue()
 {
     return m_queue;
-}
-
-int QueueModel::getLastQueueID()
-{
-    return queueID;
-}
-
-void QueueModel::insertAtIndex(int index, std::shared_ptr<Song> song)
-{
-    if (index > rowCount()) {
-        index = rowCount();
-    }
-
-    beginInsertRows(QModelIndex(), index, index);
-    auto entry = std::make_shared<QueueEntry>();
-    entry->song = song;
-    entry->songID = song->id;
-    m_queue.push_front(entry);
-    endInsertRows();
 }
 
 void QueueModel::pushFront(std::shared_ptr<QueueEntry> entry)
@@ -223,10 +191,6 @@ void QueueModel::pushFront(std::shared_ptr<QueueEntry> entry)
     endInsertRows();
 }
 
-void QueueModel::onSongAdded(std::shared_ptr<Song> song)
-{
-    addSong(song);
-}
 
 void QueueModel::moveSong(int from, int to)
 {
@@ -243,3 +207,16 @@ void QueueModel::moveSong(int from, int to)
     m_queue.move(from, to);
     endMoveRows();
 }
+
+void QueueModel::removeFromQueue(int songID)
+{
+    for(int i=m_queue.size()-1; i>=0; --i){
+        if(m_queue[i]->songID == songID){
+            beginRemoveRows(QModelIndex(), i, i);
+            qDebug() << "removed" << m_queue[i]->song->title << "from queue";
+            m_queue.removeAt(i);
+            endRemoveRows();
+        }
+    }
+}
+

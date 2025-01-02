@@ -14,6 +14,8 @@ struct QueueEntry {
 
 class QueueModel : public QAbstractListModel
 {
+    Q_OBJECT
+
 public:
     explicit QueueModel(QObject *parent = nullptr);
 
@@ -40,32 +42,24 @@ public:
 
     int getLen() const;
     std::shared_ptr<Song> getSongAtIndex(int index);
-    QString getSongTitle(const QString &filePath) const;
-    QString getSongArtist(const QString &filePath) const;
-    QString getSongAlbum(const QString &filePath) const;
-    QStringList getSongFeatures(const QString &filePath) const;
-    int getSongTrackNum(const QString &filePath) const;
     QList<std::shared_ptr<QueueEntry>> getQueue();
-    int getLastQueueID();
+    void removeFromQueue(int songID);
+    void insertAtIndex(int index, std::shared_ptr<Song> song);
+    void insertAtIndex(int index, QList<std::shared_ptr<Song>> songs);
+    void appendToQueue(std::shared_ptr<Song> song);
+    void appendToQueue(QList<std::shared_ptr<Song>>);
 
-    void insertAtIndex(int index, std::shared_ptr<Song> entry);
     void pushFront(std::shared_ptr<QueueEntry> entry);
-    void removeSong(const QString &filePath);
-    void addToQueue(QVector<std::shared_ptr<Song>> queue_songs);
     void setQueue(QList<std::shared_ptr<QueueEntry>> queue_entries);
     std::shared_ptr<QueueEntry> popEntry(int index);
+    void moveSong(int from, int to);
+
 
 
 signals:
     void decrementAlbum(QString &albumName, QStringList &albumArtists);
     void removeFromPlaylist(int songID);
     void removeCurrentPlaying(QString &path);
-
-
-public slots:
-    void onSongAdded(std::shared_ptr<Song> song);
-    void removeFolderSongs(QString &folderPath);
-    void moveSong(int from, int to);
 
 
 private:

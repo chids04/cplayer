@@ -48,6 +48,18 @@ ApplicationWindow {
             id: errorPopup
         }
 
+        MsgPopup{
+            id: msgPopup
+        }
+
+    }
+
+    Connections{
+        target: ViewController
+
+        function onShowMsg(msg){
+            msgPopup.openPopup(msg)
+        }
     }
 
 

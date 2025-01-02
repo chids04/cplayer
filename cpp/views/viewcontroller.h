@@ -43,6 +43,7 @@ signals:
     void playlistsViewSelected();
     void albumSongsViewChanged();
     void playlistSongsViewChanged();
+    void showMsg(const QString &message);
 
 public slots:
     void songView();

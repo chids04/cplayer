@@ -44,6 +44,19 @@ Rectangle {
         }
     }
 
+    CButton{
+        id: clearBtn
+        buttonText: "clear queue"
+        buttonColor: "#444647"
+        anchors{
+            topMargin: 10
+            top: seperator.bottom
+            horizontalCenter: parent.horizontalCenter
+        }
+
+        onButtonClicked: MusicHandler.nowPlaying.clearQueue()
+    }
+
     Component {
         id: dragDelegate
 
@@ -206,7 +219,7 @@ Rectangle {
         id: view
 
         anchors {
-            top: seperator.bottom
+            top: clearBtn.bottom
             left:parent.left
             right: parent.right
             rightMargin: 5

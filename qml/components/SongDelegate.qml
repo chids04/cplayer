@@ -14,6 +14,7 @@ Rectangle {
     property bool songFromAlbum
     property var songObj
     property list<string> songFeatures
+    property bool isContextMenuOpen: false
 
     property alias songDelegateColor: songRect.color
     property alias songDelegateWidth: songRect.width
@@ -49,7 +50,10 @@ Rectangle {
         }
 
         onExited: {
-            tintOverlay.color = "transparent"
+            if(!songRect.isContextMenuOpen){
+                tintOverlay.color = "transparent"
+            }
+
         }
 
         onDoubleClicked: {
@@ -66,6 +70,8 @@ Rectangle {
                 songDelegateClicked()
             }
             else if(mouse.button === Qt.RightButton){
+                isContextMenuOpen = true
+                tintOverlay.color = "#383838"
                 contextMenu.openContextMenu(songObj)
             }
 
@@ -74,6 +80,10 @@ Rectangle {
 
         SongContextMenu{
             id:contextMenu
+            onClosed: {
+                songRect.isContextMenuOpen = false
+                tintOverlay.color = "transparent"
+            }
         }
 
 

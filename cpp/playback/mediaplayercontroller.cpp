@@ -110,7 +110,15 @@ void MediaPlayerController::setAudioDevice(const QAudioDevice &device)
 
 void MediaPlayerController::onPlayingChanged() {
     if (m_playing) {
-        player->play();
+        //check if there are items in queue to play if no song loaded
+        if(player->source() == QUrl()){
+            if(NowPlaying::instance().queueModel()->getLen() != 0){
+
+            }
+        }
+        else{
+            player->play();
+        }
     } else {
         player->pause();
     }

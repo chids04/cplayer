@@ -8,6 +8,7 @@
 
 #include "playlist.h"
 #include "playlistsongsmodel.h"
+#include "playlistimageprovider.h"
 
 class PlaylistManager : public QObject
 {
@@ -40,6 +41,7 @@ public:
 
     Playlist currentPlaylist() const;
     void setCurrentPlaylist(const Playlist &newCurrentPlaylist);
+    void setPlaylistImageProvider(PlaylistImageProvider *imgProvider);
 
 public slots:
     void addPlaylist(QString playlistName, QUrl coverPath = QUrl(), bool hasCover = false);
@@ -63,6 +65,8 @@ private:
     bool m_hasCover;
     int m_playlistID;
     Playlist m_currentPlaylist;
+
+    PlaylistImageProvider *playlistImageProvider;
 };
 
 #endif // PLAYLISTMANAGER_H

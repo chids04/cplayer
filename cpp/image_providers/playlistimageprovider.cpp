@@ -8,13 +8,6 @@
 PlaylistImageProvider::PlaylistImageProvider() : QQuickImageProvider(QQuickImageProvider::Pixmap)
 {}
 
-PlaylistImageProvider &PlaylistImageProvider::instance()
-{
-    static PlaylistImageProvider playlistImageProvider;
-    return playlistImageProvider;
-
-}
-
 QPixmap PlaylistImageProvider::requestPixmap(const QString &id, QSize *size, const QSize &requestedSize)
 {
     QPixmap loadedCover;

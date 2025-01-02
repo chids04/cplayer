@@ -24,7 +24,7 @@ void PlaylistManager::addPlaylist(QString playlistName, QUrl coverPath, bool has
     PlaylistModel::instance().addPlaylist(playlist);
 
     if(hasCover){
-        PlaylistImageProvider::instance().addCover(playlistNum, coverPath.toLocalFile());
+        playlistImageProvider->addCover(playlistNum, coverPath.toLocalFile());
     }
 
     playlistNum++;
@@ -33,7 +33,7 @@ void PlaylistManager::addPlaylist(QString playlistName, QUrl coverPath, bool has
 void PlaylistManager::removePlaylist(int playlistID)
 {
     PlaylistModel::instance().removePlaylist(playlistID);
-    PlaylistImageProvider::instance().removeCover(playlistID);
+    playlistImageProvider->removeCover(playlistID);
 }
 
 void PlaylistManager::loadPlaylistSongs(int id)
@@ -144,4 +144,9 @@ void PlaylistManager::setCurrentPlaylist(const Playlist &newCurrentPlaylist)
         return;
     m_currentPlaylist = newCurrentPlaylist;
     emit currentPlaylistChanged();
+}
+
+void PlaylistManager::setPlaylistImageProvider(PlaylistImageProvider *imgProvider)
+{
+    playlistImageProvider = imgProvider;
 }

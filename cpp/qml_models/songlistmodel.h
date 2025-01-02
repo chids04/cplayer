@@ -49,6 +49,7 @@ signals:
     void decrementAlbum(QString &albumName, QStringList &albumArtists);
     void removeFromPlaylist(int songID);
     void removeCurrentPlaying(QString &path);
+    void removeFromNowPlaying(int songID);
 
 
 public slots:

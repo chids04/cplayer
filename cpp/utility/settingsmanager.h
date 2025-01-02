@@ -8,6 +8,7 @@
 
 #include "folder.h"
 #include "song.h"
+#include "playlistimageprovider.h"
 
 class SettingsManager : public QObject{
 
@@ -37,6 +38,8 @@ public:
     void saveFileFolderMap();
     void savePlaylistCovers();
 
+    void setPlaylistImageProvider(PlaylistImageProvider *img_provider);
+
 public slots:
     void shutDown();
 
@@ -46,6 +49,7 @@ signals:
 
 private:
     QHash<QString, QStringList> loadedFileFolderMap;
+    PlaylistImageProvider *playlistImageProvider;
 
 };
 

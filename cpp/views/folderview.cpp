@@ -87,8 +87,10 @@ void FolderView::onDirectoryChanged(const QString &path)
     qDebug() << "detected changes in dir" << path;
 
     if(!isScanning){
+        qDebug() << "hello";
         QDir directory(path);
         QStringList updatedDir = directory.entryList(QDir::Files | QDir::NoDotAndDotDot | QDir::Readable);
+
 
         QStringList existingFiles = getFilesInFolder(path);
         QStringList newFiles;
@@ -112,6 +114,7 @@ void FolderView::onDirectoryChanged(const QString &path)
 
         for(const QString &file : existingFiles){
             if(!updatedDir.contains(file)){
+                qDebug() << "removing song at" << file;
                 removeFilesFromFolder(path, file);
                 QString fullPath = directory.filePath(file);
                 SongListModel::instance().removeSong(fullPath);

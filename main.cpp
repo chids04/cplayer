@@ -35,6 +35,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("cplayer");
 
     QSettings settings;
+    settings.clear();
 
     int fontId = QFontDatabase::addApplicationFont(":/resource/ui/fonts/Satoshi-Medium.otf");
 
@@ -45,7 +46,6 @@ int main(int argc, char *argv[])
     }
 
     //image provider needs to be intatitated before application engine to prevent crash
-    PlaylistImageProvider::instance();
 
     QQmlApplicationEngine engine;
 
@@ -80,9 +80,13 @@ int main(int argc, char *argv[])
     utilitySingleton->setSettingsManager(&SettingsManager::instance());
 
     MediaImageProvider *mediaImageProvider = new MediaImageProvider;
+    PlaylistImageProvider *playlistImageProvider = new PlaylistImageProvider;
+    PlaylistManager::instance().setPlaylistImageProvider(playlistImageProvider);
+    SettingsManager::instance().setPlaylistImageProvider(playlistImageProvider);
+
 
     engine.addImageProvider(QLatin1String("coverArt"), mediaImageProvider);
-    engine.addImageProvider(QLatin1String("playlistCovers"), &PlaylistImageProvider::instance());
+    engine.addImageProvider(QLatin1String("playlistCovers"), playlistImageProvider);
 
     if(SettingsManager::instance().hasFolder()){
         SettingsManager::instance().setup();

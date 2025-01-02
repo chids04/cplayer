@@ -6,11 +6,13 @@
 #include "albumlistmodel.h"
 #include "playlistmodel.h"
 #include "mediaplayercontroller.h"
+#include "nowplaying.h"
 
 SongListModel::SongListModel(QObject *parent) : QAbstractListModel(parent) {
     connect(this, &SongListModel::decrementAlbum, &AlbumListModel::instance(), &AlbumListModel::decrementAlbum);
     connect(this, &SongListModel::removeFromPlaylist, &PlaylistModel::instance(), &PlaylistModel::removeSongs);
     connect(this, &SongListModel::removeCurrentPlaying, &MediaPlayerController::instance(), &MediaPlayerController::onRemoveCurrentPlaying);
+    connect(this, &SongListModel::removeFromNowPlaying, &NowPlaying::instance(), &NowPlaying::onRemoveFromNowPlaying);
 }
 
 SongListModel &SongListModel::instance()
@@ -168,6 +170,7 @@ void SongListModel::removeSong(const QString &filePath)
             emit decrementAlbum(m_songs[i]->album, m_songs[i]->albumArtists);
             emit removeFromPlaylist(m_songs[i]->id);
             emit removeCurrentPlaying(m_songs[i]->filePath);
+            emit removeFromNowPlaying(m_songs[i]->id);
 
             beginRemoveRows(QModelIndex(), i, i);
             m_songs.removeAt(i);
@@ -188,6 +191,7 @@ void SongListModel::removeFolderSongs(QString &folderPath)
             emit decrementAlbum(m_songs[i]->album, m_songs[i]->albumArtists);
             emit removeFromPlaylist(m_songs[i]->id);
             emit removeCurrentPlaying(m_songs[i]->filePath);
+            emit removeFromNowPlaying(m_songs[i]->id);
 
             beginRemoveRows(QModelIndex(), i, i);
             m_songs.removeAt(i);  // Remove song if its path contains the folderPath

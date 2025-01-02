@@ -8,6 +8,9 @@ Menu {
     title: qsTr("Tools")
 
     property var songObj
+    signal popupClosed()
+
+    onClosed: popupClosed()
 
     MenuItem{
         id: queueNext

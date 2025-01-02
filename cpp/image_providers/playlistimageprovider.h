@@ -7,7 +7,6 @@ class PlaylistImageProvider : public QQuickImageProvider
 {
 public:
     PlaylistImageProvider();
-    static PlaylistImageProvider &instance();
     QPixmap requestPixmap(const QString &id, QSize *size, const QSize &requestedSize);
     QHash<int, QPixmap> getCovers();
     void addCover(int playlistID, QString coverPath);

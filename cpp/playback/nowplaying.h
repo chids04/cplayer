@@ -22,6 +22,8 @@ public:
 
     QList<std::shared_ptr<QueueEntry>> getPlayedSongs();
     QList<std::shared_ptr<QueueEntry>> getNowPlaying();
+    void playFromQueue();
+    int getCurrentSongID();
     void loadFromSettings();
 
     QueueModel *queueModel() const;
@@ -36,9 +38,10 @@ signals:
     void durationLoaded(qint64 duration);
     void songLoaded(std::shared_ptr<Song>);
     void jumpToEnd();
-    void queueModelChanged();
 
+    void queueModelChanged();
     void queueProxyModelChanged();
+
 
 public slots:
     void playAlbum(const QString &albumName, const QStringList &albumArtists, bool queue=false);
@@ -49,6 +52,9 @@ public slots:
     void addToQueue(std::shared_ptr<Song> song);
     void playNow(std::shared_ptr<Song> song);
     void moveSong(int from, int to);
+    void clearQueue();
+
+    void onRemoveFromNowPlaying(int songID);
 
 private:
     QList<Queue> m_queues;

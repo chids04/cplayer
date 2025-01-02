@@ -13,6 +13,8 @@ RoundButton {
 
     property alias buttonText: contentText.text
     property alias buttonTextSize: contentText.font.pointSize
+    property alias buttonColor: contentBackground.color
+
     signal buttonClicked();
 
     onClicked: {
@@ -47,6 +49,7 @@ RoundButton {
     }
 
     background: Rectangle {
+        id: contentBackground
         color: "transparent"
         radius: customButton.radius
         border.color: customButton.borderColor
