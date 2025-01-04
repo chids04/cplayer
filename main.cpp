@@ -7,7 +7,7 @@
 #include "viewcontroller.h"
 #include "albumfilterproxymodel.h"
 #include "folderlistmodel.h"
-#include "albumsongsview.h"
+#include "albumsongsmanager.h"
 #include "folderview.h"
 #include "playlistmodel.h"
 #include "playlistmanager.h"
@@ -72,8 +72,8 @@ int main(int argc, char *argv[])
     musicHandler->setPlaylistManager(&PlaylistManager::instance());
 
     auto viewController = engine.singletonInstance<ViewController *>("cplayer", "ViewController");
-    viewController->setAlbumSongsView(&AlbumSongsView::instance());
-    viewController->setPlaylistSongsView(&PlaylistSongsView::instance());
+    viewController->setAlbumSongsView(&AlbumSongsManager::instance());
+    viewController->setPlaylistSongsView(&PlaylistSongsManager::instance());
     viewController->setFolderView(&FolderView::instance());
 
     auto utilitySingleton = engine.singletonInstance<UtilitySingleton *>("cplayer", "UtilitySingleton");

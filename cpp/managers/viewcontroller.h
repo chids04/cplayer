@@ -6,7 +6,7 @@
 #include <QDebug>
 
 #include "albumsongsview.h"
-#include "playlistsongsview.h"
+#include "playlistsongsmanager.h"
 #include "folderview.h"
 
 class ViewController : public QObject

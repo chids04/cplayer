@@ -4,7 +4,7 @@ import QtQuick.Controls
 
 import cplayer
 
-import "./components"
+import "../components"
 
 Item {
 

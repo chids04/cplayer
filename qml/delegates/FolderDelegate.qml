@@ -2,6 +2,8 @@ import QtQuick 2.15
 import QtQuick.Layouts
 import QtQuick.Controls
 
+import "../components"
+
 Item {
     id: folderDelegate
     property string folderDelegateName

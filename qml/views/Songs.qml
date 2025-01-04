@@ -5,9 +5,6 @@ import QtQuick.Controls.Basic
 import cplayer
 
 
-import "./components"
-
-
 Item {
     id:songsWindow
 

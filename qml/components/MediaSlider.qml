@@ -6,10 +6,6 @@ import QtQuick.Effects
 
 import cplayer
 
-import "./components"
-
-
-
 Item{
     Layout.fillWidth: true
     height: 100

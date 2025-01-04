@@ -1,5 +1,5 @@
-#ifndef PLAYLISTSONGSVIEW_H
-#define PLAYLISTSONGSVIEW_H
+#ifndef PLAYLISTSONGSMANAGER_H
+#define PLAYLISTSONGSMANAGER_H
 
 #include <QObject>
 
@@ -36,4 +36,4 @@ private:
     QString m_playlistName;
 };
 
-#endif // PLAYLISTSONGSVIEW_H
+#endif // PLAYLISTSONGSMANAGER_H

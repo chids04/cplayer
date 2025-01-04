@@ -3,6 +3,8 @@ import QtQuick.Layouts
 import QtQuick.Controls
 
 
+import "../components"
+
 Rectangle {
     id: songRect
     //width: songsListView.width-23

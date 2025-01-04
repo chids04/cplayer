@@ -4,7 +4,7 @@ import Qt.labs.platform
 import QtQuick.Controls.Basic
 
 import cplayer
-import "./components"
+import "../components"
 
 Item {
     id: folderView
