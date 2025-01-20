@@ -1,7 +1,5 @@
-// Copyright (C) 2017 The Qt Company Ltd.
-// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR BSD-3-Clause
-
 pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQml.Models
 import QtQuick.Layouts
@@ -54,7 +52,7 @@ Rectangle {
             horizontalCenter: parent.horizontalCenter
         }
 
-        onButtonClicked: MusicHandler.nowPlaying.clearQueue()
+        onButtonClicked: GlobalSingleton.playbackManager.nowPlaying.clearQueue()
     }
 
     Component {
@@ -90,13 +88,11 @@ Rectangle {
 
             Rectangle {
                 id: content
-//![0]
                 anchors {
                     horizontalCenter: parent.horizontalCenter
                     verticalCenter: parent.verticalCenter
                 }
                 width: dragArea.width
-                //height: songInfo.implicitHeight + 4
                 height: 70
 
                 border.color: "#282930"
@@ -106,12 +102,12 @@ Rectangle {
                 Behavior on color { ColorAnimation { duration: 100 } }
 
                 radius: 2
-//![1]
+
                 Drag.active: dragArea.held
                 Drag.source: dragArea
                 Drag.hotSpot.x: width / 2
                 Drag.hotSpot.y: height / 2
-//![1]
+
                 states: State {
                     when: dragArea.held
 
@@ -127,17 +123,6 @@ Rectangle {
                         }
                     }
                 }
-
-//                Column {
-//                    id: column
-//                    anchors {
-//                        fill: parent
-//                        margins: 2
-//                    }
-
-//                    Text { text: qsTr('Name: ') + dragArea.title }
-//                    Text { text: qsTr('Type: ') + dragArea.artist }
-//                }
 
                 Item{
                     id: songInfo
@@ -199,7 +184,7 @@ Rectangle {
                     let target_index = dragArea.DelegateModel.itemsIndex
                     visualModel.items.move(src_index, target_index)
 
-                    MusicHandler.nowPlaying.moveSong(src_index, target_index)
+                    GlobalSingleton.playbackManager.nowPlaying.moveSong(src_index, target_index)
 
 
 
@@ -210,7 +195,7 @@ Rectangle {
     DelegateModel {
         id: visualModel
 
-        model: MusicHandler.nowPlaying.queueModel
+        model: GlobalSingleton.playbackManager.nowPlaying.queueModel
         delegate: dragDelegate
 
     }

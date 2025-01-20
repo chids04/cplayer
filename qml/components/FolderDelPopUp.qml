@@ -62,7 +62,7 @@ Popup {
 
         background: Rectangle{
             anchors.fill: parent
-            width: text2Width.width >= text1Width ? text2Width : text1Width
+            width: text2Width.width >= text1Width.width ? text2Width.width : text1Width.width
             color: "#202020"
             border.color: "#2f3137"
             border.width: 2
@@ -87,7 +87,7 @@ Popup {
             }
             Text{
                 id: folderPathText
-                text: folderPath
+                text: folderPopup.folderPath
                 font.pointSize: 8
                 font.bold: true
                 color: "white"
@@ -106,7 +106,7 @@ Popup {
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
 
                 onButtonClicked: {
-                    ViewController.folderView.removeFolder(index, folderPath)
+                    GlobalSingleton.folderManager.removeFolder(index, folderPopup.folderPath)
                     folderPopup.close()
                 }
 

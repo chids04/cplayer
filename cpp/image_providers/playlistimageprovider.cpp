@@ -39,14 +39,24 @@ QHash<int, QPixmap> PlaylistImageProvider::getCovers()
     return playlistCovers;
 }
 
-void PlaylistImageProvider::addCover(int playlistID, QString coverPath)
+void PlaylistImageProvider::addCover(int playlistID, int rotation, const QString &coverPath)
 {
     QPixmap cover(coverPath);
 
     if(!cover.isNull()){
-        playlistCovers.insert(playlistID, coverPath);
+
+
+        if(rotation > 0){
+            cover = cover.transformed(QTransform().rotate(rotation));
+        }
+
+        cover = cover.scaled(400, 400, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+        playlistCovers.insert(playlistID, cover);
     }
+
 }
+
 
 void PlaylistImageProvider::loadCovers()
 {
@@ -60,6 +70,23 @@ void PlaylistImageProvider::loadCovers()
         QPixmap coverArt = settings.value(key).value<QPixmap>();
 
         playlistCovers.insert(playlistID, coverArt);
+    }
+
+    settings.endGroup();
+}
+
+void PlaylistImageProvider::saveCovers()
+{
+    QSettings settings;
+    settings.remove("playlistCovers");
+    settings.sync();
+    settings.beginGroup("playlistCovers");
+
+    for(auto it = playlistCovers.begin(); it != playlistCovers.end(); ++it){
+        int coverKey = it.key();
+        QPixmap coverArt = it.value();
+
+        settings.setValue(QString::number(coverKey), coverArt);
     }
 
     settings.endGroup();

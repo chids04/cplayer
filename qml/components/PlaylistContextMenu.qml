@@ -1,3 +1,4 @@
+pragma ComponentBehavior: Bound
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 
@@ -8,13 +9,28 @@ Menu {
     title: qsTr("Tools")
 
     property int playlistID
+    property string playlistName
+    property bool playlistHasCover
+
+    EditPlaylist{
+        id: editPopup
+    }
 
     MenuItem{
         id: removePlaylist
-        text: "Remove Playlist"
+        text: "remove playlist"
 
         onTriggered: {
-            MusicHandler.playlistManager.removePlaylist(playlistID)
+            GlobalSingleton.playlistManager.removePlaylist(playlistMenu.playlistID)
+        }
+    }
+
+    MenuItem{
+        id: modify
+        text: "modify playlist"
+
+        onTriggered: {
+            editPopup.openPopup(playlistMenu.playlistID, playlistMenu.playlistName, playlistMenu.playlistHasCover)
         }
     }
 
@@ -58,8 +74,10 @@ Menu {
                 }
             }
 
-    function openContextMenu(playlist){
-        playlistID = playlist
+    function openContextMenu(id, name, hasCover){
+        playlistID = id
+        playlistName = name
+        playlistHasCover = hasCover
         playlistMenu.popup()
 
     }

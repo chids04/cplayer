@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Controls
 
 // ErrorPopup.qml
@@ -76,7 +75,7 @@ Popup {
         }
 
     contentItem: Text{
-        text: "<b><u>Error:</u></b> " + errorText
+        text: "<b><u>Error:</u></b> " + popup.errorText
         font.pointSize: 14
         color: "white"
     }

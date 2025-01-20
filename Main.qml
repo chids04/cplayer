@@ -23,7 +23,7 @@ ApplicationWindow {
     property alias mainErrorPopup: errorPopup
 
     onClosing : {
-        UtilitySingleton.settingsManager.shutDown()
+        GlobalSingleton.save()
     }
 
     Rectangle {
@@ -55,7 +55,7 @@ ApplicationWindow {
     }
 
     Connections{
-        target: ViewController
+        target: GlobalSingleton.viewController
 
         function onShowMsg(msg){
             msgPopup.openPopup(msg)

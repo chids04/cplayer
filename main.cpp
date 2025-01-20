@@ -1,41 +1,17 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QFontDatabase>
-
-#include "mediaplayercontroller.h"
-#include "mediaimageprovider.h"
-#include "viewcontroller.h"
-#include "albumfilterproxymodel.h"
-#include "folderlistmodel.h"
-#include "albumsongsview.h"
-#include "folderview.h"
-#include "playlistmodel.h"
-#include "playlistmanager.h"
-#include "nowplaying.h"
-#include "songfilterproxymodel.h"
-#include "albumsearchfilter.h"
-#include "modelhandler.h"
-#include "musichandler.h"
-#include "viewcontroller.h"
-#include "utilitysingleton.h"
-#include "playlistfilter.h"
-#include "playlistimageprovider.h"
-
 #include <QDebug>
+
+#include "globalsingleton.h"
 
 int main(int argc, char *argv[])
 {
-    //need to remove the use of static instances, makes app harder to test
-    //will have a global model with a static reference to itself
-    //classes to will be able access other classes thru this one global model
-
     QGuiApplication app(argc, argv);
-
     QCoreApplication::setOrganizationName("tecstars");
     QCoreApplication::setApplicationName("cplayer");
 
     QSettings settings;
-    settings.clear();
 
     int fontId = QFontDatabase::addApplicationFont(":/resource/ui/fonts/Satoshi-Medium.otf");
 
@@ -45,7 +21,8 @@ int main(int argc, char *argv[])
         QGuiApplication::setFont(QFont(fontFamily));
     }
 
-    //image provider needs to be intatitated before application engine to prevent crash
+    PlaylistImageProvider *playlistProvider = new PlaylistImageProvider;
+    CoverImgProvider *coverProvider = new CoverImgProvider;
 
     QQmlApplicationEngine engine;
 
@@ -56,43 +33,12 @@ int main(int argc, char *argv[])
     qRegisterMetaType<QList<Song>>();
     qRegisterMetaType<QList<Playlist>>();
 
-    auto modelHandler = engine.singletonInstance<ModelHandler *>("cplayer", "ModelHandler");
-    modelHandler->setSongList(&SongFilterProxyModel::instance());
-    modelHandler->setAlbumList(&AlbumSearchFilter::instance());
-    modelHandler->setAlbumSongs(&AlbumFilterProxyModel::instance());
-    modelHandler->setPlaylistList(&PlaylistModel::instance());
-    modelHandler->setFolderList(&FolderListModel::instance());
-    modelHandler->setSettingsManager(&SettingsManager::instance());
-    modelHandler->setPlaylistFilter(&PlaylistFilter::instance());
+    auto globalSingleton = engine.singletonInstance<GlobalSingleton*>("cplayer", "GlobalSingleton");
 
+    engine.addImageProvider(QLatin1String("coverArt"), coverProvider);
+    engine.addImageProvider(QLatin1String("playlistCovers"), playlistProvider);
 
-    auto musicHandler = engine.singletonInstance<MusicHandler *>("cplayer", "MusicHandler");
-    musicHandler->setMediaPlayerController(&MediaPlayerController::instance());
-    musicHandler->setNowPlaying(&NowPlaying::instance());
-    musicHandler->setPlaylistManager(&PlaylistManager::instance());
-
-    auto viewController = engine.singletonInstance<ViewController *>("cplayer", "ViewController");
-    viewController->setAlbumSongsView(&AlbumSongsView::instance());
-    viewController->setPlaylistSongsView(&PlaylistSongsView::instance());
-    viewController->setFolderView(&FolderView::instance());
-
-    auto utilitySingleton = engine.singletonInstance<UtilitySingleton *>("cplayer", "UtilitySingleton");
-    utilitySingleton->setSettingsManager(&SettingsManager::instance());
-
-    MediaImageProvider *mediaImageProvider = new MediaImageProvider;
-    PlaylistImageProvider *playlistImageProvider = new PlaylistImageProvider;
-    PlaylistManager::instance().setPlaylistImageProvider(playlistImageProvider);
-    SettingsManager::instance().setPlaylistImageProvider(playlistImageProvider);
-
-
-    engine.addImageProvider(QLatin1String("coverArt"), mediaImageProvider);
-    engine.addImageProvider(QLatin1String("playlistCovers"), playlistImageProvider);
-
-    if(SettingsManager::instance().hasFolder()){
-        SettingsManager::instance().setup();
-    }
-
-
+    globalSingleton->init(coverProvider, playlistProvider);
     const QUrl url(QStringLiteral("qrc:/qt/qml/cplayer/Main.qml"));
     QObject::connect(
         &engine,
