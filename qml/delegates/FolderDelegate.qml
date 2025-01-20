@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick 2.15
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -30,7 +32,7 @@ Item {
 
                 Text{
                     id: folderNameText
-                    text: folderName
+                    text: folderDelegate.folderDelegateName
                     color: "white"
                     font.bold: true
                     font.pointSize: 10
@@ -39,7 +41,7 @@ Item {
 
                 Text{
                     id:folderPathText
-                    text: folderPath
+                    text: folderDelegate.folderDelegatePath
                     color: "white"
                     font.pointSize: 10
 
@@ -67,7 +69,7 @@ Item {
                     //propagateComposedEvents: true
                     onEntered: removeBtn.opacity = 0.5
                     onExited: removeBtn.opacity = 1
-                    onClicked: confirmPopup.openFolderPopup(folderIndex, folderDelegatePath)
+                    onClicked: confirmPopup.openFolderPopup(folderDelegate.folderIndex, folderDelegate.folderDelegatePath)
 
                     onPressedChanged: {
                         if(pressed){

@@ -1,7 +1,8 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import Qt.labs.platform
-import QtQuick.Dialogs
 import QtQuick.Controls.Basic
 
 import cplayer
@@ -11,8 +12,10 @@ import "../components"
 
 Item {
     id: playlistsView
-    property bool hasCover
 
+    ErrorPopup{
+        id: errorPopup
+    }
 
     ColumnLayout{
         anchors.fill: parent
@@ -101,6 +104,8 @@ Item {
 
                 contentItem: ColumnLayout{
                     //anchors.fill: parent
+                    id: content
+                    property bool hasCover;
 
                     Image{
                         id: playlistImg
@@ -109,16 +114,48 @@ Item {
                         Layout.preferredWidth: 300
                         Layout.alignment: Qt.AlignHCenter
                         Layout.bottomMargin: 10
+                        rotation: 0
                     }
 
-                    CButton {
-                        buttonText: "Add Image"
+
+                    RowLayout{
                         Layout.alignment: Qt.AlignHCenter
 
-                        onButtonClicked: {
-                            imageFileDialog.open()
+                        CButton {
+                            buttonText: "add image"
+                            Layout.alignment: Qt.AlignHCenter
+
+                            onButtonClicked: {
+                                imageFileDialog.open()
+                            }
+                        }
+
+                        CButton {
+                            buttonText: "rotate image"
+                            Layout.alignment: Qt.AlignHCenter
+
+                            onButtonClicked: {
+                                playlistImg.rotation = (playlistImg.rotation + 90) % 360
+                            }
+
+                        }
+
+
+                    }
+
+
+
+                    FileDialog{
+                        id: imageFileDialog
+                        title: "Select Playlist Cover Image"
+                        nameFilters: ["Image files (*.png *.jpg *.jpeg *.bmp)"]
+
+                        onAccepted: {
+                            playlistImg.source = file
+                            content.hasCover = true
                         }
                     }
+
 
                     TextField {
                         id: inputField
@@ -148,16 +185,16 @@ Item {
 
                         onButtonClicked: {
                             if(inputField.text.trim() === ""){
-                                mainErrorPopup.openPopup("Playlist must have a name")
+                                errorPopup.openPopup("Playlist must have a name")
                             }
                             else{
                                 //PlaylistView.addPlaylist(inputField.text)
-                                if(hasCover){
-                                    MusicHandler.playlistManager.addPlaylist(inputField.text, playlistImg.source, true)
+                                if(content.hasCover){
+                                    GlobalSingleton.playlistManager.addPlaylist(inputField.text, playlistImg.rotation, playlistImg.source, true)
                                     popUp.close()
                                 }
                                 else{
-                                    MusicHandler.playlistManager.addPlaylist(inputField.text)
+                                    GlobalSingleton.playlistManager.addPlaylist(inputField.text, playlistImg.rotation)
                                     popUp.close()
                                 }
 
@@ -193,9 +230,6 @@ Item {
             }
 
 
-            PlaylistContextMenu{
-                id: playlistContextMenu
-            }
 
             GridView {
                 id: gridView
@@ -217,6 +251,13 @@ Item {
                         color: "transparent"
                         radius: 10
 
+                        required property int playlistID
+                        required property string playlistName
+                        required property bool playlistHasCover
+
+                        property bool isHovered: false
+                        property bool isContextMenuOpened: false
+
                         MouseArea {
                             anchors.fill: parent
                             hoverEnabled: true
@@ -224,10 +265,16 @@ Item {
 
                             onEntered: {
                                 playlistCard.color = "#0b0b0b"
+                                playlistCard.isHovered = true
 
                             }
                             onExited: {
-                                playlistCard.color = "transparent"
+                                if(!playlistCard.isContextMenuOpened){
+                                    playlistCard.isHovered = false
+                                    playlistCard.color = "transparent"
+                                }
+
+
                             }
 
                             onDoubleClicked:{
@@ -235,14 +282,15 @@ Item {
                                 // AlbumSongsView.setAlbum(albumArtists, albumName, albumGenre, albumYear, albumSongCount)
                                 // ViewController.selectAlbum()
                                 //PlaylistView.loadPlaylistSongs(playlistID)
-                                MusicHandler.playlistManager.loadPlaylistSongs(playlistID)
-                                ModelHandler.setPlaylistSongsList(MusicHandler.playlistManager.playlistSongsModel)
-                                ViewController.selectPlaylist()
+                                GlobalSingleton.playlistManager.loadPlaylistSongs(playlistCard.playlistID)
+                                GlobalSingleton.viewController.selectPlaylist()
                             }
 
                             onClicked: mouse => {
                                 if(mouse.button === Qt.RightButton){
-                                    playlistContextMenu.openContextMenu(playlistID)
+                                    console.log(playlistCard.playlistID, playlistCard.playlistHasCover)
+                                    playlistCard.isContextMenuOpened = true
+                                    playlistContextMenu.openContextMenu(playlistCard.playlistID, playlistCard.playlistName, playlistCard.playlistHasCover)
                                 }
                             }
 
@@ -255,27 +303,36 @@ Item {
                             anchors.bottomMargin: 5
 
                             Image {
-                                source: playlistHasCover ? "image://playlistCovers" + "/" + playlistID : "qrc:/resource/ui/assets/unknownCover.png"
+                                source: playlistCard.playlistHasCover ? "image://playlistCovers" + "/" + playlistCard.playlistID : "qrc:/resource/ui/assets/unknownCover.png"
                                 sourceSize.width: playlistCard.width - 100
                                 sourceSize.height: playlistCard.width - 100
                                 Layout.alignment: Qt.AlignHCenter
+                                cache: false
 
                             }
 
                             Text {
-                                text: playlistName
+                                text: playlistCard.playlistName
                                 font.bold: true
-                                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                                //wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                                 color: "white"
                                 Layout.alignment: Qt.AlignHCenter
                                 Layout.bottomMargin: 7
                             }
 
+
+                            PlaylistContextMenu{
+                                id: playlistContextMenu
+                                onClosed: {
+                                    playlistCard.isContextMenuOpened = false
+                                    playlistCard.color = "transparent"
+                                }
+                            }
                         }
                     }
                 }
 
-                model: ModelHandler.playlistList
+                model: GlobalSingleton.playlistManager.playlistModel
                 delegate: playlistDelegate
 
                 onWidthChanged: {
@@ -291,15 +348,5 @@ Item {
 
     }
 
-    FileDialog{
-        id: imageFileDialog
-        title: "Select Playlist Cover Image"
-        nameFilters: ["Image files (*.png *.jpg *.jpeg *.bmp)"]
-
-        onAccepted: {
-            playlistImg.source = selectedFile
-            hasCover = true
-        }
-    }
 
 }

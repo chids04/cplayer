@@ -1,7 +1,8 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import Qt.labs.platform
-import QtQuick.Controls
 
 import cplayer
 import "../components"
@@ -14,7 +15,7 @@ Item {
 
         onAccepted: {
             print(folderDialogs.folder)
-            ViewController.folderView.startFolderScanningThread(folderDialogs.folder, false)
+            GlobalSingleton.folderManager.startFolderScanningThread(folderDialogs.folder, false)
         }
     }
 
@@ -31,7 +32,7 @@ Item {
         }
 
         Rectangle {
-            height: 1
+            Layout.preferredHeight: 1
             color: "#2e2f30"
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignCenter
@@ -80,12 +81,15 @@ Item {
                 clip: true
 
                 delegate: FolderDelegate{
+                    required property string folderName
+                    required property string folderPath
+
                     folderDelegateName: folderName
                     folderDelegatePath: folderPath
                     delegateWidth: folderListView.width
                 }
 
-                model: ModelHandler.folderList
+                model: GlobalSingleton.folderManager.folderListModel
             }
 
         }

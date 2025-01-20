@@ -53,6 +53,7 @@ public:
     void setQueue(QList<std::shared_ptr<QueueEntry>> queue_entries);
     std::shared_ptr<QueueEntry> popEntry(int index);
     void moveSong(int from, int to);
+    void shuffleSongs();
 
 
 

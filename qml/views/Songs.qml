@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls.Basic
@@ -19,7 +21,9 @@ Item {
             color: "white"
         }
 
+
         TextField {
+            id: textfield
             Layout.fillWidth: true
             Layout.topMargin: 10
             Layout.preferredHeight: 40
@@ -28,7 +32,7 @@ Item {
             placeholderTextColor: "darkgrey"
             color: "white"
 
-            onTextChanged: ModelHandler.songList.filterString = text
+            onTextChanged: GlobalSingleton.songManager.songModel.filterString = text
 
             background: Rectangle{
                 border.color: "#343434"
@@ -39,15 +43,21 @@ Item {
 
         }
 
-        ListView {
+        GridView {
             id: songsListView
 
             Layout.fillHeight: true
-            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter
+            Layout.preferredWidth: (Math.floor(parent.width / cellWidth)) * cellWidth
+
+
+
             Layout.topMargin: 10
-            spacing: 5
 
             clip: true
+            cellWidth: 200
+            cellHeight: 100
+
 
             ScrollBar.vertical: ScrollBar {
                 id:songScollbar
@@ -66,16 +76,23 @@ Item {
                 }
             }
 
-            model: ModelHandler.songList// This is the model exposed from C++
-            delegate: SongDelegate{
+            model: GlobalSingleton.songManager.songModel// This is the model exposed from C++
+            delegate: SongViewDelegate{
                 id: songDelegate
-                songDelegateIndex: index
+
+                required property int index
+                required property string title
+                required property string artist
+                required property list<string> features
+                required property string album
+                required property list<string> albumArtists
+                required property var songObject
+
                 songDelegateHeight: 80
-                songDelegateWidth: songsListView.width - 23
+                songDelegateWidth: 180
                 songDelegateColor: index % 2 == 0 ? "#1e1f20" : "#131314"
                 songObj: songObject
 
-                songDelegateNumber: index + 1
                 songDelegateTitle: title
                 songDelegateAuthors: features.length === 0 ? artist  : artist + " feat. " + features.join(", ")
                 songDelegateAlbum: album
@@ -84,7 +101,7 @@ Item {
 
                 onSongDelegateDoubleClicked: {
                     //NowPlaying.playNow(songObject)
-                    MusicHandler.nowPlaying.playNow(songObject)
+                    GlobalSingleton.playbackManager.nowPlaying.playNow(songObject)
                 }
 
             }

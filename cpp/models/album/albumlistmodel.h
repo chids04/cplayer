@@ -14,10 +14,10 @@
 class AlbumListModel : public QAbstractListModel
 {
     Q_OBJECT
+    QML_ANONYMOUS
 
 public:
     explicit AlbumListModel(QObject *parent = nullptr);
-    static AlbumListModel &instance();
 
     enum AlbumRoles {
         AlbumNameRole = Qt::UserRole + 1,
@@ -25,7 +25,8 @@ public:
         AlbumSongsRole,
         AlbumArtistRole,
         AlbumYearRole,
-        AlbumSongCountRole
+        AlbumSongCountRole,
+        AlbumObjRole
 
     };
 
@@ -40,7 +41,7 @@ public:
 
 public slots:
     void updateAlbum(std::shared_ptr<Song> song);
-    void decrementAlbum(QString &albumName, QStringList &albumArtists);
+    void decrementAlbum(const QString &albumName, const QStringList &albumArtists);
     void deleteAlbums();
 
 private:

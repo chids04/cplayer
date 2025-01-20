@@ -1,7 +1,8 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Effects
-import QtQuick.Controls.Basic
 
 import cplayer
 
@@ -39,8 +40,8 @@ Item{
             Rectangle{
                 id: settingsPanel
                 color: "#424445"
-                height: 40
-                width: 50
+                Layout.preferredHeight: 40
+                Layout.preferredWidth: 50
                 bottomLeftRadius: 10
                 bottomRightRadius: 10
                 Layout.alignment: Qt.AlignLeft | Qt.AlignTop
@@ -74,7 +75,7 @@ Item{
                             albumWindow.state = ""
                             playlistsWindow.state = ""
 
-                            ViewController.settingsView()
+                            GlobalSingleton.viewController.settingsView()
 
 
                         }
@@ -103,7 +104,7 @@ Item{
             Rectangle{
                 id: songsWindow
                 Layout.fillWidth: true
-                height: 60
+                Layout.preferredHeight: 60
                 color: "transparent"
 
                 bottomRightRadius: 40
@@ -116,8 +117,8 @@ Item{
 
 
                     Rectangle {
-                        height: songText.height
-                        width: songText.width
+                        Layout.preferredHeight: songText.height
+                        Layout.preferredWidth: songText.width
                         Layout.fillWidth: true
                         color: "transparent"
                         Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
@@ -127,8 +128,6 @@ Item{
                             color: "white"
                             font.pointSize: 30
                             text: qsTr("songs")
-                            //anchors.horizontalCenter: parent.horizontalCenter
-                            //anchors.verticalCenter: parent.verticalCenter
                         }
                     }
 
@@ -150,7 +149,7 @@ Item{
                         albumWindow.state = ""
                         playlistsWindow.state = ""
 
-                        ViewController.songView()
+                        GlobalSingleton.viewController.songView()
                     }
                 }
 
@@ -158,16 +157,19 @@ Item{
                     State {
                         name: "clicked"
                         PropertyChanges {
-                            target: songsWindow;
-                            color: "#1d1d1e"
+                            songsWindow{
+                                color: "#1d1d1e"
+                            }
+
                         }
                     },
 
                     State{
                         name: ""
                         PropertyChanges {
-                            target: songsWindow;
-                            color: "transparent"
+                            songsWindow{
+                                color: "transparent"
+                            }
 
                         }
                     }
@@ -178,7 +180,7 @@ Item{
             Rectangle{
                 id: albumWindow
                 Layout.fillWidth: true
-                height: 60
+                Layout.preferredHeight: 60
                 color: "transparent"
                 bottomRightRadius: 40
                 topRightRadius: 40
@@ -191,7 +193,7 @@ Item{
 
 
                     Rectangle {
-                        height: albumText.height
+                        Layout.preferredHeight: albumText.height
                         Layout.fillWidth: true
                         color: "transparent"
                         Layout.alignment: Qt.AlignVCenter
@@ -201,8 +203,6 @@ Item{
                             color: "white"
                             font.pointSize: 30
                             text: qsTr("albums")
-                            //anchors.horizontalCenter: parent.horizontalCenter
-                            //anchors.verticalCenter: parent.verticalCenter
                         }
                     }
 
@@ -223,8 +223,7 @@ Item{
                         albumWindow.state = "clicked"
                         songsWindow.state = ""
                         playlistsWindow.state = ""
-                        selectedItem = 1
-                        ViewController.albumView()
+                        GlobalSingleton.viewController.albumView()
                     }
 
                 }
@@ -234,16 +233,18 @@ Item{
                         name: "clicked"
 
                         PropertyChanges {
-                            target: albumWindow;
-                            color: "#1d1d1e"
+                            albumWindow{
+                                color: "#1d1d1e"
+                            }
                         }
                     },
 
                     State{
                         name: ""
                         PropertyChanges {
-                            target: albumWindow;
-                            color: "transparent"
+                            albumWindow{
+                                color: "transparent"
+                            }
 
                         }
                     }
@@ -256,7 +257,7 @@ Item{
             Rectangle{
                 id: playlistsWindow
                 Layout.fillWidth: true
-                height: 60
+                Layout.preferredHeight: 60
                 color: "transparent"
                 bottomRightRadius: 40
                 topRightRadius: 40
@@ -268,7 +269,7 @@ Item{
 
 
                     Rectangle {
-                        height: playlistsText.height
+                        Layout.preferredHeight: playlistsText.height
                         Layout.fillWidth: true
                         color: "transparent"
                         Layout.alignment: Qt.AlignVCenter
@@ -278,8 +279,6 @@ Item{
                             color: "white"
                             font.pointSize: 30
                             text: qsTr("playlists")
-                            //anchors.horizontalCenter: parent.horizontalCenter
-                            //anchors.verticalCenter: parent.verticalCenter
                         }
                     }
 
@@ -300,7 +299,7 @@ Item{
                         playlistsWindow.state = "clicked"
                         albumWindow.state = ""
                         songsWindow.state = ""
-                        ViewController.playlistsView()
+                        GlobalSingleton.viewController.playlistsView()
                     }
 
                 }
@@ -310,16 +309,18 @@ Item{
                         name: "clicked"
 
                         PropertyChanges {
-                            target: playlistsWindow;
-                            color: "#1d1d1e"
+                            playlistsWindow{
+                                color: "#1d1d1e"
+                            }
                         }
                     },
 
                     State{
                         name: ""
                         PropertyChanges {
-                            target: playlistsWindow;
-                            color: "transparent"
+                            playlistsWindow{
+                                color: "transparent"
+                            }
 
                         }
                     }

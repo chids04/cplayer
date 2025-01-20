@@ -8,17 +8,20 @@
 
 class Playlist
 {
+
 public:
     Playlist() = default;
     Playlist(int id, const QString &playlistName, bool hasCover = false);
 
     void addSong(int songID);
+    void removeSong(int id);
     void clearPlaylist();
     bool playlistHasCover() const;
 
     void setSongCount(int songCount);
+    void setName(const QString &name);
     void setDuration(int duration);
-    void removeSong(int id);
+    void setHasCover(bool cover);
 
     int getID() const;
     int getDuration() const;
@@ -30,6 +33,7 @@ public:
 
     friend QDataStream &operator<<(QDataStream &out, const Playlist &playlist);
     friend QDataStream &operator>>(QDataStream &in, Playlist &playlist);
+
 
 private:
     int id;

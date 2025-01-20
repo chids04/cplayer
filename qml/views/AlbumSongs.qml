@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -28,7 +30,7 @@ Item {
                 Image{
                     id: albumCoverArt
 
-                    source: "image://coverArt/" + ViewController.albumSongsView.albumName + "/" + ViewController.albumSongsView.albumArtists[0]
+                    source: "image://coverArt/" + GlobalSingleton.songManager.albumName + "/" + GlobalSingleton.songManager.albumArtists[0]
                     sourceSize.width: 170
                     sourceSize.height: 170
 
@@ -41,7 +43,7 @@ Item {
                     Text{
                         id: loadedAlbumName
                         color: "white"
-                        text: ViewController.albumSongsView.albumName
+                        text: GlobalSingleton.songManager.albumName
                         Layout.fillWidth: true
                         elide: Text.ElideRight
                         font.bold: true
@@ -51,21 +53,21 @@ Item {
 
                     Text{
                         id: loadedAlbumArtists
-                        text: ViewController.albumSongsView.albumArtists.join(", ")
+                        text: GlobalSingleton.songManager.albumArtists.join(", ")
                         color:"white"
                         font.pointSize: 20
                     }
 
                     Text{
                         id: loadedAlbumGenre
-                        text: ViewController.albumSongsView.genre
+                        text: GlobalSingleton.songManager.albumGenre
                         color: "white"
                         font.pointSize: 10
                     }
 
                     Text{
                         id: loadedAlbumYear
-                        text: ViewController.albumSongsView.year
+                        text: GlobalSingleton.songManager.albumYear
                         color: "white"
                         font.pointSize: 10
                     }
@@ -87,7 +89,7 @@ Item {
                 buttonText: "Play Now"
 
                 onButtonClicked: {
-                    MusicHandler.nowPlaying.playAlbum(ViewController.albumSongsView.albumName, ViewController.albumSongsView.albumArtists, false);
+                    GlobalSingleton.playbackManager.nowPlaying.playAlbum(GlobalSingleton.songManager.albumName, GlobalSingleton.songManager.albumArtists, false);
                 }
 
             }
@@ -97,9 +99,9 @@ Item {
                 buttonText: "Add to Queue"
 
                 onButtonClicked: {
-                    MusicHandler.nowPlaying.playAlbum(ViewController.albumSongsView.albumName, ViewController.albumSongsView.albumArtists, true);
-                    let albumNameBold = "<b>" + ViewController.albumSongsView.albumName + "</b>";
-                    ViewController.showMsg(albumNameBold + " added to queue")
+                    GlobalSingleton.playbackManager.nowPlaying.playAlbum(GlobalSingleton.songManager.albumName, GlobalSingleton.songManager.albumArtists, true);
+                    let albumNameBold = "<b>" + GlobalSingleton.songManager.albumName + "</b>";
+                    GlobalSingleton.viewController.showMsg(albumNameBold + " added to queue")
                 }
             }
 
@@ -137,10 +139,19 @@ Item {
                     }
                 }
 
-                model: ModelHandler.albumSongs
+                model: GlobalSingleton.songManager.albumSongsModel
 
                 delegate: SongDelegate{
                     id: songDelegate
+
+                    required property int index
+                    required property int albumNum
+                    required property string title
+                    required property string album
+                    required property string artist
+                    required property list<string> albumArtists
+                    required property list<string> features
+                    required property var songObject
 
                     songDelegateIndex: index
                     songDelegateHeight: 80
@@ -156,7 +167,7 @@ Item {
                     songFeatures: albumArtists
 
                     onSongDelegateDoubleClicked: {
-                        MusicHandler.nowPlaying.playNow(songObject)
+                        GlobalSingleton.playbackManager.nowPlaying.playNow(songObject)
                     }
 
                 }

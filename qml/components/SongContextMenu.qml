@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 
@@ -17,7 +19,7 @@ Menu {
         text: "Queue Next"
 
         onTriggered: {
-            MusicHandler.nowPlaying.queueNext(songObj)
+            GlobalSingleton.playbackManager.nowPlaying.queueNext(songObj)
         }
     }
 
@@ -26,13 +28,16 @@ Menu {
         title: "Add to playlist"
         Instantiator {
             id: playlistInstantiator
-            model: ModelHandler.playlistList // Assuming PlaylistModel is exposed from C++
+            model: GlobalSingleton.playlistManager.playlistModel // Assuming PlaylistModel is exposed from C++
 
             delegate: MenuItem {
                 id: menuItemDelegate
+                required property string playlistName
+                required property int playlistID
+
                 text: playlistName
                 onTriggered: {
-                    MusicHandler.playlistManager.addSongToPlaylist(playlistID, songObj)
+                    GlobalSingleton.playlistManager.addSongToPlaylist(playlistID, songObj)
                 }
             }
 

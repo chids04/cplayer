@@ -1,7 +1,8 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import Qt.labs.platform
-import QtQuick.Controls.Basic
 
 import cplayer
 import "../components"
@@ -14,7 +15,7 @@ Item {
         title: "Select a directory to scan for music"
 
         onAccepted: {
-            ViewController.folderView.startFolderScanningThread(folderDialog.folder)
+            GlobalSingleton.folderManager.startFolderScanningThread(folderDialog.folder)
             //FolderView.startFolderScanningThread(folderDialog.folder)
         }
 
@@ -63,6 +64,12 @@ Item {
                     width: folderListView.width-23
                     height: 90
                     radius: 10
+
+                    required property int index
+                    required property string folderName
+                    required property string folderPath
+                    required property int folderSongCount
+
                     color: index % 2 == 0 ? "#1e1f20" : "#131314"
 
                     RowLayout{
@@ -89,19 +96,19 @@ Item {
                                 anchors.fill: parent
 
                                 Text{
-                                    text: folderName
+                                    text: folderRect.folderName
                                     font.bold: true
                                     font.pointSize: 16
                                     color: "white"
                                 }
 
                                 Text{
-                                    text: folderPath
+                                    text: folderRect.folderPath
                                     color: "white"
                                 }
 
                                 Text{
-                                    text: "Number of Songs: " + folderSongCount
+                                    text: "Number of Songs: " + folderRect.folderSongCount
                                     color: "white"
 
                                 }
@@ -115,7 +122,7 @@ Item {
             }
 
             //model: FolderModel// This is the model exposed from C++
-            model: ModelHandler.folderList
+            model: GlobalSingleton.folderManager.folderListModel
             delegate: folderDelegate
 
         }

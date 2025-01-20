@@ -2,18 +2,13 @@
 
 #include "songlistmodel.h"
 
-AlbumFilterProxyModel::AlbumFilterProxyModel(QObject *parent)
+AlbumFilterProxyModel::AlbumFilterProxyModel(SongListModel *songListModel, QObject *parent)
     : QSortFilterProxyModel{parent}
 {
-    setSourceModel(&SongListModel::instance());
+    setSourceModel(songListModel);
     sort(0, Qt::AscendingOrder);
 }
 
-AlbumFilterProxyModel &AlbumFilterProxyModel::instance()
-{
-    static AlbumFilterProxyModel albumFilterProxyModel;
-    return albumFilterProxyModel;
-}
 
 void AlbumFilterProxyModel::setCurrentAlbumName(const QString &newAlbumName)
 {

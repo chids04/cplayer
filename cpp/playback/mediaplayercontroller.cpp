@@ -18,31 +18,14 @@ MediaPlayerController::MediaPlayerController(QObject *parent)
 
     setAudioDeviceModel(new AudioDeviceModel);
 
- //    to-do, audio device switching
-
- //    const QList<QAudioDevice> audioDevices = QMediaDevices::audioOutputs();
- //    for (const QAudioDevice &device : audioDevices)
- //    {
- //        qDebug() << "ID: " << device.id() << Qt::endl;
- //        qDebug() << "Description: " << device.description() << Qt::endl;
- //        qDebug() << "Is default: " << (device.isDefault() ? "Yes" : "No") << Qt::endl;
- //    }
-
     connect(player, &QMediaPlayer::positionChanged, this, &MediaPlayerController::onPositionChanged);
     connect(player, &QMediaPlayer::durationChanged, this, &MediaPlayerController::durationChanged);
     connect(mediaDevices, &QMediaDevices::audioOutputsChanged, this, &MediaPlayerController::onAudioDeviceChanged);
     connect(m_audioDeviceModel, &AudioDeviceModel::audioDeviceChanged, this, &MediaPlayerController::setAudioDevice);
+
     connect(this, &MediaPlayerController::playingChanged, this, &MediaPlayerController::onPlayingChanged);
-    connect(this, &MediaPlayerController::nextSong, &NowPlaying::instance(), &NowPlaying::onNextClicked);
-    connect(this, &MediaPlayerController::previousSong, &NowPlaying::instance(), &NowPlaying::onPreviousClicked);
-
-    connect(&NowPlaying::instance(), &NowPlaying::playSong, this, &MediaPlayerController::onPlaySong);
-    connect(&NowPlaying::instance(), &NowPlaying::jumpToEnd, this, &MediaPlayerController::onJumpToEnd);
-    connect(&NowPlaying::instance(), &NowPlaying::positionLoaded, this, &MediaPlayerController::onPositionLoaded);
-    connect(&NowPlaying::instance(), &NowPlaying::songLoaded, this ,&MediaPlayerController::onSongLoaded);
-    connect(&NowPlaying::instance(), &NowPlaying::durationLoaded, this, &MediaPlayerController::onDurationChanged);
-
     connect(player, &QMediaPlayer::mediaStatusChanged, this, &MediaPlayerController::onMediaStatusChanged);
+
 
     m_volume = 0.2;
     output->setVolume(m_volume);
@@ -112,9 +95,7 @@ void MediaPlayerController::onPlayingChanged() {
     if (m_playing) {
         //check if there are items in queue to play if no song loaded
         if(player->source() == QUrl()){
-            if(NowPlaying::instance().queueModel()->getLen() != 0){
-
-            }
+            emit checkQueue();
         }
         else{
             player->play();
@@ -386,3 +367,4 @@ void MediaPlayerController::setAudioDeviceModel(AudioDeviceModel *newAudioDevice
     m_audioDeviceModel = newAudioDeviceModel;
     emit audioDeviceModelChanged();
 }
+

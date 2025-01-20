@@ -11,10 +11,10 @@ class Folder
 public:
     Folder() = default;
 
-    Folder(QString &folderName, QString &folderPath, int songCount);
+    Folder(const QString &folderName, const QString &folderPath, int songCount);
 
-    void setFolderName(QString &newFolderName);
-    void setFolderPath(QString &newFolderPath);
+    void setFolderName(const QString &newFolderName);
+    void setFolderPath(const QString &newFolderPath);
     void setSongCount(int songCount);
     void setStored();
 

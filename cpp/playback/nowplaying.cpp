@@ -1,49 +1,52 @@
-#include "nowplaying.h"
+#include <QRandomGenerator>
 
+#include "nowplaying.h"
 #include "albumlistmodel.h"
 #include "songlistmodel.h"
+#include "songmanager.h"
+#include "mediaplayercontroller.h"
 
-NowPlaying::NowPlaying(QObject *parent) :
-    QObject(parent)
+NowPlaying::NowPlaying(MediaPlayerController *mediaPlayerController, QObject *parent) :
+    QObject(parent), m_mediaPlayer(mediaPlayerController)
 {
     QueueModel *queue_model = new QueueModel;
     QueueModelFilter *queue_proxy = new QueueModelFilter(queue_model);
     setQueueModel(queue_model);
     setQueueProxyModel(queue_proxy);
-
 }
 
-NowPlaying &NowPlaying::instance()
+void NowPlaying::saveNowPlaying()
 {
-    static NowPlaying nowPlaying;
-    return nowPlaying;
-}
+    //only need to store song id
+    QList<std::shared_ptr<QueueEntry>> queue = m_queueModel->getQueue();
+    int curr_song_id = getCurrentSongID();
 
-QList<std::shared_ptr<QueueEntry> > NowPlaying::getPlayedSongs()
-{
-    return m_playedSongs;
-}
+    qint64 position = m_mediaPlayer->position();
 
-QList<std::shared_ptr<QueueEntry> > NowPlaying::getNowPlaying()
-{
-    return m_queueModel->getQueue();
+    QList<int> queue_IDs;
+    QList<int> played_IDs;
 
-}
-
-void NowPlaying::playFromQueue()
-{
-    playingSong = m_queueModel->popEntry(0);
-    emit playSong(playingSong->song);
-}
-
-int NowPlaying::getCurrentSongID()
-{
-    if(playingSong != nullptr){
-        return playingSong->songID;
+    for(auto &queue_entry : queue){
+        qDebug() << "writing song" << queue_entry->song->title << "with id" << queue_entry->song->id << "to file";
+        queue_IDs << queue_entry->songID;
     }
 
-    return -1;
+    for(auto &played_entry : m_playedSongs){
+        played_IDs << played_entry->songID;
+    }
+
+    QSettings settings;
+    settings.beginGroup("nowPlaying");
+
+    settings.setValue("queue", QVariant::fromValue(queue_IDs));
+    settings.setValue("queueHistory", QVariant::fromValue(played_IDs));
+    settings.setValue("playingSong", curr_song_id);
+    settings.setValue("nowPlayingSongPosition", QVariant::fromValue(position));
+    settings.setValue("isShuffle", QVariant::fromValue(m_shuffle));
+
+    settings.endGroup();
 }
+
 
 void NowPlaying::loadFromSettings()
 {
@@ -51,12 +54,14 @@ void NowPlaying::loadFromSettings()
     settings.beginGroup("nowPlaying");
 
     qint64 position = settings.value("nowPlayingSongPosition", 0).toLongLong();
+    bool isShuffle = settings.value("isShuffle", false).toBool();
+    setShuffle(isShuffle);
 
     QList<int> queue_IDs   = settings.value("queue").value<QList<int>>();
     QList<int> played_IDs  = settings.value("queueHistory").value<QList<int>>();
     int curr_song = settings.value("playingSong").toInt();
 
-    const auto allSongs = SongListModel::instance().getSongs();
+    const auto allSongs = m_songListModel->getSongs();
     QHash<int, std::shared_ptr<Song>> song_map;
     for (const auto &s : allSongs) {
         song_map[s->id] = s;
@@ -115,11 +120,45 @@ void NowPlaying::loadFromSettings()
     }
 }
 
+void NowPlaying::setModels(SongManager *songManager)
+{
+    m_songListModel = songManager->getSongListModel();
+    m_albumListModel = songManager->getAlbumListModel();
+}
+
+QList<std::shared_ptr<QueueEntry> > NowPlaying::getPlayedSongs()
+{
+    return m_playedSongs;
+}
+
+QList<std::shared_ptr<QueueEntry> > NowPlaying::getNowPlaying()
+{
+    return m_queueModel->getQueue();
+
+}
+
+void NowPlaying::playFromQueue()
+{
+    playingSong = m_queueModel->popEntry(0);
+    emit playSong(playingSong->song);
+}
+
+int NowPlaying::getCurrentSongID()
+{
+    if(playingSong != nullptr){
+        return playingSong->songID;
+    }
+
+    return -1;
+}
+
+
+
 
 void NowPlaying::playAlbum(const QString &albumName, const QStringList &albumArtists, bool queue)
 {
-    QModelIndex albumIndex = AlbumListModel::instance().findAlbumIndex(albumName, albumArtists);
-    QVariant albumSongsVariant = AlbumListModel::instance().data(albumIndex, AlbumListModel::AlbumSongsRole);
+    QModelIndex albumIndex = m_albumListModel->findAlbumIndex(albumName, albumArtists);
+    QVariant albumSongsVariant = m_albumListModel->data(albumIndex, AlbumListModel::AlbumSongsRole);
     QList<std::shared_ptr<Song>> songs = albumSongsVariant.value<QList<std::shared_ptr<Song>>>();
 
     std::sort(songs.begin(), songs.end(), [](const std::shared_ptr<Song> &a, const std::shared_ptr<Song> &b){
@@ -151,7 +190,7 @@ void NowPlaying::playPlaylist(const Playlist &playlist, bool queue)
     }
 
 
-    QList<std::shared_ptr<Song>> songs = SongListModel::instance().getSongs();
+    QList<std::shared_ptr<Song>> songs = m_songListModel->getSongs();
     QList<std::shared_ptr<Song>> p_songs;
 
     for(const auto &song : songs){
@@ -263,6 +302,17 @@ void NowPlaying::onRemoveFromNowPlaying(int songID)
 
 }
 
+void NowPlaying::onCheckQueue()
+{
+    if(m_queueModel->getLen() == 0) {
+        return;
+    }
+    else{
+        playingSong = m_queueModel->popEntry(0);
+        emit playSong(playingSong->song);
+    }
+}
+
 QueueModel *NowPlaying::queueModel() const
 {
     return m_queueModel;
@@ -289,3 +339,22 @@ void NowPlaying::setQueueProxyModel(QueueModelFilter *newQueueProxyModel)
     m_queueProxyModel = newQueueProxyModel;
     emit queueProxyModelChanged();
 }
+
+bool NowPlaying::shuffle() const
+{
+    return m_shuffle;
+}
+
+void NowPlaying::setShuffle(bool newShuffle)
+{
+    if (m_shuffle == newShuffle)
+        return;
+    m_shuffle = newShuffle;
+
+    if(m_shuffle == true){
+        m_queueModel->shuffleSongs();
+    }
+
+    emit shuffleChanged();
+}
+

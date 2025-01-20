@@ -1,5 +1,7 @@
 #include "album.h"
 
+Album::Album(){}
+
 Album::Album(QString &name, QStringList &artist, QString &genre, int &year) :
     name(name), artist(artist), genre(genre), year(year){}
 

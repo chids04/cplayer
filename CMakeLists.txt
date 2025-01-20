@@ -6,7 +6,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
 
 find_package(Qt6 6.8 REQUIRED COMPONENTS Multimedia Quick Widgets Core)
-# find_package(TagLib 2.0.1 REQUIRED)
 
 
 if(WIN32)
@@ -59,6 +58,7 @@ qt_add_qml_module(appcplayer
 	QML_FILES
 	    qml/delegates/SongDelegate.qml
 		qml/delegates/FolderDelegate.qml
+		qml/delegates/SongViewDelegate.qml
 
 		#QML Components
     QML_FILES
@@ -70,6 +70,9 @@ qt_add_qml_module(appcplayer
         qml/components/PlaylistContextMenu.qml
 		qml/components/NowPlayingRect.qml
 		qml/components/MsgPopup.qml
+		qml/components/AudioDevicesPopup.qml
+		qml/components/EditPlaylist.qml
+		qml/components/EditSong.qml
 
 
 	#Singleton
@@ -94,18 +97,11 @@ qt_add_qml_module(appcplayer
 
 	#C++ Models
     SOURCES
-        cpp/cpp_models/coverartholder.h
-        cpp/cpp_models/coverartholder.cpp
 
 	#C++ background tasks
 	SOURCES
-	    cpp/background/musicscannerthread.h
-		cpp/background/musicscannerthread.cpp
-
-		cpp/background/songaddthread.h
-		cpp/background/songaddthread.cpp
-
-
+		cpp/background/musicscanner.h
+		cpp/background/musicscanner.cpp
 
     #C++ Playback Control
     SOURCES
@@ -129,15 +125,11 @@ qt_add_qml_module(appcplayer
 
     #C++ Image Providers
     SOURCES
-        cpp/image_providers/mediaimageprovider.h
-        cpp/image_providers/mediaimageprovider.cpp
-
         cpp/image_providers/playlistimageprovider.h
         cpp/image_providers/playlistimageprovider.cpp
 
 		cpp/image_providers/coverimgprovider.h
 		cpp/image_providers/coverimgprovider.cpp
-
 
     #C++ QML Models
     SOURCES
@@ -162,52 +154,31 @@ qt_add_qml_module(appcplayer
 		cpp/models/playlist/playlistfilter.cpp
 		cpp/models/playlist/playlistfilter.h
 
-		cpp/models/playlist/playlistsongsmodel.h
-		cpp/models/playlist/playlistsongsmodel.cpp
-
-
-		cpp/models/modelhandler.h
-		cpp/models/modelhandler.cpp
-
-		cpp/models/musichandler.h
-		cpp/models/musichandler.cpp
-
 	#QML View Managers
     SOURCES
-	    cpp/managers/albumsongsmanager.h
-		cpp/managers/albumsongsmanager.cpp
 
-		cpp/managers/albumview.h
-		cpp/managers/albumview.cpp
-
-		cpp/managers/folderview.h
-		cpp/managers/folderview.cpp
-
-		cpp/managers/songview.h
-		cpp/managers/songview.cpp
+		cpp/managers/foldermanager.h
+		cpp/managers/foldermanager.cpp
 
 		cpp/managers/viewcontroller.h
 		cpp/managers/viewcontroller.cpp
 
-		cpp/managers/playlistsongsmanager.cpp
-		cpp/managers/playlistsongsmanager.h
-
 		cpp/managers/playlistmanager.h
 		cpp/managers/playlistmanager.cpp
 
-		cpp/managers/models/folderlistmodel.h
-		cpp/managers/models/folderlistmodel.cpp
+		cpp/models/folder/folderlistmodel.h
+		cpp/models/folder/folderlistmodel.cpp
+
+		cpp/managers/songmanager.h
+		cpp/managers/songmanager.cpp
+
+		cpp/managers/playbackmanager.h
+		cpp/managers/playbackmanager.cpp
 
     #C++ utlities
     SOURCES
-        cpp/utility/settingsmanager.cpp
-        cpp/utility/settingsmanager.h
-
-        cpp/utility/utilitysingleton.h
-        cpp/utility/utilitysingleton.cpp
 
 )
-
 
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -223,44 +194,23 @@ set_target_properties(appcplayer PROPERTIES
 
 if(WIN32)
     target_link_directories(appcplayer PUBLIC ${TAGLIB_LIBRARY})
-    #target_link_directories(appcplayer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/cpp/taglib/lib ${TAGLIB_LIBRARY})
 
     target_link_libraries(appcplayer
         PRIVATE Qt6::Quick Qt6::Multimedia Qt6::Widgets Qt6::Core ${TAGLIB_LIBRARY}
         rapidfuzz::rapidfuzz
     )
 
-    #target_include_directories(appcplayer PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cpp/taglib/include ${TAGLIB_INCLUDE_DIR})
-#    target_include_directories(appcplayer PRIVATE
-#        ${TAGLIB_INCLUDE_DIR}
-#        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/cpp_models
-#        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/image_providers
-#        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/qml_models
-#        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/views
-#        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/playback
-#        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/utility)
-
-
 elseif(UNIX)
-    #target_include_directories(appcplayer PRIVATE)
     target_link_libraries(appcplayer
         PRIVATE Qt6::Quick Qt6::Multimedia Qt6::Widgets Qt6::Core TagLib::tag
         rapidfuzz::rapidfuzz
     )
 
-#    target_include_directories(appcplayer PRIVATE
-#        ${TAGLIB_INCLUDE_DIR}
-#        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/cpp_models/include
-#        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/image_providers/include
-#        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/qml_models/include
-#        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/views/include
-#        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/playback/include
-#        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/utility/include)
-
 endif()
 
 target_include_directories(appcplayer PRIVATE
         ${TAGLIB_INCLUDE_DIR}
+		${CMAKE_CURRENT_SOURCE_DIR}/cpp
 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/types
 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/background
 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/cpp_models

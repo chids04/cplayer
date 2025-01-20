@@ -1,14 +1,14 @@
+#include <QSettings>
+
 #include "playlistmodel.h"
+#include "playlistmanager.h"
 
-PlaylistModel::PlaylistModel(QObject *parent) : QAbstractListModel(parent)
+PlaylistModel::PlaylistModel(PlaylistManager *playlistManager, QObject *parent) : QAbstractListModel(parent),
+    playlistManager(playlistManager)
 {
+
 }
 
-PlaylistModel &PlaylistModel::instance()
-{
-    static PlaylistModel playlistModel;
-    return playlistModel;
-}
 
 void PlaylistModel::addPlaylist(std::shared_ptr<Playlist> playlist)
 {
@@ -40,6 +40,19 @@ void PlaylistModel::loadPlaylists(QList<std::shared_ptr<Playlist>> playlists)
     beginResetModel();
     m_playlists = playlists;
     endResetModel();
+}
+
+void PlaylistModel::modifyPlaylist(int id, const QString &name, bool hasCover)
+{
+    for(auto &playlist: m_playlists){
+        if(playlist->getID() == id){
+            playlist->setName(name);
+            playlist->setHasCover(hasCover);
+            break;
+        }
+
+    }
+
 }
 
 int PlaylistModel::rowCount(const QModelIndex &parent) const
@@ -120,5 +133,45 @@ QModelIndex PlaylistModel::getIndexForID(int id) const
         }
     }
     return QModelIndex();
+}
+
+
+void PlaylistModel::readPlaylists()
+{
+    QSettings settings;
+    QList<Playlist> loadedPlaylists = settings.value("playlists").value<QList<Playlist>>();
+    int playlistNum = settings.value("playlistNum", 0).toInt();
+
+
+    for(const Playlist &playlist : loadedPlaylists){
+        std::shared_ptr<Playlist> playlistPtr = std::make_shared<Playlist>(playlist);
+        beginInsertRows(QModelIndex(), rowCount(), rowCount());
+        m_playlists.append(playlistPtr);
+        qDebug() << "appendednewplaylist";
+        endInsertRows();
+    }
+
+    playlistManager->loadPlaylistNum(playlistNum);
+}
+
+void PlaylistModel::savePlaylists()
+{
+    //saves playlists and the playlistNum, since playlistNum is used as the id, this prevents duplicate playlists ids;
+    QSettings settings;
+    int playlistNum = playlistManager->getPlaylistNum();
+    QList<Playlist> playlistObj;
+
+    for(const auto &playlist : m_playlists){
+        playlistObj.append(*playlist);
+    }
+
+    settings.setValue("playlists", QVariant::fromValue(playlistObj));
+    settings.setValue("playlistNum", playlistNum);
+}
+
+void PlaylistModel::resetModel()
+{
+    beginResetModel();
+    endResetModel();
 }
 

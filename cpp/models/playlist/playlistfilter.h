@@ -4,15 +4,16 @@
 #include <QString>
 #include <QSortFilterProxyModel>
 
+#include "songlistmodel.h"
+
 class PlaylistFilter : public QSortFilterProxyModel
 {
     Q_OBJECT
+    QML_ANONYMOUS
     Q_PROPERTY(QList<int> filterList READ filterList WRITE setFilterList NOTIFY filterListChanged)
 
 public:
-    explicit PlaylistFilter(QObject *parent = nullptr);
-    static PlaylistFilter &instance();
-
+    explicit PlaylistFilter(SongListModel *songListModel, QObject *parent = nullptr);
 
     QList<int> filterList() const;
     void setFilterList(const QList<int> &newFilterList);

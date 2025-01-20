@@ -1,6 +1,10 @@
+#include <QSettings>
+#include <QRandomGenerator>
+#include <random>
+#include <algorithm>
+
 #include "queuemodel.h"
 
-#include <QSettings>
 
 QueueModel::QueueModel(QObject *parent)
     : QAbstractListModel{parent}
@@ -17,7 +21,7 @@ void QueueModel::insertAtIndex(int index, std::shared_ptr<Song> song)
 
     auto entry = std::make_shared<QueueEntry>();
     entry->song = song;
-    entry->songID = ++queueID;
+    entry->songID = song->id;
 
     beginInsertRows(QModelIndex(), index, index);
     m_queue.insert(index, entry);
@@ -34,11 +38,9 @@ void QueueModel::insertAtIndex(int index, QList<std::shared_ptr<Song> > songs)
     beginInsertRows(QModelIndex(), startIndex, endIndex);
 
     for (const auto &song : songs) {
-        if (!song) continue;
-
         auto entry = std::make_shared<QueueEntry>();
         entry->song = song;
-        entry->songID = ++queueID;
+        entry->songID = song->id;
         m_queue.insert(index++, entry); // Increment index for each song
     }
 
@@ -49,7 +51,7 @@ void QueueModel::appendToQueue(std::shared_ptr<Song> song)
 {
     auto entry = std::make_shared<QueueEntry>();
     entry->song = song;
-    entry->songID = ++queueID;
+    entry->songID = song->id;
 
     beginInsertRows(QModelIndex(), m_queue.size(), m_queue.size());
     m_queue.append(entry);
@@ -60,14 +62,14 @@ void QueueModel::appendToQueue(QList<std::shared_ptr<Song>> songs)
 {
     if (songs.isEmpty()) return;
 
-    for (auto it = songs.cbegin(); it != songs.cend(); ++it) {
+    for (auto &song : songs) {
         int newIndex = m_queue.size();
 
         beginInsertRows(QModelIndex(), newIndex, newIndex);
 
         auto entry = std::make_shared<QueueEntry>();
-        entry->song = *it;
-        entry->songID = ++queueID;
+        entry->song = song;
+        entry->songID = song->id;
         m_queue.append(entry);
 
         endInsertRows();
@@ -206,6 +208,22 @@ void QueueModel::moveSong(int from, int to)
 
     m_queue.move(from, to);
     endMoveRows();
+}
+
+void QueueModel::shuffleSongs()
+{
+    //no point shuffling if one song in queue
+    if(m_queue.size() <= 1){
+        return;
+    }
+
+    std::random_device rd;
+    std::mt19937 rng(rd());
+
+    beginResetModel();
+    std::shuffle(m_queue.begin(), m_queue.end(), rng);
+    endResetModel();
+
 }
 
 void QueueModel::removeFromQueue(int songID)

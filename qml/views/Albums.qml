@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -44,7 +46,7 @@ Item {
             placeholderTextColor: "darkgrey"
             color: "white"
 
-            onTextChanged: ModelHandler.albumList.filterString = text
+            onTextChanged: GlobalSingleton.songManager.albumSearchModel.filterString = text
 
             background: Rectangle{
                 border.color: "#343434"
@@ -78,6 +80,10 @@ Item {
                     color: "transparent"
                     radius: 10
 
+                    required property string albumName
+                    required property var albumObjRole
+                    required property list<string> albumArtists
+
                     MouseArea {
                         anchors.fill: parent
                         hoverEnabled: true
@@ -92,9 +98,8 @@ Item {
 
                         onDoubleClicked:{
                             //AlbumFilterModel.setAlbumName(albumName)
-                            ViewController.albumSongsView.setAlbum(albumArtists, albumName, albumGenre, albumYear, albumSongCount)
-                            ModelHandler.albumSongs.setCurrentAlbumName(albumName)
-                            ViewController.selectAlbum()
+                            GlobalSingleton.songManager.setAlbum(albumCard.albumObjRole)
+                            GlobalSingleton.viewController.selectAlbum()
                         }
 
                     }
@@ -105,15 +110,16 @@ Item {
                         anchors.bottomMargin: 5
 
                         Image {
-                            source: "image://coverArt/" + albumName + "/" + albumArtists.join('%')
+                            source: "image://coverArt/" + albumCard.albumName + "/" + albumCard.albumArtists.join('%')
                             sourceSize.width: albumCard.width - 100
                             sourceSize.height: albumCard.width - 100
                             Layout.alignment: Qt.AlignHCenter
                         }
 
                         Text {
-                            text: albumName
+                            text: albumCard.albumName
                             font.bold: true
+                            font.pointSize: 16
                             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                             color: "white"
                             Layout.alignment: Qt.AlignHCenter
@@ -123,7 +129,7 @@ Item {
                         }
 
                         Text {
-                            text: albumArtists[0]
+                            text: albumCard.albumArtists.join(", ")
                             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                             color: "white"
                             Layout.alignment: Qt.AlignHCenter
@@ -135,7 +141,7 @@ Item {
                 }
             }
 
-            model: ModelHandler.albumList
+            model: GlobalSingleton.songManager.albumSearchModel
             delegate: albumDelegate
 
             onWidthChanged: {

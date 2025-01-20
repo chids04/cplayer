@@ -1,114 +1,60 @@
 #include "globalsingleton.h"
+#include "coverimgprovider.h"
 
-GlobalSingleton::GlobalSingleton()
+void GlobalSingleton::init(CoverImgProvider *coverProvider, PlaylistImageProvider *playlistProvider)
 {
+    //init managers
+    setPlaybackManager(new PlaybackManager);
+    setSongManager(new SongManager(m_playbackManager));
+    setPlaylistManager(new PlaylistManager(m_songManager->getSongListModel(), playlistProvider));
+    setFolderManager(new FolderManager(m_songManager, coverProvider));
+    setViewController(new ViewController);
+
+    //injecting dependencies in cases where there are circular dependencies
+    m_playbackManager->nowPlaying()->setModels(m_songManager);
+    m_songManager->initPlaylists(m_playlistManager);
+
+    //now load data from settings, start with loading songs since nowplaying depends on it
+    m_songManager->loadFromSettings();
+    m_playbackManager->loadFromSettings();
+    m_folderManager->loadFromSettings();
+    m_playlistManager->loadFromSettings();
+}
+
+void GlobalSingleton::save()
+{
+    m_songManager->saveToSettings();
+    m_folderManager->saveToSettings();
+    m_playbackManager->saveToSettings();
+    m_playlistManager->saveToSettings();
 
 }
 
-MediaPlayerController *GlobalSingleton::mediaPlayer() const
+
+SongManager *GlobalSingleton::songManager() const
 {
-    return m_mediaPlayer;
+    return m_songManager;
 }
 
-void GlobalSingleton::setMediaPlayer(MediaPlayerController *newMediaPlayer)
+void GlobalSingleton::setSongManager(SongManager *newSongManager)
 {
-    if (m_mediaPlayer == newMediaPlayer)
+    if (m_songManager == newSongManager)
         return;
-    m_mediaPlayer = newMediaPlayer;
-    emit mediaPlayerChanged();
+    m_songManager = newSongManager;
+    emit songManagerChanged();
 }
 
-NowPlaying *GlobalSingleton::nowPlaying() const
+PlaybackManager *GlobalSingleton::playbackManager() const
 {
-    return m_nowPlaying;
+    return m_playbackManager;
 }
 
-void GlobalSingleton::setNowPlaying(NowPlaying *newNowPlaying)
+void GlobalSingleton::setPlaybackManager(PlaybackManager *newPlaybackManager)
 {
-    if (m_nowPlaying == newNowPlaying)
+    if (m_playbackManager == newPlaybackManager)
         return;
-    m_nowPlaying = newNowPlaying;
-    emit nowPlayingChanged();
-}
-
-
-
-SongFilterProxyModel *GlobalSingleton::songModel() const
-{
-    return m_songModel;
-}
-
-void GlobalSingleton::setSongModel(SongFilterProxyModel *newSongModel)
-{
-    if (m_songModel == newSongModel)
-        return;
-    m_songModel = newSongModel;
-    emit songModelChanged();
-}
-
-AlbumFilterProxyModel *GlobalSingleton::albumSongsModel() const
-{
-    return m_albumSongsModel;
-}
-
-void GlobalSingleton::setAlbumSongsModel(AlbumFilterProxyModel *newAlbumSongsModel)
-{
-    if (m_albumSongsModel == newAlbumSongsModel)
-        return;
-    m_albumSongsModel = newAlbumSongsModel;
-    emit albumSongsModelChanged();
-}
-
-AlbumSearchFilter *GlobalSingleton::albumSearchModel() const
-{
-    return m_albumSearchModel;
-}
-
-void GlobalSingleton::setAlbumSearchModel(AlbumSearchFilter *newAlbumSearchModel)
-{
-    if (m_albumSearchModel == newAlbumSearchModel)
-        return;
-    m_albumSearchModel = newAlbumSearchModel;
-    emit albumSearchModelChanged();
-}
-
-PlaylistModel *GlobalSingleton::playlistModel() const
-{
-    return m_playlistModel;
-}
-
-void GlobalSingleton::setPlaylistModel(PlaylistModel *newPlaylistModel)
-{
-    if (m_playlistModel == newPlaylistModel)
-        return;
-    m_playlistModel = newPlaylistModel;
-    emit playlistModelChanged();
-}
-
-FolderListModel *GlobalSingleton::folderListModel() const
-{
-    return m_folderListModel;
-}
-
-void GlobalSingleton::setFolderListModel(FolderListModel *newFolderListModel)
-{
-    if (m_folderListModel == newFolderListModel)
-        return;
-    m_folderListModel = newFolderListModel;
-    emit folderListModelChanged();
-}
-
-PlaylistFilter *GlobalSingleton::playlistSongsModel() const
-{
-    return m_playlistSongsModel;
-}
-
-void GlobalSingleton::setPlaylistSongsModel(PlaylistFilter *newPlaylistSongsModel)
-{
-    if (m_playlistSongsModel == newPlaylistSongsModel)
-        return;
-    m_playlistSongsModel = newPlaylistSongsModel;
-    emit playlistSongsModelChanged();
+    m_playbackManager = newPlaybackManager;
+    emit playbackManagerChanged();
 }
 
 PlaylistManager *GlobalSingleton::playlistManager() const
@@ -122,4 +68,28 @@ void GlobalSingleton::setPlaylistManager(PlaylistManager *newPlaylistManager)
         return;
     m_playlistManager = newPlaylistManager;
     emit playlistManagerChanged();
+}
+
+FolderManager *GlobalSingleton::folderManager() const
+{
+    return m_folderManager;
+}
+
+void GlobalSingleton::setFolderManager(FolderManager *newFolderManager)
+{
+    if (m_folderManager == newFolderManager)
+        return;
+    m_folderManager = newFolderManager;
+    emit folderManagerChanged();
+}
+
+ViewController *GlobalSingleton::viewController() const
+{
+    return m_viewController;
+}
+
+void GlobalSingleton::setViewController(ViewController *newViewController)
+{
+    m_viewController = newViewController;
+    emit viewControllerChanged();
 }

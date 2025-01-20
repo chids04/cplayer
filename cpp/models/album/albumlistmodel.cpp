@@ -3,11 +3,6 @@
 AlbumListModel::AlbumListModel(QObject *parent) : QAbstractListModel(parent) {
 }
 
-AlbumListModel &AlbumListModel::instance()
-{
-    static AlbumListModel albumListModel;
-    return albumListModel;
-}
 
 void AlbumListModel::addAlbum(const Album &album)
 {
@@ -79,6 +74,8 @@ QVariant AlbumListModel::data(const QModelIndex &index, int role) const
         case AlbumSongCountRole:
             return album.getSongCount();
 
+        case AlbumObjRole:
+            return QVariant::fromValue(album);
         default:
             return QVariant();
     }
@@ -96,6 +93,7 @@ QHash<int, QByteArray> AlbumListModel::roleNames() const
     roles[AlbumArtistRole] = "albumArtists";
     roles[AlbumYearRole] = "albumYear";
     roles[AlbumSongCountRole] = "albumSongCount";
+    roles[AlbumObjRole] = "albumObjRole";
 
     return roles;
 }
@@ -115,7 +113,7 @@ void AlbumListModel::clear()
     }
 }
 
-void AlbumListModel::decrementAlbum(QString &albumName, QStringList &albumArtists)
+void AlbumListModel::decrementAlbum(const QString &albumName, const QStringList &albumArtists)
 {
     for (int i = m_albums.size() - 1; i >= 0; --i) {
         if (m_albums[i].getName() == albumName && m_albums[i].getArtist() == albumArtists) {

@@ -3,14 +3,16 @@
 
 #include <QSortFilterProxyModel>
 
+#include "albumlistmodel.h"
+
 class AlbumSearchFilter : public QSortFilterProxyModel
 {
     Q_OBJECT
+    QML_ANONYMOUS
     Q_PROPERTY(QString filterString READ filterString WRITE setFilterString NOTIFY filterStringChanged)
 
 public:
-    explicit AlbumSearchFilter(QObject *parent = nullptr);
-    static AlbumSearchFilter &instance();
+    explicit AlbumSearchFilter(AlbumListModel *albumListModel, QObject *parent = nullptr);
 
     QString filterString() const;
 
@@ -29,4 +31,6 @@ signals:
 private:
     QString m_filterString;
 };
+
+Q_DECLARE_METATYPE(AlbumSearchFilter)
 #endif // ALBUMSEARCHFILTER_H

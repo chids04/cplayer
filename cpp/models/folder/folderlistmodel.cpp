@@ -1,8 +1,5 @@
 #include "folderlistmodel.h"
-#include "settingsmanager.h"
 #include "foldermanager.h"
-#include "songlistmodel.h"
-
 #include "folderlistmodel.h"
 
 #include <QDir>

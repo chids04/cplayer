@@ -1,14 +1,14 @@
 #include "folder.h"
 
-Folder::Folder(QString &folderName, QString &folderPath, int songCount) : folderName(folderName), folderPath(folderPath), songCount(songCount)
+Folder::Folder(const QString &folderName, const QString &folderPath, int songCount) : folderName(folderName), folderPath(folderPath), songCount(songCount)
 {}
 
-void Folder::setFolderName(QString &newFolderName)
+void Folder::setFolderName(const QString &newFolderName)
 {
     folderName = newFolderName;
 }
 
-void Folder::setFolderPath(QString &newFolderPath)
+void Folder::setFolderPath(const QString &newFolderPath)
 {
     folderPath = newFolderPath;
 }

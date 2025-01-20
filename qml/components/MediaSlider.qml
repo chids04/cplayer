@@ -1,4 +1,5 @@
 pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls.Basic
@@ -53,14 +54,14 @@ Item{
                         Layout.preferredWidth: 80
                         Layout.alignment: Qt.AlignVCenter
                         //source: "qrc:/resource/ui/assets/unknownCover.png"
-                        source: "image://coverArt/" + MusicHandler.mediaPlayerController.album + "/" + MusicHandler.mediaPlayerController.leadingArtist
+                        source: "image://coverArt/" + GlobalSingleton.playbackManager.mediaPlayer.album + "/" + GlobalSingleton.playbackManager.mediaPlayer.leadingArtist
                         sourceSize.width: 80
                         sourceSize.height: 80
 
                         Connections{
-                            target: MusicHandler.mediaPlayerController
+                            target: GlobalSingleton.playbackManager.mediaPlayer
                             function onCoverArtChanged(){
-                                songArt.source = "image://coverArt/" + MusicHandler.mediaPlayerController.album + "/" + MusicHandler.mediaPlayerController.leadingArtist
+                                songArt.source = "image://coverArt/" + GlobalSingleton.playbackManager.mediaPlayer.album + "/" + GlobalSingleton.playbackManager.mediaPlayer.leadingArtist
                             }
                         }
                     }
@@ -74,16 +75,16 @@ Item{
                             id: songName
                             color: "white"
                             font.bold: true
-                            text: MusicHandler.mediaPlayerController.trackTitle
+                            text: GlobalSingleton.playbackManager.mediaPlayer.trackTitle
                             Layout.preferredWidth: mediaInfo.width - songArt.width - 30
                             Layout.minimumWidth: 100
 
                             elide: Text.ElideRight
 
                             Connections{
-                                target: MusicHandler.mediaPlayerController
+                                target:GlobalSingleton.playbackManager.mediaPlayer
                                 function onTrackTitleChanged(){
-                                    songName.text = MusicHandler.mediaPlayerController.trackTitle
+                                    songName.text = GlobalSingleton.playbackManager.mediaPlayer.trackTitle
                                 }
 
                             }
@@ -94,13 +95,13 @@ Item{
                             color: "white"
                             Layout.preferredWidth: mediaInfo.width - songArt.width - 30
                             Layout.minimumWidth: 100
-                            text: MusicHandler.mediaPlayerController.features.length === 0 ? MusicHandler.mediaPlayerController.leadingArtist  : MusicHandler.mediaPlayerController.leadingArtist + " feat. " + MusicHandler.mediaPlayerController.features.join(", ")
+                            text: GlobalSingleton.playbackManager.mediaPlayer.features.length === 0 ? GlobalSingleton.playbackManager.mediaPlayer.leadingArtist  : GlobalSingleton.playbackManager.mediaPlayer.leadingArtist + " feat. " + GlobalSingleton.playbackManager.mediaPlayer.features.join(", ")
                             elide: Text.ElideRight
 
                             Connections{
-                                target: MusicHandler.mediaPlayerController
+                                target: GlobalSingleton.playbackManager.mediaPlayer
                                 function onLeadingArtistChanged(){
-                                    songAuthors.text = MusicHandler.mediaPlayerController.features.length === 0 ? MusicHandler.mediaPlayerController.leadingArtist  : MusicHandler.mediaPlayerController.leadingArtist + " feat. " + MusicHandler.mediaPlayerController.features.join(", ")
+                                    songAuthors.text = GlobalSingleton.playbackManager.mediaPlayer.features.length === 0 ? GlobalSingleton.playbackManager.mediaPlayer.leadingArtist  : GlobalSingleton.playbackManager.mediaPlayer.leadingArtist + " feat. " + GlobalSingleton.playbackManager.mediaPlayer.features.join(", ")
                                 }
                             }
                         }
@@ -138,7 +139,7 @@ Item{
                             Layout.fillHeight: true
 
                             Image {
-                                property bool shuffle: false
+                                property bool shuffle: GlobalSingleton.playbackManager.nowPlaying.shuffle
 
                                 id: shuffleSongs
                                 anchors.centerIn: parent
@@ -155,11 +156,11 @@ Item{
                                     onClicked : {
                                         if(!shuffleSongs.shuffle){
                                             shuffleSongs.source = "qrc:/resource/ui/assets/shuffle_on.png"
-                                            shuffleSongs.shuffle = true
+                                            GlobalSingleton.playbackManager.nowPlaying.setShuffle(true)
                                         }
                                         else{
                                             shuffleSongs.source = "qrc:/resource/ui/assets/shuffle.png"
-                                            shuffleSongs.shuffle = false
+                                            GlobalSingleton.playbackManager.nowPlaying.setShuffle(false)
                                         }
                                     }
 
@@ -202,7 +203,7 @@ Item{
                                     onEntered: previousBtn.scale = 1.2
                                     onExited: previousBtn.scale = 1.0
                                     onClicked: {
-                                        MusicHandler.mediaPlayerController.previousClicked()
+                                        GlobalSingleton.playbackManager.mediaPlayer.previousClicked()
                                     }
 
                                     onPressedChanged:{
@@ -240,7 +241,7 @@ Item{
 
                                 Shortcut{
                                     sequence: "Space"
-                                    onActivated: MusicHandler.mediaPlayerController.togglePlayState()
+                                    onActivated: GlobalSingleton.playbackManager.mediaPlayer.togglePlayState()
                                 }
 
 
@@ -251,7 +252,7 @@ Item{
                                     onEntered: playBtn.scale = 1.2
                                     onExited: playBtn.scale = 1.0
                                     onClicked: {
-                                        MusicHandler.mediaPlayerController.togglePlayState()
+                                        GlobalSingleton.playbackManager.mediaPlayer.togglePlayState()
                                     }
 
                                     onPressedChanged: {
@@ -273,9 +274,9 @@ Item{
 
 
                                 Connections {
-                                    target: MusicHandler.mediaPlayerController
+                                    target: GlobalSingleton.playbackManager.mediaPlayer
                                     function onUpdateUI(){
-                                        if(MusicHandler.mediaPlayerController.playing) {
+                                        if(GlobalSingleton.playbackManager.mediaPlayer.playing) {
                                             playBtn.source = "qrc:/resource/ui/assets/pauseBtn.png"
                                         }
                                         else{
@@ -306,7 +307,7 @@ Item{
                                     onEntered: nextBtn.scale = 1.2
                                     onExited: nextBtn.scale = 1.0
                                     onClicked:{
-                                        MusicHandler.mediaPlayerController.nextClicked()
+                                        GlobalSingleton.playbackManager.mediaPlayer.nextClicked()
                                     }
 
                                     onPressedChanged: {
@@ -354,13 +355,13 @@ Item{
                                         if(!repeatSongs.shuffle){
                                             repeatSongs.source = "qrc:/resource/ui/assets/repeat_individual.png"
                                             repeatSongs.shuffle = true
-                                            MusicHandler.mediaPlayerController.onRepeatChanged(repeatSongs.shuffle)
+                                            GlobalSingleton.playbackManager.mediaPlayer.onRepeatChanged(repeatSongs.shuffle)
 
                                         }
                                         else{
                                             repeatSongs.source = "qrc:/resource/ui/assets/repeat.png"
                                             repeatSongs.shuffle = false
-                                            MusicHandler.mediaPlayerController.onRepeatChanged(repeatSongs.shuffle)
+                                            GlobalSingleton.playbackManager.mediaPlayer.onRepeatChanged(repeatSongs.shuffle)
                                         }
 
                                     }
@@ -402,9 +403,9 @@ Item{
                                 color: "white"
 
                                 Connections{
-                                    target: MusicHandler.mediaPlayerController
+                                    target: GlobalSingleton.playbackManager.mediaPlayer
                                     function onPositionChanged(){
-                                        elapsedTime.text = MusicHandler.mediaPlayerController.genTime(MusicHandler.mediaPlayerController.position)
+                                        elapsedTime.text = GlobalSingleton.playbackManager.mediaPlayer.genTime(GlobalSingleton.playbackManager.mediaPlayer.position)
 
                                     }
                                 }
@@ -416,12 +417,12 @@ Item{
                         Slider {
                             id: control
                             from: 0
-                            to: MusicHandler.mediaPlayerController.duration
-                            value: MusicHandler.mediaPlayerController.position
+                            to: GlobalSingleton.playbackManager.mediaPlayer.duration
+                            value: GlobalSingleton.playbackManager.mediaPlayer.position
 
                             Layout.preferredWidth: mediaControls.width-60
                             onValueChanged: {
-                                MusicHandler.mediaPlayerController.position = value
+                                GlobalSingleton.playbackManager.mediaPlayer.position = value
                             }
 
                             background: Rectangle {
@@ -465,9 +466,9 @@ Item{
                                 color: "white"
 
                                 Connections{
-                                    target: MusicHandler.mediaPlayerController
+                                    target: GlobalSingleton.playbackManager.mediaPlayer
                                     function onDurationChanged(){
-                                        songDuration.text = MusicHandler.mediaPlayerController.genTime(MusicHandler.mediaPlayerController.duration)
+                                        songDuration.text = GlobalSingleton.playbackManager.mediaPlayer.genTime(GlobalSingleton.playbackManager.mediaPlayer.duration)
 
                                     }
 
@@ -495,136 +496,6 @@ Item{
                     anchors.centerIn: parent
                     color:"transparent"
 
-
-                    Popup{
-                        id: popup
-                        x: volumeStatus.x-100
-                        y: -100
-                        width: 215
-                        height: 100
-                        padding: 0
-
-                        background: Item{
-
-                        }
-
-                        contentItem: Rectangle{
-
-                            id: audioDevices
-                            width: 200
-                            height: 100
-                            //x: volumeStatus.x-100
-                            //y: -100
-                            //visible: false
-
-                            color: "#303132"
-                            border.color: "#6e7173"
-                            border.width: 2
-                            radius: 5
-
-                            Text{
-                                id: selectAudioText
-                                anchors.top: parent.top
-                                anchors.topMargin: 5
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                text: "Select Audio Device"
-                                font.bold: true
-                                font.pointSize: 16
-                                color: "white"
-                            }
-
-                            Rectangle{
-                                id: seperator
-                                height: 1
-                                border.color: "white"
-                                border.width: 1
-                                anchors.top: selectAudioText.bottom
-                                anchors.left: parent.left
-                                anchors.right: parent.right
-
-                                anchors.topMargin: 5
-                                anchors.bottomMargin: 5
-                                anchors.leftMargin: 10
-                                anchors.rightMargin: 10
-                            }
-
-                            ListView {
-                                id: audioDeviceList
-                                anchors.top: seperator.bottom
-                                anchors.bottom: parent.bottom
-                                anchors.bottomMargin: 3
-                                anchors.left: parent.left
-                                anchors.right: parent.right
-                                anchors.leftMargin: 5
-                                anchors.topMargin: 5
-
-                                model: MusicHandler.mediaPlayerController.audioDeviceModel
-                                clip: true
-
-                                ScrollBar.vertical: ScrollBar {
-                                    id:optionScrollbar
-                                    policy: ScrollBar.AlwaysOn
-
-                                    width: 10
-
-                                    contentItem: Rectangle {
-                                        implicitWidth: 10
-                                        radius: 3
-                                        color: "#2e2e2e"
-                                    }
-
-                                    background: Rectangle {
-                                        implicitWidth: 10
-                                        color: "#7a7a7a"
-                                        radius: 3
-                                    }
-                                }
-
-                                delegate: Rectangle {
-                                    id: deviceDelegate
-                                    width: audioDeviceList.width - 14
-                                    height: 20
-
-                                    required property string deviceName
-                                    required property int index
-                                    required property bool isSelected
-
-                                    color: isSelected ? "#6e7173" : "transparent"
-
-                                    Text{
-                                        text: deviceDelegate.deviceName
-                                        color: "white"
-                                        width: deviceDelegate.width
-                                        elide: Text.ElideRight
-                                        anchors.leftMargin: 4
-                                    }
-
-
-                                    MouseArea{
-                                        anchors.fill: parent
-                                        onClicked: MusicHandler.mediaPlayerController.audioDeviceModel.selectDevice(deviceDelegate.index)
-
-                                        onPressedChanged: {
-                                            if(pressed){
-                                                deviceDelegate.scale = 0.95
-                                            }
-                                            else{
-                                                deviceDelegate.scale = 1
-                                            }
-                                        }
-
-                                    }
-
-                                    Behavior on scale {
-                                        NumberAnimation {
-                                            duration: 200
-                                            easing.type: Easing.InOutQuad
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
 
                     Image{
                         id: nowPlayingImage
@@ -684,6 +555,12 @@ Item{
                             verticalCenter: parent.verticalCenter
                         }
 
+                        AudioDevicesPopup{
+                            id: audioDevicePopup
+                            x: audioImage.x-300
+                            y: -150
+                        }
+
                         Behavior on scale{
                             NumberAnimation{
                                 duration: 400
@@ -694,7 +571,7 @@ Item{
                         MouseArea{
                             anchors.fill: parent
                             onClicked :{
-                                popup.open()
+                                audioDevicePopup.openPopup()
                             }
 
                             onPressedChanged :{
@@ -721,13 +598,14 @@ Item{
                             right: volumeSlider.left
                             verticalCenter: parent.verticalCenter
                         }
+
                     }
 
 
                     Slider{
                         id: volumeSlider
                         implicitWidth: parent.width * 0.3
-                        value: MusicHandler.mediaPlayerController.volume
+                        value: GlobalSingleton.playbackManager.mediaPlayer.volume
                         from: 0
                         to: 1
 
@@ -765,15 +643,15 @@ Item{
                         }
 
                         onValueChanged: {
-                            MusicHandler.mediaPlayerController.setVolume(volumeSlider.value)
+                            GlobalSingleton.playbackManager.mediaPlayer.setVolume(volumeSlider.value)
                         }
 
                     }
 
                     Connections{
-                        target: MusicHandler.mediaPlayerController
+                        target: GlobalSingleton.playbackManager.mediaPlayer
                         function onVolumeChanged(){
-                            volumeSlider.value = MusicHandler.mediaPlayerController.volume
+                            volumeSlider.value = GlobalSingleton.playbackManager.mediaPlayer.volume
                         }
                     }
                 }

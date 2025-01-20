@@ -9,28 +9,40 @@
 #include "queuemodelfilter.h"
 
 #include <QObject>
+#include <qqmlintegration.h>
+
+class SongManager;
+class SongListModel;
+class AlbumListModel;
+class MediaPlayerController;
 
 class NowPlaying : public QObject
 {
     Q_OBJECT
+    QML_ANONYMOUS
+
     Q_PROPERTY(QueueModel* queueModel READ queueModel WRITE setQueueModel NOTIFY queueModelChanged)
     Q_PROPERTY(QueueModelFilter* queueProxyModel READ queueProxyModel WRITE setQueueProxyModel NOTIFY queueProxyModelChanged)
+    Q_PROPERTY(bool shuffle READ shuffle WRITE setShuffle NOTIFY shuffleChanged)
 
 public:
-    explicit NowPlaying(QObject *parent = nullptr);
-    static NowPlaying &instance();
+    explicit NowPlaying(MediaPlayerController *mediaPlayerController, QObject *parent = nullptr);
 
     QList<std::shared_ptr<QueueEntry>> getPlayedSongs();
     QList<std::shared_ptr<QueueEntry>> getNowPlaying();
     void playFromQueue();
     int getCurrentSongID();
     void loadFromSettings();
+    void saveNowPlaying();
+    void setModels(SongManager *songManager);
 
     QueueModel *queueModel() const;
     void setQueueModel(QueueModel *newQueueModel);
 
     QueueModelFilter *queueProxyModel() const;
     void setQueueProxyModel(QueueModelFilter *newQueueProxyModel);
+
+    bool shuffle() const;
 
 signals:
     void playSong(std::shared_ptr<Song> song);
@@ -42,6 +54,8 @@ signals:
     void queueModelChanged();
     void queueProxyModelChanged();
 
+
+    void shuffleChanged();
 
 public slots:
     void playAlbum(const QString &albumName, const QStringList &albumArtists, bool queue=false);
@@ -55,6 +69,8 @@ public slots:
     void clearQueue();
 
     void onRemoveFromNowPlaying(int songID);
+    void onCheckQueue();
+    void setShuffle(bool newShuffle);
 
 private:
     QList<Queue> m_queues;
@@ -67,6 +83,10 @@ private:
     QueueModel *m_queueModel = nullptr;
     QueueModelFilter *m_queueProxyModel = nullptr;
     QList<std::shared_ptr<QueueEntry>> m_playedSongs;
+    SongListModel *m_songListModel;
+    AlbumListModel *m_albumListModel;
+    MediaPlayerController *m_mediaPlayer;
+    bool m_shuffle = false;
 };
 
 #endif // NOWPLAYING_H

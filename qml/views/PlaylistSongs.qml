@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -29,9 +31,10 @@ Item {
                     Layout.preferredHeight: parent.height - 10
                     Layout.preferredWidth: parent.height - 10
 
-                    source: MusicHandler.playlistManager.hasCover ? "image://playlistCovers" + "/" +MusicHandler.playlistManager.playlistID : "qrc:/resource/ui/assets/unknownCover.png"
+                    source: GlobalSingleton.playlistManager.hasCover ? "image://playlistCovers" + "/" + GlobalSingleton.playlistManager.playlistID : "qrc:/resource/ui/assets/unknownCover.png"
                     sourceSize.width: parent.height - 10
                     sourceSize.height: parent.height - 10
+                    cache: false
 
                 }
 
@@ -42,7 +45,7 @@ Item {
                     Text{
                         id: loadedPlaylistName
                         color: "white"
-                        text: MusicHandler.playlistManager.playlistName
+                        text: GlobalSingleton.playlistManager.playlistName
                         font.bold: true
                         font.pointSize: 40
 
@@ -65,7 +68,7 @@ Item {
                 buttonText: "Play Playlist"
 
                 onButtonClicked: {
-                    MusicHandler.nowPlaying.playPlaylist(MusicHandler.playlistManager.currentPlaylist)
+                    GlobalSingleton.playbackManager.nowPlaying.playPlaylist(GlobalSingleton.playlistManager.currentPlaylist)
 
                 }
 
@@ -76,7 +79,7 @@ Item {
                 buttonText: "Queue Playlist"
 
                 onButtonClicked: {
-                    MusicHandler.nowPlaying.playPlaylist(MusicHandler.playlistManager.currentPlaylist, true)
+                    GlobalSingleton.playbackManager.nowPlaying.playPlaylist(GlobalSingleton.playlistManager.currentPlaylist, true)
                 }
             }
         }
@@ -115,10 +118,18 @@ Item {
                 }
 
                 //model: PlaylistView.playlistSongsModel
-                model: ModelHandler.playlistFilter
+                model: GlobalSingleton.playlistManager.playlistSongs
 
                 delegate: SongDelegate{
                     id: songDelegate
+
+                    required property int index
+                    required property string title
+                    required property string album
+                    required property string artist
+                    required property list<string> features
+                    required property list<string> albumArtists
+                    required property var songObject
 
                     songDelegateIndex: index
                     songDelegateHeight: 80
@@ -133,7 +144,7 @@ Item {
                     songFeatures: albumArtists
 
                     onSongDelegateDoubleClicked: {
-                        MusicHandler.nowPlaying.playNow(songObject)
+                        GlobalSingleton.playbackManager.nowPlaying.playNow(songObject)
                     }
 
                 }

@@ -13,9 +13,19 @@ void Playlist::setSongCount(int songCount)
     this->songCount = songCount;
 }
 
+void Playlist::setName(const QString &name)
+{
+    playlistName = name;
+}
+
 void Playlist::setDuration(int duration)
 {
     this->duration = duration;
+}
+
+void Playlist::setHasCover(bool cover)
+{
+    hasCover = cover;
 }
 
 void Playlist::removeSong(int id)

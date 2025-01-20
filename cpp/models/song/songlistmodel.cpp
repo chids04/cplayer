@@ -2,29 +2,24 @@
 
 #include <QDebug>
 
-#include "folderview.h"
-#include "albumlistmodel.h"
-#include "playlistmodel.h"
-#include "mediaplayercontroller.h"
-#include "nowplaying.h"
 
-SongListModel::SongListModel(QObject *parent) : QAbstractListModel(parent) {
-    connect(this, &SongListModel::decrementAlbum, &AlbumListModel::instance(), &AlbumListModel::decrementAlbum);
-    connect(this, &SongListModel::removeFromPlaylist, &PlaylistModel::instance(), &PlaylistModel::removeSongs);
-    connect(this, &SongListModel::removeCurrentPlaying, &MediaPlayerController::instance(), &MediaPlayerController::onRemoveCurrentPlaying);
-    connect(this, &SongListModel::removeFromNowPlaying, &NowPlaying::instance(), &NowPlaying::onRemoveFromNowPlaying);
+SongListModel::SongListModel(AlbumListModel *albumListModel, MediaPlayerController *mediaPlayerController, NowPlaying *nowPlaying,
+                           QObject *parent) : QAbstractListModel(parent) {
+
+    connect(this, &SongListModel::decrementAlbum, albumListModel, &AlbumListModel::decrementAlbum);
+    connect(this, &SongListModel::updateAlbum, albumListModel, &AlbumListModel::updateAlbum);
+    connect(this, &SongListModel::removeCurrentPlaying, mediaPlayerController, &MediaPlayerController::onRemoveCurrentPlaying);
+    connect(this, &SongListModel::removeFromNowPlaying, nowPlaying, &NowPlaying::onRemoveFromNowPlaying);
+
 }
 
-SongListModel &SongListModel::instance()
-{
-    static SongListModel songListModel;
-    return songListModel;
-}
 
 void SongListModel::addSong(std::shared_ptr<Song> song){
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     m_songs << song;
     endInsertRows();
+
+    emit updateAlbum(song);
 }
 
 void SongListModel::clear()
@@ -181,7 +176,7 @@ void SongListModel::removeSong(const QString &filePath)
     }
 }
 
-void SongListModel::removeFolderSongs(QString &folderPath)
+void SongListModel::removeFolderSongs(const QString &folderPath)
 {
     QString songPath;
 
@@ -204,4 +199,28 @@ void SongListModel::removeFolderSongs(QString &folderPath)
 void SongListModel::onSongAdded(std::shared_ptr<Song> song)
 {
     addSong(song);
+}
+
+void SongListModel::readSongs()
+{
+    QSettings settings;
+    QList<Song> songs = settings.value("songs").value<QList<Song>>();
+
+    for(const Song &song : songs){
+        std::shared_ptr<Song> songPtr = std::make_shared<Song>(song);
+
+        addSong(songPtr);
+    }
+}
+
+void SongListModel::saveSongs()
+{
+    QSettings settings;
+    QList<Song> songObj;
+
+    for(const auto &song: m_songs){
+        songObj.append(*song);
+    }
+
+    settings.setValue("songs", QVariant::fromValue(songObj));
 }

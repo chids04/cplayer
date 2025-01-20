@@ -11,8 +11,8 @@
 #include <QMediaDevices>
 
 #include "song.h"
+#include "nowplaying.h"
 #include "audiodevicemodel.h"
-#include <QtQml/qqmlregistration.h>
 
 class MediaPlayerController : public QObject {
 
@@ -33,7 +33,6 @@ class MediaPlayerController : public QObject {
     Q_PROPERTY(bool repeat READ repeat WRITE setRepeat NOTIFY repeatChanged)
     Q_PROPERTY(float volume READ volume WRITE setVolume NOTIFY volumeChanged)
     Q_PROPERTY(AudioDeviceModel* audioDeviceModel READ audioDeviceModel WRITE setAudioDeviceModel NOTIFY audioDeviceModelChanged)
-
 
 public:
     //could use signal and slot instead of passing around object pointers
@@ -71,6 +70,7 @@ public:
     AudioDeviceModel *audioDeviceModel() const;
     void setAudioDeviceModel(AudioDeviceModel *newAudioDeviceModel);
 
+
 signals:
     void leadingArtistChanged();
     void trackTitleChanged();
@@ -91,6 +91,8 @@ signals:
     void resetDuration();
 
     void audioDeviceModelChanged();
+    void checkQueue();
+
 
 public slots:
     void onPositionChanged();
@@ -112,9 +114,6 @@ public slots:
     void setPosition(qint64 newPosition);
     QString genTime(qint64 currentTime);
 
-
-
-
 private:
     QString m_leadingArtist;
     QString m_trackTitle;
@@ -123,9 +122,10 @@ private:
     QStringList m_features;
     int playlistID;
 
-    QMediaPlayer *player;
-    QAudioOutput *output;
-    QMediaDevices *mediaDevices;
+    QMediaPlayer *player = nullptr;
+    QAudioOutput *output = nullptr;
+    QMediaDevices *mediaDevices = nullptr;
+    AudioDeviceModel *m_audioDeviceModel = nullptr;
 
 
     bool m_playing = false;
@@ -139,7 +139,6 @@ private:
 
 
     bool m_repeat;
-    AudioDeviceModel *m_audioDeviceModel = nullptr;
 };
 
 #endif // MEDIAPLAYERCONTROLLER_H

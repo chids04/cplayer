@@ -8,14 +8,18 @@
 #include <memory>
 
 #include "song.h"
+#include "albumlistmodel.h"
+#include "mediaplayercontroller.h"
+#include "nowplaying.h"
+
 
 class SongListModel : public QAbstractListModel
 {
     Q_OBJECT
 
 public:
-    explicit SongListModel(QObject *parent = nullptr);
-    static SongListModel &instance();
+    explicit SongListModel(AlbumListModel *albumListModel, MediaPlayerController *mediaPlayerController,
+                           NowPlaying *nowPlaying, QObject *parent = nullptr);
 
     enum SongRoles {
         FilePathRole = Qt::UserRole + 1,
@@ -44,17 +48,20 @@ public:
     int getSongTrackNum(const QString &filePath) const;
     QList<std::shared_ptr<Song>> getSongs();
     void removeSong(const QString &filePath);
+    void readSongs();
+    void saveSongs();
 
 signals:
-    void decrementAlbum(QString &albumName, QStringList &albumArtists);
+    void decrementAlbum(const QString &albumName, const QStringList &albumArtists);
     void removeFromPlaylist(int songID);
-    void removeCurrentPlaying(QString &path);
+    void removeCurrentPlaying(const QString &path);
     void removeFromNowPlaying(int songID);
+    void updateAlbum(std::shared_ptr<Song>);
 
 
 public slots:
     void onSongAdded(std::shared_ptr<Song> song);
-    void removeFolderSongs(QString &folderPath);
+    void removeFolderSongs(const QString &folderPath);
 
 private:
     QList<std::shared_ptr<Song>> m_songs;

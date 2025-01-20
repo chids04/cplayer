@@ -4,6 +4,8 @@
 #include <QString>
 #include <QSortFilterProxyModel>
 
+#include "songlistmodel.h"
+
 
 class AlbumFilterProxyModel : public QSortFilterProxyModel
 {
@@ -12,7 +14,7 @@ class AlbumFilterProxyModel : public QSortFilterProxyModel
     Q_PROPERTY(QString currentAlbumName READ currentAlbumName WRITE setCurrentAlbumName NOTIFY currentAlbumNameChanged)
 
 public:
-    explicit AlbumFilterProxyModel(QObject *parent = nullptr);
+    explicit AlbumFilterProxyModel(SongListModel *songListModel, QObject *parent = nullptr);
     static AlbumFilterProxyModel &instance();
 
     QString currentAlbumName() const;
@@ -30,5 +32,7 @@ signals:
 private:
     QString m_currentAlbumName;
 };
+
+Q_DECLARE_METATYPE(AlbumFilterProxyModel)
 
 #endif // ALBUMFILTERPROXYMODEL_H

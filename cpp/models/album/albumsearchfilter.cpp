@@ -1,18 +1,12 @@
 #include "albumsearchfilter.h"
 
 #include <rapidfuzz/fuzz.hpp>
-#include "albumlistmodel.h"
 
-AlbumSearchFilter::AlbumSearchFilter(QObject *parent) : QSortFilterProxyModel(parent)
+AlbumSearchFilter::AlbumSearchFilter(AlbumListModel *albumListModel, QObject *parent) : QSortFilterProxyModel(parent)
 {
-    setSourceModel(&AlbumListModel::instance());
+    setSourceModel(albumListModel);
 }
 
-AlbumSearchFilter &AlbumSearchFilter::instance()
-{
-    static AlbumSearchFilter albumSearchFilter;
-    return albumSearchFilter;
-}
 
 QString AlbumSearchFilter::filterString() const
 {

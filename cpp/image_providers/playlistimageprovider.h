@@ -9,8 +9,9 @@ public:
     PlaylistImageProvider();
     QPixmap requestPixmap(const QString &id, QSize *size, const QSize &requestedSize);
     QHash<int, QPixmap> getCovers();
-    void addCover(int playlistID, QString coverPath);
+    void addCover(int playlistID, int rotation, const QString &coverPath);
     void loadCovers();
+    void saveCovers();
     void removeCover(int playlistID);
 
 private:

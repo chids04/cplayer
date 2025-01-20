@@ -5,17 +5,17 @@
 #include <rapidfuzz/fuzz.hpp>
 #include "songlistmodel.h"
 
-SongFilterProxyModel::SongFilterProxyModel(QObject *parent)
+SongFilterProxyModel::SongFilterProxyModel(SongListModel *songListModel, QObject *parent)
     : QSortFilterProxyModel(parent)
 {
-    setSourceModel(&SongListModel::instance());
+    setSourceModel(songListModel);
 }
 
-SongFilterProxyModel &SongFilterProxyModel::instance()
-{
-    static SongFilterProxyModel songFilterProxyModel;
-    return songFilterProxyModel;
-}
+//SongFilterProxyModel &SongFilterProxyModel::instance()
+//{
+//    static SongFilterProxyModel songFilterProxyModel;
+//    return songFilterProxyModel;
+//}
 
 QString SongFilterProxyModel::filterString() const
 {

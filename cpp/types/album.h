@@ -6,13 +6,14 @@
 #include <QStringList>
 
 #include <memory>
+#include "song.h"
 
-#include "songlistmodel.h"
 
 class Album
 {
 
 public:
+    Album();
     Album(QString &name, QStringList &artist, QString &genre, int &year);
 
     QString getName() const;
@@ -34,9 +35,10 @@ private:
     int year;
     int songCount = 0;
 
-    const SongListModel *songListModel;
 
 
 };
+
+Q_DECLARE_METATYPE(Album)
 
 #endif // ALBUM_H

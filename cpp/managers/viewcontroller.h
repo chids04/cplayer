@@ -5,32 +5,16 @@
 #include <QObject>
 #include <QDebug>
 
-#include "albumsongsview.h"
-#include "playlistsongsmanager.h"
-#include "folderview.h"
 
 class ViewController : public QObject
 {
     Q_OBJECT
-    QML_ELEMENT
-    QML_SINGLETON
+    QML_ANONYMOUS
 
-    Q_PROPERTY(AlbumSongsView* albumSongsView READ albumSongsView WRITE setAlbumSongsView NOTIFY albumSongsViewChanged)
-    Q_PROPERTY(PlaylistSongsView *playlistSongsView READ playlistSongsView WRITE setPlaylistSongsView NOTIFY playlistSongsViewChanged)
-    Q_PROPERTY(FolderView *folderView READ folderView WRITE setFolderView NOTIFY folderViewChanged)
 
 public:
     explicit ViewController(QObject *parent = nullptr);
-    static ViewController &instance();
 
-    AlbumSongsView *albumSongsView() const;
-    void setAlbumSongsView(AlbumSongsView *newAlbumSongsView);
-    
-    PlaylistSongsManager *playlistSongsView() const;
-    void setPlaylistSongsView(PlaylistSongsManager *newPlaylistSongsView);
-
-    FolderView *folderView() const;
-    void setFolderView(FolderView *newFolderView);
 
 signals:
     void albumSelected();
@@ -54,9 +38,6 @@ public slots:
     void playlistsView();
     void selectPlaylist();
 private:
-    AlbumSongsView *m_albumSongsView = nullptr;
-    PlaylistSongsManager *m_playlistSongsView = nullptr;
-    FolderView *m_folderView = nullptr;
 };
 
 #endif // VIEWCONTROLLER_H

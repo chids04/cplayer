@@ -11,9 +11,10 @@ Item{
     Layout.fillHeight: true
 
     Connections{
-        target: ViewController
+        target: GlobalSingleton.viewController
 
         function onSongViewSelected(){
+            console.log("song view selected")
             stackView.push("Songs.qml")
         }
 

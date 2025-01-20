@@ -1,18 +1,11 @@
 #include "playlistfilter.h"
 #include "songlistmodel.h"
 
-PlaylistFilter::PlaylistFilter(QObject *parent)
+PlaylistFilter::PlaylistFilter(SongListModel *songListModel, QObject *parent)
     : QSortFilterProxyModel(parent)
 {
-    setSourceModel(&SongListModel::instance());
+    setSourceModel(songListModel);
 }
-
-PlaylistFilter &PlaylistFilter::instance()
-{
-    static PlaylistFilter playlistFilter;
-    return playlistFilter;
-}
-
 
 QList<int> PlaylistFilter::filterList() const
 {
