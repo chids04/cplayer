@@ -9,13 +9,21 @@ find_package(Qt6 6.8 REQUIRED COMPONENTS Multimedia Quick Widgets Core)
 
 
 if(WIN32)
-    set(TAGLIB_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/xtras/taglib)
+     # set(TAGLIB_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/xtras/taglib)
 
-    find_path(TAGLIB_INCLUDE_DIR taglib/tag.h
-        PATHS ${TAGLIB_ROOT}/include)
+     # find_path(TAGLIB_INCLUDE_DIR taglib/tag.h
+     #     PATHS ${TAGLIB_ROOT}/include)
 
-    find_library(TAGLIB_LIBRARY NAMES tag taglib
-        PATHS ${TAGLIB_ROOT}/lib)
+     # find_library(TAGLIB_LIBRARY NAMES tag taglib
+     #      PATHS ${TAGLIB_ROOT}/lib)
+    set(TagLib_DIR "C:\\pkg_static\\lib\\cmake\\taglib")
+    include($ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
+    find_package(ZLIB)
+    find_package(TagLib)
+
+elseif(UNIX)
+    find_package(ZLIB)
+    find_package(TagLib)
 
 elseif(UNIX)
     find_package(ZLIB)
@@ -193,10 +201,10 @@ set_target_properties(appcplayer PROPERTIES
 )
 
 if(WIN32)
-    target_link_directories(appcplayer PUBLIC ${TAGLIB_LIBRARY})
 
+    target_compile_definitions(appcplayer PRIVATE TAGLIB_STATIC)
     target_link_libraries(appcplayer
-        PRIVATE Qt6::Quick Qt6::Multimedia Qt6::Widgets Qt6::Core ${TAGLIB_LIBRARY}
+        PRIVATE Qt6::Quick Qt6::Multimedia Qt6::Widgets Qt6::Core TagLib::tag
         rapidfuzz::rapidfuzz
     )
 
@@ -209,7 +217,6 @@ elseif(UNIX)
 endif()
 
 target_include_directories(appcplayer PRIVATE
-        ${TAGLIB_INCLUDE_DIR}
 		${CMAKE_CURRENT_SOURCE_DIR}/cpp
 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/types
 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/background

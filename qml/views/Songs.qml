@@ -60,7 +60,7 @@ Item {
 
 
             ScrollBar.vertical: ScrollBar {
-                id:songScollbar
+                id:songScrollbar
                 policy: ScrollBar.AlwaysOn
 
                 width: 15
@@ -77,7 +77,7 @@ Item {
             }
 
             model: GlobalSingleton.songManager.songModel// This is the model exposed from C++
-            delegate: SongViewDelegate{
+            delegate: SongDelegate{
                 id: songDelegate
 
                 required property int index
@@ -88,8 +88,8 @@ Item {
                 required property list<string> albumArtists
                 required property var songObject
 
-                songDelegateHeight: 80
-                songDelegateWidth: 180
+                songDelegateHeight: 63
+                songDelegateWidth: songsListView.width - songScrollbar.width - 10
                 songDelegateColor: index % 2 == 0 ? "#1e1f20" : "#131314"
                 songObj: songObject
 

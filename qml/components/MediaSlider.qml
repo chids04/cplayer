@@ -530,11 +530,13 @@ Item{
 
                         Popup{
                             id: nowPlayingPopup
-                            x: nowPlayingImage.x - 300
-                            y: nowPlayingImage.y - 500
-                            width: 300
-                            height: 400
+                            width: 350
+                            height: 450
                             padding: 0
+
+                            parent: Overlay.overlay
+                            x: parent.width - width - 50
+                            y: parent.height - height - 100
 
                             background: Item{}
                             contentItem: NowPlayingRect{}
@@ -557,8 +559,6 @@ Item{
 
                         AudioDevicesPopup{
                             id: audioDevicePopup
-                            x: audioImage.x-300
-                            y: -150
                         }
 
                         Behavior on scale{

@@ -10,8 +10,8 @@ import cplayer
 Rectangle {
     id: root
 
-    width: 300
-    height: 400
+    width: 350
+    height: 450
 
     color: "#303132"
     border.color: "#6e7173"
@@ -155,7 +155,7 @@ Rectangle {
                                 Text{
                                     text: dragArea.title
                                     Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
-                                    Layout.preferredWidth: infoContainer.width
+                                    Layout.preferredWidth: infoContainer.width - 10
                                     elide: Text.ElideRight
                                     color: "white"
                                     font.bold: true
@@ -163,7 +163,7 @@ Rectangle {
 
                                 Text{
                                     Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
-                                    Layout.preferredWidth: infoContainer.width
+                                    Layout.preferredWidth: infoContainer.width - 10
                                     elide: Text.ElideRight
                                     text: dragArea.features.length === 0 ? dragArea.artist  : dragArea.artist + " feat. " + dragArea.features.join(", ")
 

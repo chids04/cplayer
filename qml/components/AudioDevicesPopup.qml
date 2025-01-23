@@ -7,11 +7,14 @@ import cplayer
 
 Popup{
     id: popup
-    width: 215
-    height: 100
+    width: 300
+    height: 200
     padding: 0
 
 
+    parent: Overlay.overlay
+    x: parent.width - popup.width - 30
+    y: parent.height - popup.height - 100
     background: Item{
 
     }
@@ -95,7 +98,7 @@ Popup{
             delegate: Rectangle {
                 id: deviceDelegate
                 width: audioDeviceList.width - 14
-                height: 20
+                height: 40
 
                 required property string deviceName
                 required property int index
@@ -109,6 +112,7 @@ Popup{
                     width: deviceDelegate.width
                     elide: Text.ElideRight
                     anchors.leftMargin: 4
+                    anchors.verticalCenter: parent.verticalCenter
                 }
 
 

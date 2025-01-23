@@ -120,7 +120,6 @@ Item {
                             text: albumCard.albumName
                             font.bold: true
                             font.pointSize: 16
-                            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                             color: "white"
                             Layout.alignment: Qt.AlignHCenter
                             Layout.fillWidth: true
@@ -130,7 +129,6 @@ Item {
 
                         Text {
                             text: albumCard.albumArtists.join(", ")
-                            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                             color: "white"
                             Layout.alignment: Qt.AlignHCenter
                             Layout.fillWidth: true
