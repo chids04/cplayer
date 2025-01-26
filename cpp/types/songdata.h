@@ -1,6 +1,7 @@
 #ifndef SONGDATA_H
 #define SONGDATA_H
 
+#include <QMetaType>
 #include <QString>
 #include <QStringList>
 #include <QDataStream>
@@ -68,5 +69,7 @@ struct SongData {
         return in;
     }
 };
+
+Q_DECLARE_METATYPE(QList<SongData>)
 
 #endif // SONGDATA_H

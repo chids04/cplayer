@@ -27,7 +27,6 @@ void NowPlaying::saveNowPlaying()
     QList<int> played_IDs;
 
     for(auto &queue_entry : queue){
-        qDebug() << "writing song" << queue_entry->song->title << "with id" << queue_entry->song->id << "to file";
         queue_IDs << queue_entry->songID;
     }
 
@@ -62,13 +61,13 @@ void NowPlaying::loadFromSettings()
     int curr_song = settings.value("playingSong").toInt();
 
     const auto allSongs = m_songListModel->getSongs();
-    QHash<int, std::shared_ptr<Song>> song_map;
+    QHash<int, Song*> song_map;
     for (const auto &s : allSongs) {
-        song_map[s->id] = s;
+        song_map[s->m_id] = s;
 
-        if(s->id == curr_song){
+        if(s->m_id == curr_song){
             auto entry = std::make_shared<QueueEntry>();
-            entry->songID = s->id;
+            entry->songID = s->m_id;
             entry->song = s;
             playingSong = entry;
         }
@@ -159,10 +158,10 @@ void NowPlaying::playAlbum(const QString &albumName, const QStringList &albumArt
 {
     QModelIndex albumIndex = m_albumListModel->findAlbumIndex(albumName, albumArtists);
     QVariant albumSongsVariant = m_albumListModel->data(albumIndex, AlbumListModel::AlbumSongsRole);
-    QList<std::shared_ptr<Song>> songs = albumSongsVariant.value<QList<std::shared_ptr<Song>>>();
+    QList<Song*> songs = albumSongsVariant.value<QList<Song*>>();
 
-    std::sort(songs.begin(), songs.end(), [](const std::shared_ptr<Song> &a, const std::shared_ptr<Song> &b){
-        return a->trackNum < b->trackNum;
+    std::sort(songs.begin(), songs.end(), [](const Song* a, const Song* b){
+        return a->m_trackNum < b->m_trackNum;
     });
 
     if(queue == true){
@@ -190,11 +189,11 @@ void NowPlaying::playPlaylist(const Playlist &playlist, bool queue)
     }
 
 
-    QList<std::shared_ptr<Song>> songs = m_songListModel->getSongs();
-    QList<std::shared_ptr<Song>> p_songs;
+    QList<Song*> songs = m_songListModel->getSongs();
+    QList<Song*> p_songs;
 
     for(const auto &song : songs){
-        if(songIDs.contains(song->id)){
+        if(songIDs.contains(song->m_id)){
             p_songs << song;
         }
     }
@@ -255,21 +254,21 @@ void NowPlaying::onNextClicked()
     }
 }
 
-void NowPlaying::queueNext(std::shared_ptr<Song> song)
+void NowPlaying::queueNext(Song* song)
 {
     m_queueModel->insertAtIndex(0, song);
 }
 
-void NowPlaying::addToQueue(std::shared_ptr<Song> song)
+void NowPlaying::addToQueue(Song* song)
 {
     m_queueModel->appendToQueue(song);
 }
 
-void NowPlaying::playNow(std::shared_ptr<Song> song)
+void NowPlaying::playNow(Song* song)
 {
     m_queueModel->insertAtIndex(0, song);
     playingSong = m_queueModel->popEntry(0);
-    qDebug() << "playing song" << playingSong->song->title;
+    qDebug() << "playing song" << playingSong->song->m_title;
     emit playSong(playingSong->song);
     m_playedSongs.push_back(playingSong);
 }

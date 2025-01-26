@@ -27,10 +27,9 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     //for custom types used in signal/slots or that need to be written to and from QVariant
-    qRegisterMetaType<std::shared_ptr<Song>>();
     qRegisterMetaType<QList<Folder>>();
     qRegisterMetaType<QList<int>>();
-    qRegisterMetaType<QList<Song>>();
+    qRegisterMetaType<QList<SongData>>();
     qRegisterMetaType<QList<Playlist>>();
 
     auto globalSingleton = engine.singletonInstance<GlobalSingleton*>("cplayer", "GlobalSingleton");

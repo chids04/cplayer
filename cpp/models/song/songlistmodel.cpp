@@ -14,7 +14,7 @@ SongListModel::SongListModel(AlbumListModel *albumListModel, MediaPlayerControll
 }
 
 
-void SongListModel::addSong(std::shared_ptr<Song> song){
+void SongListModel::addSong(Song* song){
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     m_songs << song;
     endInsertRows();
@@ -55,25 +55,25 @@ QVariant SongListModel::data(const QModelIndex &index, int role) const {
 
     switch(role){
         case FilePathRole:
-        return song->filePath;
+        return song->m_filePath;
 
         case TitleRole:
-        return song->title;
+        return song->m_title;
 
         case ArtistRole:
-        return song->artist;
+        return song->m_artist;
 
         case AlbumRole:
-        return song->album;
+        return song->m_album;
 
         case FeaturingArtistsRole:
-        return song->featuringArtists;
+        return song->m_featuringArtists;
 
         case NumberInAlbumRole:
-        return song->trackNum;
+        return song->m_trackNum;
 
         case AlbumArtistsRole:
-            return song->albumArtists;
+            return song->m_albumArtists;
 
         case SongObjectRole:
             return QVariant::fromValue(song);
@@ -97,63 +97,21 @@ QHash<int, QByteArray> SongListModel::roleNames() const {
     return roles;
 }
 
-QString SongListModel::getSongTitle(const QString &filePath) const
+void SongListModel::updateSong(int id)
 {
-    //add error checking here
-    for(const auto &song : m_songs){
-        if(song->filePath == filePath){
-            return song->title;
+    int index = -1;
+    for (int i = 0; i < m_songs.size(); ++i) {
+        if (m_songs[i]->m_id == id) {
+            index = i;
         }
     }
 
-    return QString();
+    QModelIndex modelIndex = createIndex(index, 0);
+    emit dataChanged(modelIndex, modelIndex);
 }
 
-QString SongListModel::getSongArtist(const QString &filePath) const
-{
-    for(const auto &song : m_songs){
-        if(song->filePath == filePath){
-            return song->artist;
-        }
-    }
 
-    return QString();
-}
-
-QString SongListModel::getSongAlbum(const QString &filePath) const
-{
-    for(const auto &song : m_songs){
-        if(song->filePath == filePath){
-            return song->album;
-        }
-    }
-
-    return QString();
-}
-
-QStringList SongListModel::getSongFeatures(const QString &filePath) const
-{
-    for(const auto &song : m_songs){
-        if(song->filePath == filePath){
-            return song->featuringArtists;
-        }
-    }
-
-    return QStringList();
-}
-
-int SongListModel::getSongTrackNum(const QString &filePath) const
-{
-    for(const auto &song : m_songs){
-        if(song->filePath == filePath){
-            return song->trackNum;
-        }
-    }
-
-    return 0;
-}
-
-QList<std::shared_ptr<Song> > SongListModel::getSongs()
+QList<Song* > SongListModel::getSongs()
 {
     return m_songs;
 }
@@ -161,11 +119,11 @@ QList<std::shared_ptr<Song> > SongListModel::getSongs()
 void SongListModel::removeSong(const QString &filePath)
 {
     for(int i=m_songs.size() - 1; i>= 0; --i){
-        if(m_songs[i]->filePath == filePath){
-            emit decrementAlbum(m_songs[i]->album, m_songs[i]->albumArtists);
-            emit removeFromPlaylist(m_songs[i]->id);
-            emit removeCurrentPlaying(m_songs[i]->filePath);
-            emit removeFromNowPlaying(m_songs[i]->id);
+        if(m_songs[i]->m_filePath == filePath){
+            emit decrementAlbum(m_songs[i]->m_album, m_songs[i]->m_albumArtists);
+            emit removeFromPlaylist(m_songs[i]->m_id);
+            emit removeCurrentPlaying(m_songs[i]->m_filePath);
+            emit removeFromNowPlaying(m_songs[i]->m_id);
 
             beginRemoveRows(QModelIndex(), i, i);
             m_songs.removeAt(i);
@@ -181,12 +139,12 @@ void SongListModel::removeFolderSongs(const QString &folderPath)
     QString songPath;
 
     for (int i = m_songs.size() - 1; i >= 0; --i) {
-        songPath = m_songs[i]->filePath;
+        songPath = m_songs[i]->m_filePath;
         if (songPath.contains(folderPath, Qt::CaseSensitive)) {
-            emit decrementAlbum(m_songs[i]->album, m_songs[i]->albumArtists);
-            emit removeFromPlaylist(m_songs[i]->id);
-            emit removeCurrentPlaying(m_songs[i]->filePath);
-            emit removeFromNowPlaying(m_songs[i]->id);
+            emit decrementAlbum(m_songs[i]->m_album, m_songs[i]->m_albumArtists);
+            emit removeFromPlaylist(m_songs[i]->m_id);
+            emit removeCurrentPlaying(m_songs[i]->m_filePath);
+            emit removeFromNowPlaying(m_songs[i]->m_id);
 
             beginRemoveRows(QModelIndex(), i, i);
             m_songs.removeAt(i);  // Remove song if its path contains the folderPath
@@ -196,7 +154,7 @@ void SongListModel::removeFolderSongs(const QString &folderPath)
     }
 }
 
-void SongListModel::onSongAdded(std::shared_ptr<Song> song)
+void SongListModel::onSongAdded(Song* song)
 {
     addSong(song);
 }
@@ -204,10 +162,11 @@ void SongListModel::onSongAdded(std::shared_ptr<Song> song)
 void SongListModel::readSongs()
 {
     QSettings settings;
-    QList<Song> songs = settings.value("songs").value<QList<Song>>();
+    QList<SongData> songDataList = settings.value("songs").value<QList<SongData>>();
 
-    for(const Song &song : songs){
-        std::shared_ptr<Song> songPtr = std::make_shared<Song>(song);
+    for (const SongData &songData : songDataList) {
+        Song* songPtr = new Song();
+        songPtr->fromSongData(songData);
 
         addSong(songPtr);
     }
@@ -216,11 +175,11 @@ void SongListModel::readSongs()
 void SongListModel::saveSongs()
 {
     QSettings settings;
-    QList<Song> songObj;
+    QList<SongData> songDataList;
 
-    for(const auto &song: m_songs){
-        songObj.append(*song);
+    for (const auto &song : m_songs) {
+        songDataList.append(song->toSongData());
     }
 
-    settings.setValue("songs", QVariant::fromValue(songObj));
+    settings.setValue("songs", QVariant::fromValue(songDataList));
 }

@@ -65,7 +65,7 @@ public slots:
     void modifyPlaylist(int id, const QString &playlistName, int rotation = 0, const QUrl &coverPath = QUrl(), bool hasCover = false);
     void removePlaylist(int playlistID);
     void loadPlaylistSongs(int id);
-    void addSongToPlaylist(int id, std::shared_ptr<Song> song);
+    void addSongToPlaylist(int id, Song* song);
     Playlist currentPlaylist() const;
 
 

@@ -45,10 +45,10 @@ public:
     bool shuffle() const;
 
 signals:
-    void playSong(std::shared_ptr<Song> song);
+    void playSong(Song* song);
     void positionLoaded(qint64 position);
     void durationLoaded(qint64 duration);
-    void songLoaded(std::shared_ptr<Song>);
+    void songLoaded(Song* song);
     void jumpToEnd();
 
     void queueModelChanged();
@@ -62,9 +62,9 @@ public slots:
     void playPlaylist(const Playlist &playlist, bool queue=false);
     void onPreviousClicked(int duration);
     void onNextClicked();
-    void queueNext(std::shared_ptr<Song> song);
-    void addToQueue(std::shared_ptr<Song> song);
-    void playNow(std::shared_ptr<Song> song);
+    void queueNext(Song* song);
+    void addToQueue(Song* song);
+    void playNow(Song* song);
     void moveSong(int from, int to);
     void clearQueue();
 
@@ -74,7 +74,7 @@ public slots:
 
 private:
     QList<Queue> m_queues;
-    QList<std::shared_ptr<Song>> songQueue;
+    QList<Song*> songQueue;
     std::shared_ptr<QueueEntry> playingSong;
 
     int currentQueueIndex;

@@ -25,12 +25,12 @@ QStringList Album::getArtist() const
     return artist;
 }
 
-QList<std::shared_ptr<Song>> Album::getSongs() const
+QList<Song*> Album::getSongs() const
 {
     return songList;
 }
 
-void Album::addSong(std::shared_ptr<Song> song)
+void Album::addSong(Song* song)
 {
     songList << song;
     songCount++;

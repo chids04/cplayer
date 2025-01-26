@@ -24,17 +24,17 @@ QModelIndex AlbumListModel::findAlbumIndex(const QString &albumName, const QStri
     return QModelIndex();
 }
 
-void AlbumListModel::updateAlbum(std::shared_ptr<Song> song)
+void AlbumListModel::updateAlbum(Song* song)
 {
 
     for(Album &album: m_albums){
-        if(album.getName() == song->album && album.getArtist() == song->albumArtists){
+        if(album.getName() == song->m_album && album.getArtist() == song->m_albumArtists){
             album.addSong(song);
             return;
         }
     }
     //album doesnt exist, need to create a new one
-    Album album(song->album, song->albumArtists, song->genre, song->year);
+    Album album(song->m_album, song->m_albumArtists, song->m_genre, song->m_year);
     album.addSong(song);
     addAlbum(album);
 }

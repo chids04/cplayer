@@ -33,20 +33,15 @@ public:
 
     };
 
-    void addSong(std::shared_ptr<Song> song);
+    void addSong(Song* song);
     void clear();
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const override;
     QHash<int, QByteArray> roleNames() const override;
-
-    QString getSongTitle(const QString &filePath) const;
-    QString getSongArtist(const QString &filePath) const;
-    QString getSongAlbum(const QString &filePath) const;
-    QStringList getSongFeatures(const QString &filePath) const;
-    int getSongTrackNum(const QString &filePath) const;
-    QList<std::shared_ptr<Song>> getSongs();
+    void updateSong(int id);
+    QList<Song*> getSongs();
     void removeSong(const QString &filePath);
     void readSongs();
     void saveSongs();
@@ -56,15 +51,15 @@ signals:
     void removeFromPlaylist(int songID);
     void removeCurrentPlaying(const QString &path);
     void removeFromNowPlaying(int songID);
-    void updateAlbum(std::shared_ptr<Song>);
+    void updateAlbum(Song*);
 
 
 public slots:
-    void onSongAdded(std::shared_ptr<Song> song);
+    void onSongAdded(Song* song);
     void removeFolderSongs(const QString &folderPath);
 
 private:
-    QList<std::shared_ptr<Song>> m_songs;
+    QList<Song*> m_songs;
     static SongListModel *modelInstance;
 
 };

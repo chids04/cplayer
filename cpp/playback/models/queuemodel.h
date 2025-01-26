@@ -3,12 +3,11 @@
 
 #include <QAbstractListModel>
 #include <QObject>
-#include <deque>
 
 #include "song.h"
 
 struct QueueEntry {
-    std::shared_ptr<Song> song;
+    Song* song;
     int songID;
 };
 
@@ -32,7 +31,7 @@ public:
 
     };
 
-    void addSong(std::shared_ptr<Song> song);
+    void addSong(Song* song);
     void clear();
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -41,13 +40,13 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
     int getLen() const;
-    std::shared_ptr<Song> getSongAtIndex(int index);
+    Song* getSongAtIndex(int index);
     QList<std::shared_ptr<QueueEntry>> getQueue();
     void removeFromQueue(int songID);
-    void insertAtIndex(int index, std::shared_ptr<Song> song);
-    void insertAtIndex(int index, QList<std::shared_ptr<Song>> songs);
-    void appendToQueue(std::shared_ptr<Song> song);
-    void appendToQueue(QList<std::shared_ptr<Song>>);
+    void insertAtIndex(int index, Song* song);
+    void insertAtIndex(int index, QList<Song*> songs);
+    void appendToQueue(Song* song);
+    void appendToQueue(QList<Song*>);
 
     void pushFront(std::shared_ptr<QueueEntry> entry);
     void setQueue(QList<std::shared_ptr<QueueEntry>> queue_entries);

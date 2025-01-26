@@ -16,16 +16,29 @@ Menu {
 
     MenuItem{
         id: queueNext
-        text: "Queue Next"
+        text: "queue next"
 
         onTriggered: {
             GlobalSingleton.playbackManager.nowPlaying.queueNext(songObj)
         }
     }
 
+    MenuItem{
+        id: editSongItem
+        text: "edit song"
+
+        onTriggered : {
+            editSong.openPopup(mainMenu.songObj)
+        }
+    }
+
+    EditSong{
+        id: editSong
+    }
+
     Menu {
         id: addToPlaylistMenu
-        title: "Add to playlist"
+        title: "add to playlist"
         Instantiator {
             id: playlistInstantiator
             model: GlobalSingleton.playlistManager.playlistModel // Assuming PlaylistModel is exposed from C++

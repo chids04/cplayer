@@ -1,9 +1,9 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
-
 
 import "../components"
+
+import cplayer
 
 Rectangle {
     id: songRect
@@ -14,8 +14,8 @@ Rectangle {
     property string songDelegateLeadingArtist
     property int songDelegateIndex
     property bool songFromAlbum
-    property var songObj
-    property list<string> songFeatures
+    property Song songObj
+    property list<string> songAlbumArtists
     property bool isContextMenuOpen: false
 
     property alias songDelegateColor: songRect.color
@@ -60,7 +60,7 @@ Rectangle {
 
         onDoubleClicked: {
             songRect.state = 'doubleClicked'
-            songDelegateDoubleClicked()
+            songRect.songDelegateDoubleClicked()
         }
 
         onReleased: {
@@ -69,12 +69,12 @@ Rectangle {
 
         onClicked: mouse => {
             if(mouse.button === Qt.LeftButton){
-                songDelegateClicked()
+                songRect.songDelegateClicked()
             }
             else if(mouse.button === Qt.RightButton){
-                isContextMenuOpen = true
+                songRect.isContextMenuOpen = true
                 tintOverlay.color = "#383838"
-                contextMenu.openContextMenu(songObj)
+                contextMenu.openContextMenu(songRect.songObj)
             }
 
 
@@ -101,8 +101,9 @@ Rectangle {
             State {
                 name: "doubleClicked"
                 PropertyChanges {
-                    target: songRect
-                    scale: 0.95
+                    songRect{
+                        scale: 0.95
+                    }
                 }
             }
         ]
@@ -148,9 +149,9 @@ Rectangle {
 
                 Image {
                     id: albumImage
-                    width:60
-                    height:60
-                    source: "image://coverArt/" + songDelegateAlbum + "/" + songFeatures.join('%')
+                    Layout.preferredWidth:60
+                    Layout.preferredHeight:60
+                    source: "image://coverArt/" + songRect.songDelegateAlbum + "/" + songRect.songAlbumArtists.join('%')
                     sourceSize.width: 60
                     sourceSize.height: 60
                     Layout.rightMargin: 10

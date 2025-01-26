@@ -215,6 +215,7 @@ Rectangle {
 
         model: visualModel
 
+
         spacing: 4
         clip: true
 

@@ -83,6 +83,7 @@ qt_add_qml_module(appcplayer
 		qml/components/EditSong.qml
 
 
+
 	#Singleton
 	SOURCES
 	    cpp/globalsingleton.h
@@ -102,6 +103,9 @@ qt_add_qml_module(appcplayer
 
 		cpp/types/playlist.h
 		cpp/types/playlist.cpp
+
+        cpp/types/songdata.cpp
+        cpp/types/songdata.h
 
 	#C++ Models
     SOURCES

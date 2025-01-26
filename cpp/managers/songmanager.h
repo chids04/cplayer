@@ -2,6 +2,7 @@
 #define SONGMANAGER_H
 
 #include <QObject>
+#include <QStringListModel>
 #include "songlistmodel.h"
 #include "playlistmanager.h"
 #include "playbackmanager.h"
@@ -25,6 +26,11 @@ class SongManager : public QObject
     Q_PROPERTY(QStringList albumArtists READ albumAritsts WRITE setAlbumArtists NOTIFY albumArtistsChanged)
     Q_PROPERTY(QString albumGenre READ albumGenre WRITE setAlbumGenre NOTIFY albumGenreChanged)
     Q_PROPERTY(int albumYear READ albumYear WRITE setAlbumYear NOTIFY albumYearChanged)
+
+    //stringlistmodels for song editing
+    Q_PROPERTY(QStringListModel *featuresList READ featuresList WRITE setFeaturesList NOTIFY featuresListChanged)
+    Q_PROPERTY(QStringListModel *albumArtistsList READ albumArtistsList WRITE setAlbumArtistsList NOTIFY albumAritstsListChanged)
+
 
 
 public:
@@ -63,8 +69,23 @@ public:
     int albumYear() const;
     void setAlbumYear(int newAlbumYear);
 
+    QStringListModel *featuresList() const;
+    void setFeaturesList(QStringListModel *newFeaturesList);
+
+    QStringListModel *albumArtistsList() const;
+    void setAlbumArtistsList(QStringListModel *newAlbumArtistsList);
+
 public slots:
     void setAlbum(const Album &album);
+
+    //song editing functions
+    void insertFeature(const QString &feature);
+    void setFeaturesToEdit(const QStringList &features);
+    void insertArtist(const QString &artist);
+    void setAlbumArtistsToEdit(const QStringList &albumArtists);
+    void saveChanges(Song *song, const QString &title, const QString &leadingArtist, const QString &album,
+                     const QString &genre, int year, int trackNum, bool hasCover, const QUrl &coverPath = QUrl());
+
 signals:
     void songModelChanged();
     void albumSongsModelChanged();
@@ -81,9 +102,14 @@ signals:
 
     void albumYearChanged();
 
+    void featuresListChanged();
+
+    void albumAritstsListChanged();
+
 private:
     SongListModel *songListModel = nullptr;
     AlbumListModel *albumListModel = nullptr;
+    MediaPlayerController *mediaPlayer = nullptr;
 
     SongFilterProxyModel *m_songModel = nullptr;
     AlbumFilterProxyModel *m_albumSongsModel = nullptr;
@@ -93,6 +119,8 @@ private:
     QStringList m_albumArtists;
     QString m_albumGenre;
     int m_albumYear;
+    QStringListModel *m_featuresList = nullptr;
+    QStringListModel *m_albumArtistsList = nullptr;
 };
 
 #endif // SONGMANAGER_H

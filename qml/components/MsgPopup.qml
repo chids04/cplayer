@@ -71,8 +71,8 @@ Popup {
         background: Rectangle{
             anchors.fill: parent
             color: "#202020"
-            border.color: "#2f3137"
-            border.width: 2
+            border.color: "#424345"
+            border.width: 3
             radius: 20
         }
 

@@ -30,6 +30,7 @@ class MediaPlayerController : public QObject {
     Q_PROPERTY(qint64 duration READ duration  WRITE onDurationChanged NOTIFY durationChanged)
     Q_PROPERTY(qint64 position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(QString filePath READ filePath WRITE setFilePath NOTIFY filePathChanged)
+    Q_PROPERTY(QStringList albumArtists READ albumArtists WRITE setAlbumArtists NOTIFY albumArtistsChanged)
     Q_PROPERTY(bool repeat READ repeat WRITE setRepeat NOTIFY repeatChanged)
     Q_PROPERTY(float volume READ volume WRITE setVolume NOTIFY volumeChanged)
     Q_PROPERTY(AudioDeviceModel* audioDeviceModel READ audioDeviceModel WRITE setAudioDeviceModel NOTIFY audioDeviceModelChanged)
@@ -57,12 +58,11 @@ public:
     void setAlbum(const QString &newAlbum);
     void setTrackTitle(const QString &title);
     void setLeadingArtist(const QString &leadingArtist);
-
     void setFeatures(const QStringList &newFeatures);
 
+    void updateSong(Song *song);
 
     bool repeat() const;
-
     void setRepeat(bool newRepeat);
 
     void onDurationChanged(qint64 newDuration);
@@ -70,6 +70,8 @@ public:
     AudioDeviceModel *audioDeviceModel() const;
     void setAudioDeviceModel(AudioDeviceModel *newAudioDeviceModel);
 
+    QStringList albumArtists() const;
+    void setAlbumArtists(const QStringList &newAlbumArtists);
 
 signals:
     void leadingArtistChanged();
@@ -94,6 +96,9 @@ signals:
     void checkQueue();
 
 
+
+    void albumArtistsChanged();
+
 public slots:
     void onPositionChanged();
     void onPlayingChanged();
@@ -105,8 +110,8 @@ public slots:
     void onAudioDeviceChanged();
     void setAudioDevice(const QAudioDevice &device);
 
-    void onPlaySong(std::shared_ptr<Song> song);
-    void onSongLoaded(std::shared_ptr<Song> song);
+    void onPlaySong(Song* song);
+    void onSongLoaded(Song* song);
     void onRepeatChanged(bool repeat);
     void onPositionLoaded(qint64 position);
     void onRemoveCurrentPlaying(const QString &filePath);
@@ -139,6 +144,7 @@ private:
 
 
     bool m_repeat;
+    QStringList m_albumArtists;
 };
 
 #endif // MEDIAPLAYERCONTROLLER_H

@@ -21,9 +21,9 @@ public:
     int getYear() const;
     int getSongCount() const;
     QStringList getArtist() const;
-    QList<std::shared_ptr<Song>> getSongs() const;
+    QList<Song*> getSongs() const;
 
-    void addSong(std::shared_ptr<Song> song);
+    void addSong(Song* song);
     void incrementCount();
     void decrementCount();
 
@@ -31,7 +31,7 @@ private:
     QString name;
     QString genre;
     QStringList artist;
-    QList<std::shared_ptr<Song>> songList;
+    QList<Song*> songList;
     int year;
     int songCount = 0;
 

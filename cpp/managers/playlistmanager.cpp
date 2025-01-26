@@ -67,14 +67,14 @@ void PlaylistManager::loadPlaylistSongs(int id)
 
 
 
-void PlaylistManager::addSongToPlaylist(int id, std::shared_ptr<Song> song)
+void PlaylistManager::addSongToPlaylist(int id, Song* song)
 {
     QModelIndex index = m_playlistModel->getIndexForID(id);
 
     QVariant playlistObj = m_playlistModel->data(index, PlaylistModel::PlaylistObjRole);
     std::shared_ptr<Playlist> playlist = playlistObj.value<std::shared_ptr<Playlist>>();
 
-    playlist->addSong(song->id);
+    playlist->addSong(song->m_id);
 }
 
 bool PlaylistManager::hasCover() const

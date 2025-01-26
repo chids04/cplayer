@@ -77,9 +77,9 @@ Popup {
     background: Rectangle {
         id: popUpDelegate
         anchors.fill: parent
-        color: "#202020"
+        color: "#191919"
 
-        border.color: "#2f3137"
+        border.color: "#424345"
         border.width: 2
     }
 
@@ -166,7 +166,9 @@ Popup {
             color: "white"
 
             background: Rectangle{
-                color: "#2f3137"
+                border.color: "#343434"
+                border.width: 2
+                color: "#232425"
                 radius: 10
 
             }

@@ -14,10 +14,10 @@ class Queue : public QObject {
     Q_PROPERTY(QString queueName READ queueName WRITE queueName NOTIFY queueNameChanged);
 
 public:
-    Queue(QString name, QList<std::shared_ptr<Song>> songs, QObject *parent = nullptr);
-    QList<std::shared_ptr<Song>> getSongs();
+    Queue(QString name, QList<Song*> songs, QObject *parent = nullptr);
+    QList<Song*> getSongs();
     void shuffleSongs();
-    std::shared_ptr<Song> popSong();
+    Song* popSong();
     QString queueName() const;
     void queueName(const QString &newQueueName);
 
@@ -27,8 +27,8 @@ signals:
 private:
     QString m_queueName;
     bool shuffle = false;
-    QList<std::shared_ptr<Song>> originalSongs;
-    QList<std::shared_ptr<Song>> shuffledSongs;
+    QList<Song*> originalSongs;
+    QList<Song*> shuffledSongs;
 };
 
 #endif // QUEUE_H

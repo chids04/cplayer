@@ -43,20 +43,16 @@ Item {
 
         }
 
-        GridView {
+        ListView {
             id: songsListView
 
+            Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignHCenter
-            Layout.preferredWidth: (Math.floor(parent.width / cellWidth)) * cellWidth
-
-
-
             Layout.topMargin: 10
+            clip:true
 
-            clip: true
-            cellWidth: 200
-            cellHeight: 100
+            spacing: 5
 
 
             ScrollBar.vertical: ScrollBar {
@@ -97,7 +93,7 @@ Item {
                 songDelegateAuthors: features.length === 0 ? artist  : artist + " feat. " + features.join(", ")
                 songDelegateAlbum: album
                 songDelegateLeadingArtist: artist
-                songFeatures: albumArtists
+                songAlbumArtists: albumArtists
 
                 onSongDelegateDoubleClicked: {
                     //NowPlaying.playNow(songObject)

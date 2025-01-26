@@ -90,7 +90,7 @@ void MusicScanner::onFileRecieved(const QString &localPath)
                 coverImgProvider->addCover(albumArtists, albumName, loadedCover);
             }
 
-            std::shared_ptr<Song> song = std::make_shared<Song>(localPath, title, leadingArtist, albumName, genre, features, albumArtists, year, length, trackNum, id);
+            Song* song =new Song(localPath, title, leadingArtist, albumName, genre, features, albumArtists, year, length, trackNum, id);
             id++;
 
             //need to add the song to the listmodel, and the album
@@ -149,8 +149,17 @@ void MusicScanner::onFolderRecieved(const QUrl &folderPath)
             QString leadingArtist;
 
             auto splitArtists = [](const QString &artists, QString &leadingArtist, QStringList &features){
-                if(artists.contains(" / ")){
-                    QStringList artistList = artists.split(" / ");
+                if(artists.contains("/") || artists.contains(" / ")){
+                    QStringList artistList;
+
+                    //some programs (deemix) put all artists into artist string
+                    if(artists.contains("/")){
+                        artistList = artists.split("/");
+                    }
+                    else if(artistList.contains(" / ")){
+                        artistList = artists.split(" / ");
+                    }
+
                     leadingArtist = artistList.first();
                     features = artistList.mid(1);
                 }
@@ -185,7 +194,7 @@ void MusicScanner::onFolderRecieved(const QUrl &folderPath)
                 albumName = "Unknown";
             }
 
-            std::shared_ptr<Song> song = std::make_shared<Song>(filePath, title, leadingArtist, albumName, genre, features, albumArtists, year, length, trackNum, id);
+            Song* song =new Song(filePath, title, leadingArtist, albumName, genre, features, albumArtists, year, length, trackNum, id);
             id++;
 
             //need to add the song to the listmodel, and the album
@@ -195,7 +204,7 @@ void MusicScanner::onFolderRecieved(const QUrl &folderPath)
             //here is for where songs has no metatdata
             if(f.tag()->isEmpty()){
                 QFileInfo fi(filePath);
-                auto song = std::make_shared<Song>(filePath, fi.fileName(), "Unknown", "Unknown", QString(), QStringList("Unknown"), QStringList(), int(), int(), int(), id);
+                auto song =new Song(filePath, fi.fileName(), "Unknown", "Unknown", QString(), QStringList("Unknown"), QStringList(), int(), int(), int(), id);
                 emit songFetched(song);
                 id++;
             }

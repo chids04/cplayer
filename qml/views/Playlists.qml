@@ -96,10 +96,10 @@ Item {
                 background: Rectangle {
                     id: popUpDelegate
                     anchors.fill: parent
-                    color: "#202020"
+                    color: "#191919"
 
-                    border.color: "#2f3137"
-                    border.width: 2
+                    border.color: "#424345"
+                    border.width: 5
                 }
 
                 contentItem: ColumnLayout{
@@ -162,11 +162,13 @@ Item {
                         Layout.alignment: Qt.AlignHCenter
                         Layout.preferredWidth: 300
                         placeholderText: "Enter Playlist Name"
-                        placeholderTextColor: "#6a6f76"
+                        placeholderTextColor: "darkgrey"
                         color: "white"
 
                         background: Rectangle{
-                            color: "#2f3137"
+                            border.color: "#2e2f30"
+                            border.width: 2
+                            color: "#232425"
                             radius: 10
 
                         }

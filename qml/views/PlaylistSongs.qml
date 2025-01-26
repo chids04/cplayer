@@ -141,7 +141,7 @@ Item {
                     songDelegateAuthors: features.length === 0 ? artist  : artist + " feat. " + features.join(", ")
                     songDelegateAlbum: album
                     songDelegateLeadingArtist: artist
-                    songFeatures: albumArtists
+                    songAlbumArtists: albumArtists
 
                     onSongDelegateDoubleClicked: {
                         GlobalSingleton.playbackManager.nowPlaying.playNow(songObject)

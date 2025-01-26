@@ -24,7 +24,7 @@ void PlaylistFilter::setFilterList(const QList<int> &newFilterList)
 bool PlaylistFilter::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
     QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
-    int songID = sourceModel()->data(index, SongListModel::SongObjectRole).value<std::shared_ptr<Song>>()->id;
+    int songID = sourceModel()->data(index, SongListModel::SongObjectRole).value<Song*>()->m_id;
     if(m_filterList.contains(songID)){
         return true;
     }

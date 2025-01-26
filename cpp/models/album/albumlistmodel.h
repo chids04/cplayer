@@ -40,7 +40,7 @@ public:
     void clear();
 
 public slots:
-    void updateAlbum(std::shared_ptr<Song> song);
+    void updateAlbum(Song* song);
     void decrementAlbum(const QString &albumName, const QStringList &albumArtists);
     void deleteAlbums();
 

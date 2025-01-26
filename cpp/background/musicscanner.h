@@ -16,7 +16,7 @@ public:
     MusicScanner(CoverImgProvider *coverImgProvider, QObject *parent=nullptr);
 
 signals:
-    void songFetched(std::shared_ptr<Song>);
+    void songFetched(Song*);
     void scanningFinished(QString folderName, QString folderPath, int songCount);
     void saveID(int id);
 

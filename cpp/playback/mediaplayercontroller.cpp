@@ -187,15 +187,26 @@ void MediaPlayerController::setFeatures(const QStringList &newFeatures) {
     }
 }
 
-void MediaPlayerController::onPlaySong(std::shared_ptr<Song> song) {
+void MediaPlayerController::updateSong(Song *song)
+{
+    setTrackTitle(song->m_title);
+    setLeadingArtist(song->m_artist);
+    setAlbum(song->m_album);
+    setFeatures(song->m_featuringArtists);
+    setAlbumArtists(song->m_albumArtists);
+
+}
+
+void MediaPlayerController::onPlaySong(Song* song) {
     player->stop();
 
-    player->setSource(QUrl::fromLocalFile(song->filePath));
-    setTrackTitle(song->title);
-    setLeadingArtist(song->artist);
-    setFilePath(song->filePath);
-    setAlbum(song->album);
-    setFeatures(song->featuringArtists);
+    player->setSource(QUrl::fromLocalFile(song->m_filePath));
+    setTrackTitle(song->m_title);
+    setLeadingArtist(song->m_artist);
+    setFilePath(song->m_filePath);
+    setAlbum(song->m_album);
+    setFeatures(song->m_featuringArtists);
+    setAlbumArtists(song->m_albumArtists);
 
     emit coverArtChanged();
     emit leadingArtistChanged();
@@ -205,19 +216,21 @@ void MediaPlayerController::onPlaySong(std::shared_ptr<Song> song) {
     player->play();
 }
 
-void MediaPlayerController::onSongLoaded(std::shared_ptr<Song> song)
+void MediaPlayerController::onSongLoaded(Song* song)
 {
 
-    player->setSource(QUrl::fromLocalFile(song->filePath));
+    player->setSource(QUrl::fromLocalFile(song->m_filePath));
 
     qDebug() << "setting position to " << posFromFile;
 
     qDebug() << "player is at position" << player->position();
-    setTrackTitle(song->title);
-    setLeadingArtist(song->artist);
-    setFilePath(song->filePath);
-    setAlbum(song->album);
-    setFeatures(song->featuringArtists);
+
+    setTrackTitle(song->m_title);
+    setLeadingArtist(song->m_artist);
+    setFilePath(song->m_filePath);
+    setAlbum(song->m_album);
+    setFeatures(song->m_featuringArtists);
+    setAlbumArtists(song->m_albumArtists);
 
     emit coverArtChanged();
     emit leadingArtistChanged();
@@ -368,3 +381,16 @@ void MediaPlayerController::setAudioDeviceModel(AudioDeviceModel *newAudioDevice
     emit audioDeviceModelChanged();
 }
 
+
+QStringList MediaPlayerController::albumArtists() const
+{
+    return m_albumArtists;
+}
+
+void MediaPlayerController::setAlbumArtists(const QStringList &newAlbumArtists)
+{
+    if (m_albumArtists == newAlbumArtists)
+        return;
+    m_albumArtists = newAlbumArtists;
+    emit albumArtistsChanged();
+}

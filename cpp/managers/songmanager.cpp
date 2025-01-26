@@ -9,6 +9,8 @@ SongManager::SongManager(PlaybackManager *playbackManager, QObject *parent)
 
     songListModel = new SongListModel(albumListModel, playbackManager->mediaPlayer(), playbackManager->nowPlaying());
 
+    mediaPlayer = playbackManager->mediaPlayer();
+
     //these models exposed to qml
     SongFilterProxyModel *songFilterProxyModel = new SongFilterProxyModel(songListModel);
     AlbumFilterProxyModel *albumFilterProxyModel = new AlbumFilterProxyModel(songListModel);
@@ -17,6 +19,9 @@ SongManager::SongManager(PlaybackManager *playbackManager, QObject *parent)
     setSongModel(songFilterProxyModel);
     setAlbumSongsModel(albumFilterProxyModel);
     setAlbumSearchModel(albumSearchFilter);
+
+    setFeaturesList(new QStringListModel);
+    setAlbumArtistsList(new QStringListModel);
 
 }
 
@@ -108,6 +113,49 @@ void SongManager::setAlbum(const Album &album)
     m_albumSongsModel->setCurrentAlbumName(album.getName());
 }
 
+void SongManager::insertFeature(const QString &feature)
+{
+    if(m_featuresList->insertRow(m_featuresList->rowCount())){
+        QModelIndex index = m_featuresList->index(m_featuresList->rowCount() - 1);
+        m_featuresList->setData(index, feature);
+    }
+}
+
+void SongManager::setFeaturesToEdit(const QStringList &features)
+{
+    m_featuresList->setStringList(features);
+}
+
+void SongManager::insertArtist(const QString &artist)
+{
+    if(m_albumArtistsList->insertRow(m_albumArtistsList->rowCount())){
+        QModelIndex index = m_albumArtistsList->index(m_albumArtistsList->rowCount() - 1);
+        m_albumArtistsList->setData(index, artist);
+    }
+}
+
+void SongManager::setAlbumArtistsToEdit(const QStringList &albumArtists)
+{
+    m_albumArtistsList->setStringList(albumArtists);
+}
+
+
+void SongManager::saveChanges(Song* song, const QString &title, const QString &leadingArtist, const QString &album,
+                              const QString &genre, int year, int trackNum,
+                              bool hasCover, const QUrl &coverPath)
+{
+    song->m_trackNum = trackNum;
+    song->m_title = title;
+    song->m_artist = leadingArtist;
+    song->m_album = album;
+    song->m_featuringArtists = m_featuresList->stringList();
+    song->m_albumArtists = m_albumArtistsList->stringList();
+    song->m_genre = genre;
+
+    songListModel->updateSong(song->m_id);
+    mediaPlayer->updateSong(song);
+}
+
 QString SongManager::albumName() const
 {
     return m_albumName;
@@ -158,4 +206,30 @@ void SongManager::setAlbumYear(int newAlbumYear)
         return;
     m_albumYear = newAlbumYear;
     emit albumYearChanged();
+}
+
+QStringListModel *SongManager::featuresList() const
+{
+    return m_featuresList;
+}
+
+void SongManager::setFeaturesList(QStringListModel *newFeaturesList)
+{
+    if (m_featuresList == newFeaturesList)
+        return;
+    m_featuresList = newFeaturesList;
+    emit featuresListChanged();
+}
+
+QStringListModel *SongManager::albumArtistsList() const
+{
+    return m_albumArtistsList;
+}
+
+void SongManager::setAlbumArtistsList(QStringListModel *newAlbumArtistsList)
+{
+    if (m_albumArtistsList == newAlbumArtistsList)
+        return;
+    m_albumArtistsList = newAlbumArtistsList;
+    emit albumAritstsListChanged();
 }

@@ -1,12 +1,12 @@
 #include "queue.h"
 
-Queue::Queue(QString name, QList<std::shared_ptr<Song>> songs, QObject *parent) : QObject(parent), m_queueName(name),
+Queue::Queue(QString name, QList<Song*> songs, QObject *parent) : QObject(parent), m_queueName(name),
     originalSongs(songs), shuffledSongs(songs)
 {
     shuffleSongs();
 }
 
-QList<std::shared_ptr<Song>> Queue::getSongs()
+QList<Song*> Queue::getSongs()
 {
     if(shuffle){
         return shuffledSongs;
@@ -25,7 +25,7 @@ void Queue::shuffleSongs()
     std::shuffle(shuffledSongs.begin(),  shuffledSongs.end(), g);
 }
 
-std::shared_ptr<Song> Queue::popSong()
+Song* Queue::popSong()
 {
     if (!originalSongs.isEmpty()) {
         auto song = originalSongs.takeFirst(); // Removes and returns the first song
