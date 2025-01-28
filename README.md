@@ -12,6 +12,7 @@ a simple, fast cross platform music player written with Qt (wip)
 build [taglib](https://github.com/taglib/taglib/blob/master/INSTALL.md#build-options)
   - follow the MSVC build and install instructions, including the installtion of vcpkg and zlib
   - makes sure `-DENABLE_STATIC_RUNTIME=ON` `-DBUILD_SHARED_LIBS=OFF` are added to the cmake build command
+  - ammend the line `set(TagLib_DIR "C:\\pkg_static\\lib\\cmake\\taglib")` in CMakeLists.txt to match directoy of where you installed taglib
 
 ### mac
 1. install [homebrew](https://brew.sh/)
