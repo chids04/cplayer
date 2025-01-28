@@ -8,7 +8,7 @@ a simple, fast cross platform music player written with Qt (wip)
 3) run `git submodule --init` to fetch all submodules
 
 ### windows
-
+- use MSVC compiler kit in qt creator
 build [taglib](https://github.com/taglib/taglib/blob/master/INSTALL.md#build-options)
   - follow the MSVC build and install instructions, including the installtion of vcpkg and zlib
   - makes sure `-DENABLE_STATIC_RUNTIME=ON` `-DBUILD_SHARED_LIBS=OFF` are added to the cmake build command
