@@ -37,6 +37,7 @@ void MusicScanner::onFileRecieved(const QString &localPath)
 #endif
 
         if(!f.isNull() && !f.tag()->isEmpty()){
+            QFileInfo fileInfo(localPath);
 
 #if defined(Q_OS_WIN)
             QString title = QString::fromStdWString(f.tag()->title().toWString());
@@ -83,6 +84,18 @@ void MusicScanner::onFileRecieved(const QString &localPath)
                 albumArtists << leadingArtist;
             }
 
+            if(albumArtists.isEmpty()){
+                albumArtists << leadingArtist;
+            }
+
+            if(albumName == ""){
+                albumName = fileInfo.fileName();
+            }
+
+            if(albumArtists == QStringList()){
+                albumArtists = QStringList(fileInfo.fileName());
+            }
+
             if(!coverImgProvider->hasCover(albumArtists, albumName)){
                 TagLib::VariantMap imgData = f.complexProperties("PICTURE").front();
                 TagLib::ByteVector coverArt = imgData.value("data").toByteVector();
@@ -90,13 +103,17 @@ void MusicScanner::onFileRecieved(const QString &localPath)
                 coverImgProvider->addCover(albumArtists, albumName, loadedCover);
             }
 
-            Song* song =new Song(localPath, title, leadingArtist, albumName, genre, features, albumArtists, year, length, trackNum, id);
+            emit songDataFetched(localPath, title, leadingArtist, albumName, genre, features, albumArtists, year, length, trackNum, id);
             id++;
 
-            //need to add the song to the listmodel, and the album
-            emit songFetched(song);
-            emit saveID(id);
+        }else{
+            if(f.tag()->isEmpty()){
+                QFileInfo fi(localPath);
+                emit songDataFetched(localPath, fi.fileName(), QString(), fi.fileName(), QString(), QStringList(), QStringList(fi.fileName()), int(), int(), int(), id);
+                id++;
+            }
         }
+
 
 }
 
@@ -181,6 +198,14 @@ void MusicScanner::onFolderRecieved(const QUrl &folderPath)
                 albumArtists << leadingArtist;
             }
 
+            if(albumName == ""){
+                albumName = fileInfo.fileName();
+            }
+
+            if(albumArtists == QStringList()){
+                albumArtists = QStringList(fileInfo.fileName());
+            }
+
             if(!coverImgProvider->hasCover(albumArtists, albumName)){
                 TagLib::VariantMap imgData = f.complexProperties("PICTURE").front();
                 TagLib::ByteVector coverArt = imgData.value("data").toByteVector();
@@ -189,23 +214,18 @@ void MusicScanner::onFolderRecieved(const QUrl &folderPath)
             }
 
             if(title == ""){
-                QFileInfo fi(filePath);
-                title = fi.fileName();
-                albumName = "Unknown";
+                title = fileInfo.fileName();
             }
 
-            Song* song =new Song(filePath, title, leadingArtist, albumName, genre, features, albumArtists, year, length, trackNum, id);
+            emit songDataFetched(filePath, title, leadingArtist, albumName, genre, features, albumArtists, year, length, trackNum, id);
             id++;
 
-            //need to add the song to the listmodel, and the album
-            emit songFetched(song);
         }
         else{
             //here is for where songs has no metatdata
             if(f.tag()->isEmpty()){
                 QFileInfo fi(filePath);
-                auto song =new Song(filePath, fi.fileName(), "Unknown", "Unknown", QString(), QStringList("Unknown"), QStringList(), int(), int(), int(), id);
-                emit songFetched(song);
+                emit songDataFetched(filePath, fi.fileName(), QString(), fi.fileName(), QString(), QStringList(), QStringList(fi.fileName()), int(), int(), int(), id);
                 id++;
             }
 

@@ -16,7 +16,10 @@ public:
     MusicScanner(CoverImgProvider *coverImgProvider, QObject *parent=nullptr);
 
 signals:
-    void songFetched(Song*);
+    void songDataFetched(const QString &filePath, const QString &title, const QString &artist,
+                     const QString &album, const QString &genre, const QStringList &featuringArtists,
+                     const QStringList &albumArtists, int year, int length, int trackNum, int id);
+
     void scanningFinished(QString folderName, QString folderPath, int songCount);
     void saveID(int id);
 

@@ -22,7 +22,9 @@ FolderManager::FolderManager(SongManager *songManager, CoverImgProvider *coverPr
 
     connect(this, &FolderManager::scanFile, musicScanner, &MusicScanner::onFileRecieved);
     connect(this, &FolderManager::scanFolder, musicScanner,&MusicScanner::onFolderRecieved);
-    connect(musicScanner, &MusicScanner::songFetched, songListModel, &SongListModel::onSongAdded);
+
+    connect(this, &FolderManager::songFetched, songListModel, &SongListModel::onSongAdded);
+    connect(musicScanner, &MusicScanner::songDataFetched, this, &FolderManager::onSongDataFetched);
     connect(musicScanner, &MusicScanner::scanningFinished, this, &FolderManager::onScanningFinished);
     connect(musicScanner, &MusicScanner::saveID, this, &FolderManager::onSaveID);
     workerThread.start();
@@ -109,6 +111,16 @@ void FolderManager::onSaveID(int id)
 {
     QSettings settings;
     settings.setValue("lastSongID", id);
+}
+
+void FolderManager::onSongDataFetched(const QString &filePath, const QString &title, const QString &artist, const QString &album, const QString &genre, const QStringList &featuringArtists, const QStringList &albumArtists, int year, int length, int trackNum, int id)
+{
+    Song *song = new Song(filePath, title, artist, album, genre, featuringArtists, albumArtists
+                          ,year, length, trackNum, id);
+
+    emit songFetched(song);
+
+
 }
 
 void FolderManager::appendToFile(QUrl &folderPath) {

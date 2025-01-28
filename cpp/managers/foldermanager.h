@@ -56,7 +56,7 @@ signals:
     void deleteAlbums();
     void scanFile(const QString &filePath);
     void scanFolder(const QUrl &folderPath);
-
+    void songFetched(Song *song);
     void folderListModelChanged();
 
 public slots:
@@ -68,6 +68,10 @@ private slots:
     void onFileChanged(const QString &path);
     void onDirectoryChanged(const QString &path);
     void onSaveID(int id);
+
+    void onSongDataFetched(const QString &filePath, const QString &title, const QString &artist,
+                           const QString &album, const QString &genre, const QStringList &featuringArtists,
+                           const QStringList &albumArtists, int year, int length, int trackNum, int id);
 
 private:
     QUrl m_path;
