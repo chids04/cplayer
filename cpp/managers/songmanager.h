@@ -81,8 +81,13 @@ public slots:
     //song editing functions
     void insertFeature(const QString &feature);
     void setFeaturesToEdit(const QStringList &features);
+    void moveFeature(int src, int dst);
+    void removeFeature(int index);
+
     void insertArtist(const QString &artist);
     void setAlbumArtistsToEdit(const QStringList &albumArtists);
+    void moveArtist(int src, int dst);
+    void removeArtist(int index);
     void saveChanges(Song *song, const QString &title, const QString &leadingArtist, const QString &album,
                      const QString &genre, int year, int trackNum, bool hasCover, const QUrl &coverPath = QUrl());
 

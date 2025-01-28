@@ -54,6 +54,8 @@ Item {
 
             spacing: 5
 
+            property int highlightedIndex: -1
+
 
             ScrollBar.vertical: ScrollBar {
                 id:songScrollbar
@@ -76,31 +78,36 @@ Item {
             delegate: SongDelegate{
                 id: songDelegate
 
-                required property int index
-                required property string title
-                required property string artist
-                required property list<string> features
-                required property string album
-                required property list<string> albumArtists
-                required property var songObject
-
                 songDelegateHeight: 63
                 songDelegateWidth: songsListView.width - songScrollbar.width - 10
-                songDelegateColor: index % 2 == 0 ? "#1e1f20" : "#131314"
-                songObj: songObject
-
-                songDelegateTitle: title
-                songDelegateAuthors: features.length === 0 ? artist  : artist + " feat. " + features.join(", ")
-                songDelegateAlbum: album
-                songDelegateLeadingArtist: artist
-                songAlbumArtists: albumArtists
+                highlightedIndex: songsListView.highlightedIndex
 
                 onSongDelegateDoubleClicked: {
                     //NowPlaying.playNow(songObject)
-                    GlobalSingleton.playbackManager.nowPlaying.playNow(songObject)
+                    GlobalSingleton.playbackManager.nowPlaying.playNow(songObj)
+                }
+
+                onSongDelegateRightClicked: {
+                    songsListView.interactive = false
+                    contextMenu.currDelegate = songsListView.itemAtIndex(index)
+                    contextMenu.openContextMenu(songObj)
+                }
+            }
+
+            SongContextMenu{
+                id: contextMenu
+                property SongDelegate currDelegate
+
+                onPopupClosed: {
+                    if(currDelegate){
+                        songsListView.interactive = true
+                        currDelegate.overlay = "transparent"
+                        currDelegate.isContextMenuOpen = false
+                    }
                 }
 
             }
+
 
 
     }

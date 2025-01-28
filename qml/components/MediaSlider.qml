@@ -145,7 +145,7 @@ Item{
                                 anchors.centerIn: parent
                                 height: 30
                                 width: 30
-                                source: "qrc:/resource/ui/assets/shuffle.png"
+                                source: shuffle == true ? "qrc:/resource/ui/assets/shuffle_on.png" : "qrc:/resource/ui/assets/shuffle.png"
 
                                 MouseArea{
                                     anchors.fill: parent
@@ -337,12 +337,12 @@ Item{
                             Layout.fillWidth: true
 
                             Image{
-                                property bool shuffle : false
+                                property bool repeat : GlobalSingleton.playbackManager.mediaPlayer.repeat
 
                                 id: repeatSongs
                                 height: 30
                                 width: 30
-                                source: "qrc:/resource/ui/assets/repeat.png"
+                                source: repeat == true ? "qrc:/resource/ui/assets/repeat_individual.png" : "qrc:/resource/ui/assets/repeat.png"
                                 anchors.centerIn: parent
 
                                 MouseArea{
@@ -352,16 +352,16 @@ Item{
                                     onExited: repeatSongs.scale = 1.0
 
                                     onClicked  : {
-                                        if(!repeatSongs.shuffle){
+                                        if(!repeatSongs.repeat){
                                             repeatSongs.source = "qrc:/resource/ui/assets/repeat_individual.png"
-                                            repeatSongs.shuffle = true
-                                            GlobalSingleton.playbackManager.mediaPlayer.onRepeatChanged(repeatSongs.shuffle)
+                                            repeatSongs.repeat = true
+                                            GlobalSingleton.playbackManager.mediaPlayer.repeat = repeatSongs.repeat
 
                                         }
                                         else{
                                             repeatSongs.source = "qrc:/resource/ui/assets/repeat.png"
-                                            repeatSongs.shuffle = false
-                                            GlobalSingleton.playbackManager.mediaPlayer.onRepeatChanged(repeatSongs.shuffle)
+                                            repeatSongs.repeat = false
+                                            GlobalSingleton.playbackManager.mediaPlayer.repeat = repeatSongs.repeat
                                         }
 
                                     }

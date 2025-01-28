@@ -15,16 +15,16 @@ class Song : public QObject {
     Q_OBJECT
     QML_ELEMENT
 
-    Q_PROPERTY(QString filePath MEMBER m_filePath)
-    Q_PROPERTY(QString title MEMBER m_title)
-    Q_PROPERTY(QString artist MEMBER m_artist)
-    Q_PROPERTY(QString album MEMBER m_album)
-    Q_PROPERTY(QString genre MEMBER m_genre)
-    Q_PROPERTY(QStringList albumArtists MEMBER m_albumArtists)
-    Q_PROPERTY(QStringList featuringArtists MEMBER m_featuringArtists)
-    Q_PROPERTY(int length MEMBER m_length)
-    Q_PROPERTY(int trackNum MEMBER m_trackNum)
-    Q_PROPERTY(int year MEMBER m_year)
+    Q_PROPERTY(QString filePath MEMBER m_filePath NOTIFY filePathChanged)
+    Q_PROPERTY(QString title MEMBER m_title NOTIFY titleChanged)
+    Q_PROPERTY(QString artist MEMBER m_artist NOTIFY artistChanged)
+    Q_PROPERTY(QString album MEMBER m_album NOTIFY albumChanged)
+    Q_PROPERTY(QString genre MEMBER m_genre NOTIFY genreChanged)
+    Q_PROPERTY(QStringList albumArtists MEMBER m_albumArtists NOTIFY albumArtistsChanged)
+    Q_PROPERTY(QStringList featuringArtists MEMBER m_featuringArtists NOTIFY featuringArtistsChanged)
+    Q_PROPERTY(int length MEMBER m_length NOTIFY lengthChanged)
+    Q_PROPERTY(int trackNum MEMBER m_trackNum NOTIFY trackNumChanged)
+    Q_PROPERTY(int year MEMBER m_year NOTIFY yearChanged)
     Q_PROPERTY(int id MEMBER m_id)
 
 public:
@@ -48,6 +48,17 @@ public:
 
     SongData toSongData() const;       // Convert Song to SongData
     void fromSongData(const SongData &data); // Populate Song from SongData
+signals:
+    void filePathChanged();
+    void titleChanged();
+    void artistChanged();
+    void albumChanged();
+    void genreChanged();
+    void albumArtistsChanged();
+    void featuringArtistsChanged();
+    void lengthChanged();
+    void trackNumChanged();
+    void yearChanged();
 };
 
 #endif // SONG_H

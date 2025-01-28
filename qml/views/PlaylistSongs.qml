@@ -123,28 +123,31 @@ Item {
                 delegate: SongDelegate{
                     id: songDelegate
 
-                    required property int index
-                    required property string title
-                    required property string album
-                    required property string artist
-                    required property list<string> features
-                    required property list<string> albumArtists
-                    required property var songObject
 
-                    songDelegateIndex: index
-                    songDelegateHeight: 80
+                    songDelegateHeight: 63
                     songDelegateWidth: playlistSongsListView.width - 23
-                    songDelegateColor: index % 2 == 0 ? "#1e1f20" : "#131314"
-
-                    songDelegateNumber: index + 1
-                    songDelegateTitle: title
-                    songDelegateAuthors: features.length === 0 ? artist  : artist + " feat. " + features.join(", ")
-                    songDelegateAlbum: album
-                    songDelegateLeadingArtist: artist
-                    songAlbumArtists: albumArtists
 
                     onSongDelegateDoubleClicked: {
-                        GlobalSingleton.playbackManager.nowPlaying.playNow(songObject)
+                        GlobalSingleton.playbackManager.nowPlaying.playNow(songObj)
+                    }
+
+                    onSongDelegateRightClicked: {
+                        playlistSongsListView.interactive = false
+                        contextMenu.currDelegate = playlistSongsListView.itemAtIndex(index)
+                        contextMenu.openContextMenu(songObj)
+                    }
+                }
+
+                SongContextMenu{
+                    id: contextMenu
+                    property SongDelegate currDelegate
+
+                    onPopupClosed: {
+                        if(currDelegate){
+                            playlistSongsListView.interactive = true
+                            currDelegate.overlay = "transparent"
+                            currDelegate.isContextMenuOpen = false
+                        }
                     }
 
                 }

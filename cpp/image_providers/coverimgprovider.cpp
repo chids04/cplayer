@@ -23,6 +23,7 @@ QPixmap CoverImgProvider::requestPixmap(const QString &id, QSize *size, const QS
 
     int index = id.lastIndexOf(delimiter);
 
+
     if(index != -1){
         albumName = id.left(index);
         artists = id.right(id.length()-index-delimiter.length()).split('%');

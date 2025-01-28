@@ -144,30 +144,33 @@ Item {
                 delegate: SongDelegate{
                     id: songDelegate
 
-                    required property int index
-                    required property int albumNum
-                    required property string title
-                    required property string album
-                    required property string artist
-                    required property list<string> albumArtists
-                    required property list<string> features
-                    required property var songObject
 
-                    songDelegateIndex: index
-                    songDelegateHeight: 80
+                    songDelegateHeight: 63
                     songDelegateWidth: albumSongsListView.width - 23
-                    songDelegateColor: index % 2 == 0 ? "#1e1f20" : "#131314"
 
-                    songObj: songObject
-                    songDelegateNumber: albumNum
-                    songDelegateTitle: title
-                    songDelegateAuthors: features.length === 0 ? artist  : artist + " feat. " + features.join(", ")
-                    songDelegateAlbum: album
-                    songDelegateLeadingArtist: artist
-                    songAlbumArtists: albumArtists
+                    notForAlbum: false
 
                     onSongDelegateDoubleClicked: {
-                        GlobalSingleton.playbackManager.nowPlaying.playNow(songObject)
+                        GlobalSingleton.playbackManager.nowPlaying.playNow(songObj)
+                    }
+
+                    onSongDelegateRightClicked: {
+                        albumSongsListView.interactive = false
+                        contextMenu.currDelegate = albumSongsListView.itemAtIndex(index)
+                        contextMenu.openContextMenu(songObj)
+                    }
+
+                }
+                SongContextMenu{
+                    id: contextMenu
+                    property SongDelegate currDelegate
+
+                    onPopupClosed: {
+                        if(currDelegate){
+                            albumSongsListView.interactive = true
+                            currDelegate.overlay = "transparent"
+                            currDelegate.isContextMenuOpen = false
+                        }
                     }
 
                 }

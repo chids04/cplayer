@@ -9,26 +9,45 @@ Rectangle {
     id: songRect
     //width: songsListView.width-23
     radius: 10
-    //color: index % 2 == 0 ? "#1e1f20" : "#131314"
 
-    property string songDelegateLeadingArtist
-    property int songDelegateIndex
-    property bool songFromAlbum
-    property Song songObj
-    property list<string> songAlbumArtists
+    // property string songDelegateLeadingArtist
+    // property int songDelegateIndex
+    // property bool songFromAlbum
+    // property list<string> songAlbumArtists
+
+    // required property int index
+    // required property int albumNum
+    // required property string title
+    // required property string artist
+    // required property string album
+    // required property list<string> features
+    // required property list<string> albumArtists
+
+    required property int index
+    required property Song songObj
+
+    property int highlightedIndex
     property bool isContextMenuOpen: false
+    property bool notForAlbum: true
 
-    property alias songDelegateColor: songRect.color
+    //property Song song
+
+    color: index % 2 == 0 ? "#1e1f20" : "#131314"
+
+
     property alias songDelegateWidth: songRect.width
     property alias songDelegateHeight: songRect.height
+    property alias overlay: tintOverlay.color
 
-    property alias songDelegateNumber: songNumber.text
-    property alias songDelegateTitle: songTitle.text
-    property alias songDelegateAuthors: songAuthors.text
-    property alias songDelegateAlbum: songAlbum.text
+
+    // property alias songDelegateNumber: songNumber.text
+    // property alias songDelegateTitle: songTitle.text
+    // property alias songDelegateAuthors: songAuthors.text
+    // property alias songDelegateAlbum: songAlbum.text
 
 
     signal songDelegateClicked()
+    signal songDelegateRightClicked()
     signal songDelegateDoubleClicked()
 
 
@@ -37,6 +56,15 @@ Rectangle {
         anchors.fill: parent
         radius: songRect.radius
         color: "transparent"
+
+        // color:{
+        //     if(songRect.highlightedIndex === songRect.index){
+        //         color = "#383838"
+        //     }
+        //     else{
+        //         color = "transparent"
+        //     }
+        // }
     }
 
 
@@ -52,9 +80,14 @@ Rectangle {
         }
 
         onExited: {
+            // if(songRect.highlightedIndex !== songRect.index){
+            //     tintOverlay.color = "transparent"
+            // }
+
             if(!songRect.isContextMenuOpen){
                 tintOverlay.color = "transparent"
             }
+
 
         }
 
@@ -72,21 +105,21 @@ Rectangle {
                 songRect.songDelegateClicked()
             }
             else if(mouse.button === Qt.RightButton){
+                tintOverlay.color = "#383838";
                 songRect.isContextMenuOpen = true
-                tintOverlay.color = "#383838"
-                contextMenu.openContextMenu(songRect.songObj)
-            }
+                songRect.songDelegateRightClicked()
 
+            }
 
         }
 
-        SongContextMenu{
-            id:contextMenu
-            onClosed: {
-                songRect.isContextMenuOpen = false
-                tintOverlay.color = "transparent"
-            }
-        }
+        // SongContextMenu{
+        //     id:contextMenu
+        //     onClosed: {
+        //         songRect.isContextMenuOpen = false
+        //         tintOverlay.color = "transparent"
+        //     }
+        // }
 
 
         Behavior on scale {
@@ -140,6 +173,7 @@ Rectangle {
                 Text{
                     id: songNumber
                     Layout.preferredWidth: 40
+                    text: songRect.notForAlbum ? songRect.index + 1 : songRect.songObj.trackNum
                     Layout.maximumWidth: 40
                     elide: Text.ElideRight
                     Layout.leftMargin: 10
@@ -151,7 +185,7 @@ Rectangle {
                     id: albumImage
                     Layout.preferredWidth:60
                     Layout.preferredHeight:60
-                    source: "image://coverArt/" + songRect.songDelegateAlbum + "/" + songRect.songAlbumArtists.join('%')
+                    source: "image://coverArt/" + songRect.songObj.album + "/" + songRect.songObj.albumArtists.join('%')
                     sourceSize.width: 60
                     sourceSize.height: 60
                     Layout.rightMargin: 10
@@ -161,6 +195,7 @@ Rectangle {
                 Text {
                     id:songTitle
                     font.bold: true
+                    text: songRect.songObj.title
                     color: "white"
                     Layout.fillWidth: true
                     elide: Text.ElideRight
@@ -183,6 +218,7 @@ Rectangle {
                 id: songAuthors
                 color: "white"
                 width: parent.width
+                text: songRect.songObj.featuringArtists.length === 0 ? songRect.songObj.artist  : songRect.songObj.artist + " feat. " + songRect.songObj.featuringArtists.join(", ")
                 height: parent.height
                 elide: Text.ElideRight
                 horizontalAlignment: Text.AlignHCenter
@@ -201,6 +237,7 @@ Rectangle {
                 //text: album
                 color: "white"
                 width:parent.width
+                text: songRect.songObj.album
                 height: parent.height
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter

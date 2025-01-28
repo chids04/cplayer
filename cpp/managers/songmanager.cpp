@@ -126,6 +126,18 @@ void SongManager::setFeaturesToEdit(const QStringList &features)
     m_featuresList->setStringList(features);
 }
 
+void SongManager::moveFeature(int src, int dst)
+{
+    m_featuresList->moveRows(QModelIndex(), src, 1, QModelIndex(), dst);
+
+    qDebug() << m_featuresList->stringList();
+}
+
+void SongManager::removeFeature(int index)
+{
+    m_featuresList->removeRows(index, 1, QModelIndex());
+}
+
 void SongManager::insertArtist(const QString &artist)
 {
     if(m_albumArtistsList->insertRow(m_albumArtistsList->rowCount())){
@@ -137,6 +149,16 @@ void SongManager::insertArtist(const QString &artist)
 void SongManager::setAlbumArtistsToEdit(const QStringList &albumArtists)
 {
     m_albumArtistsList->setStringList(albumArtists);
+}
+
+void SongManager::moveArtist(int src, int dst)
+{
+    m_albumArtistsList->moveRows(QModelIndex(), src, 1, QModelIndex(), dst);
+}
+
+void SongManager::removeArtist(int index)
+{
+    m_albumArtistsList->removeRows(index, 1, QModelIndex());
 }
 
 

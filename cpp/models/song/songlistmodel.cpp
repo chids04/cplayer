@@ -92,7 +92,7 @@ QHash<int, QByteArray> SongListModel::roleNames() const {
     roles[FeaturingArtistsRole] = "features";
     roles[NumberInAlbumRole] = "albumNum";
     roles[AlbumArtistsRole] = "albumArtists";
-    roles[SongObjectRole] = "songObject";
+    roles[SongObjectRole] = "songObj";
 
     return roles;
 }

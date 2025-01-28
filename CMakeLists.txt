@@ -31,8 +31,8 @@ elseif(UNIX)
 
 endif()
 
-add_subdirectory(3rdparty/RapidFuzz)
 
+add_subdirectory(3rdparty/RapidFuzz)
 
 qt_standard_project_setup()
 qt_policy(
@@ -204,12 +204,15 @@ set_target_properties(appcplayer PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
+
+#link_directories(appcplayer PRIVATE ${TAGLIB_INSTALL_DIR}/lib)
+
 if(WIN32)
 
     target_compile_definitions(appcplayer PRIVATE TAGLIB_STATIC)
     target_link_libraries(appcplayer
-        PRIVATE Qt6::Quick Qt6::Multimedia Qt6::Widgets Qt6::Core TagLib::tag
-        rapidfuzz::rapidfuzz
+        PRIVATE Qt6::Quick Qt6::Multimedia Qt6::Widgets Qt6::Core
+        rapidfuzz::rapidfuzz TagLib::tag
     )
 
 elseif(UNIX)

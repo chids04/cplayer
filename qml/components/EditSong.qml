@@ -96,11 +96,7 @@ Popup {
         border.width: 5
     }
 
-    contentItem: Rectangle{
-        color: "transparent"
-        border.color: "white"
-        border.width: 2
-
+    contentItem: Item{
         width: popUp.width
         height: popUp.height
         ColumnLayout{
@@ -112,7 +108,7 @@ Popup {
 
                 Image{
                     id: songImg
-                    source: "image://coverArt/" + popUp.songAlbum + "/" + popUp.songFeatures.join('%')
+                    source: "image://coverArt/" + popUp.songAlbum + "/" + popUp.songAlbumArtists.join('%')
                     sourceSize.height: 70
                     sourceSize.width: 70
                 }
@@ -462,6 +458,8 @@ Popup {
                 onButtonClicked: {
                     GlobalSingleton.songManager.saveChanges(popUp.songObj, titleText.text, leadingArtistText.text, albumText.text,
                                                             genreText.text, parseInt(yearText.text), parseInt(trackNumText.text), popUp.hasCover)
+
+                    popUp.close()
                 }
             }
         }
@@ -486,6 +484,7 @@ Popup {
             id: dragArea
 
             property bool held: false
+            required property int index
             required property string display
 
             //hoverEnabled: true
@@ -558,7 +557,7 @@ Popup {
 
                         MouseArea{
                             anchors.fill: parent
-                            onClicked: console.log("x clicked")
+                            onClicked: GlobalSingleton.songManager.removeFeature(dragArea.index)
                         }
                     }
 
@@ -583,6 +582,7 @@ Popup {
                     let target_index = dragArea.DelegateModel.itemsIndex
                     //dragDelegate.itemModel.items.move(src_index, target_index)
                     visualModel.items.move(src_index, target_index)
+                    GlobalSingleton.songManager.moveFeature(src_index, target_index)
 
                     //GlobalSingleton.playbackManager.nowPlaying.moveSong(src_index, target_index)
 
@@ -600,6 +600,7 @@ Popup {
             id: dragArtistArea
 
             property bool held: false
+            required property int index
             required property string display
 
             hoverEnabled: true
@@ -672,7 +673,7 @@ Popup {
 
                         MouseArea{
                             anchors.fill: parent
-                            onClicked: console.log("x clicked")
+                            onClicked: GlobalSingleton.songManager.removeArtist(dragArtistArea.index)
                         }
                     }
 
@@ -697,6 +698,7 @@ Popup {
                     let target_index = dragArtistArea.DelegateModel.itemsIndex
                     //dragArtistDelegate.itemModel.items.move(src_index, target_index)
                     artistModel.items.move(src_index, target_index)
+                    GlobalSingleton.songManager.moveArtist(src_index, target_index)
 
                     //GlobalSingleton.playbackManager.nowPlaying.moveSong(src_index, target_index)
 
