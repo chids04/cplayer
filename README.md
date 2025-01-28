@@ -38,6 +38,7 @@ ui is bad i know, will do a full redesign
 - last-fm integration to allow tracking listening history
 - discord rpc support to show song being currently listened to
 - revamp ui so it doesnt look like shit
+- write unit tests (i keep putting this off lol)
 
 
 
