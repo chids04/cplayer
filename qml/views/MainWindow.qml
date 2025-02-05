@@ -15,7 +15,8 @@ Item{
 
         function onSongViewSelected(){
             console.log("song view selected")
-            stackView.push("Songs.qml")
+            stackView.push("HomePage.qml")
+            //stackView.push("Songs.qml")
         }
 
         function onAlbumViewSelected(){
@@ -47,7 +48,9 @@ Item{
         anchors.fill: parent
         spacing: 10
 
-        Sidebar{
+        CSidebar{
+            id: sidebar
+
         }
 
         StackView{
@@ -60,7 +63,7 @@ Item{
             pushExit: null
 
             Component.onCompleted:{
-                stackView.push("Songs.qml")
+                stackView.push("HomePage.qml")
             }
 
         }

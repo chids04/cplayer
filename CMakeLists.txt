@@ -61,6 +61,8 @@ qt_add_qml_module(appcplayer
 		qml/views/PlaylistSongs.qml
 		qml/views/Settings.qml
 		qml/views/Sidebar.qml
+		qml/views/HomePage.qml
+		qml/views/CSidebar.qml
 
 	#QML Delegates
 	QML_FILES

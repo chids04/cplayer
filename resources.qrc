@@ -29,9 +29,13 @@
         <file>ui/assets/shuffle_on.png</file>
         <file>ui/assets/audio_output.png</file>
         <file>ui/assets/now_playing.png</file>
-    </qresource>
-    <qresource prefix="/">
-        <file>qml/components/NowPlayingRect.qml</file>
-        <file>qml/components/MsgPopup.qml</file>
+        <file>ui/assets/Search.svg</file>
+        <file>ui/assets/Menu.svg</file>
+        <file>ui/assets/Home.svg</file>
+        <file>ui/assets/Playlist.svg</file>
+        <file>ui/assets/Settings.svg</file>
+        <file>ui/assets/Folder.svg</file>
+        <file>ui/assets/Album.svg</file>
+        <file>ui/assets/Song.svg</file>
     </qresource>
 </RCC>
