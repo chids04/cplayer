@@ -48,9 +48,9 @@ Item{
         anchors.fill: parent
         spacing: 10
 
-        CSidebar{
-            id: sidebar
 
+        CSidebar{
+            sidebarStackView: stackView
         }
 
         StackView{

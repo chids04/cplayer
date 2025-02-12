@@ -190,6 +190,8 @@ Rectangle {
                     sourceSize.height: 60
                     Layout.rightMargin: 10
                     Layout.leftMargin: 10
+                    asynchronous: true
+
                 }
 
                 Text {

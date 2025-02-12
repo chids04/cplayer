@@ -7,7 +7,8 @@ import QtQuick.Controls.Basic
 import cplayer
 
 Rectangle {
-    anchors.fill: parent
+    Layout.fillWidth: true
+    Layout.fillHeight: true
     color: "#131314"
     topRightRadius: 20
 
@@ -110,9 +111,13 @@ Rectangle {
 
                         Image {
                             source: "image://coverArt/" + albumCard.albumName + "/" + albumCard.albumArtists.join('%')
-                            sourceSize.width: albumCard.width - 80
-                            sourceSize.height: albumCard.width - 80
+                            // sourceSize.width: albumCard.width - 80
+                            // sourceSize.height: albumCard.width - 80
+
+                            sourceSize.width: 100
+                            sourceSize.height: 100
                             Layout.alignment: Qt.AlignHCenter
+                            asynchronous: true
                         }
 
                         Text {
@@ -122,6 +127,8 @@ Rectangle {
                             color: "white"
                             Layout.alignment: Qt.AlignHCenter
                             Layout.fillWidth: true
+                            Layout.leftMargin: 5
+                            Layout.rightMargin: 5
                             horizontalAlignment: Text.AlignHCenter
                             elide: Text.ElideRight
                         }
@@ -131,6 +138,9 @@ Rectangle {
                             color: "white"
                             Layout.alignment: Qt.AlignHCenter
                             Layout.fillWidth: true
+                            Layout.bottomMargin: 5
+                            Layout.leftMargin: 5
+                            Layout.rightMargin: 5
                             horizontalAlignment: Text.AlignHCenter
                             elide: Text.ElideRight
                         }

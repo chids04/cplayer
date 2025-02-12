@@ -1,8 +1,12 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 
 Item {
     id: sideBar
+
+    property Item sidebarStackView;
 
     Layout.preferredWidth: 80
     Layout.fillHeight: true
@@ -46,11 +50,11 @@ Item {
             from: 'close'
             to: 'open'
 
-            NumberAnimation {
-                properties: 'Layout.preferredWidth'
-                duration: 300
-                easing.type: Easing.OutCubic
-            }
+            // NumberAnimation {
+            //     properties: 'Layout.preferredWidth'
+            //     duration: 0
+            //     easing.type: Easing.OutCubic
+            // }
 
             ScriptAction {
                 script: {
@@ -70,15 +74,15 @@ Item {
                     }
                 }
 
-                PauseAnimation {
-                    duration: 600
-                }
+                // PauseAnimation {
+                //     duration: 600
+                // }
 
-                NumberAnimation {
-                    properties: 'Layout.preferredWidth'
-                    duration: 300
-                    easing.type: Easing.OutCubic
-                }
+                // NumberAnimation {
+                //     properties: 'Layout.preferredWidth'
+                //     duration: 0
+                //     easing.type: Easing.OutCubic
+                // }
             }
         }
     ]
@@ -292,11 +296,11 @@ Item {
                                     from: 'middle'
                                     to: 'left'
 
-                                    NumberAnimation {
-                                        properties: 'Layout.leftMargin, Layout.preferredWidth, opacity'
-                                        duration: 300
-                                        easing.type: Easing.InOutSine
-                                    }
+                                    // NumberAnimation {
+                                    //     properties: 'Layout.leftMargin, Layout.preferredWidth, opacity'
+                                    //     duration: 300
+                                    //     easing.type: Easing.InOutSine
+                                    // }
                                 },
                                 Transition {
                                     from: 'left'
@@ -326,6 +330,10 @@ Item {
                                     if(button.state == "left"){
                                         background.opacity = 0
                                     }
+                                }
+
+                                onClicked:{
+                                    sideBar.sidebarStackView.push(button.modelData.qmlPath)
                                 }
                             }
 

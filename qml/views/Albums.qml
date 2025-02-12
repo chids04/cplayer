@@ -69,13 +69,30 @@ Item {
             cellHeight: albumWindow.itemWidth
             clip: true
 
+            ScrollBar.vertical: ScrollBar {
+                id:gridViewScrollbar
+                policy: ScrollBar.AlwaysOn
+
+                width: 15
+
+                contentItem: Rectangle {
+                    implicitWidth: 15
+                    radius: 3
+                    color: "#606060"
+                }
+
+                background: Rectangle{
+                    color: "transparent"
+                }
+            }
+
 
             Component{
                 id: albumDelegate
 
                 Rectangle{
                     id: albumCard
-                    width: gridView.cellWidth
+                    width: gridView.cellWidth - gridViewScrollbar.width
                     height: gridView.cellHeight
                     color: "transparent"
                     radius: 10
@@ -114,12 +131,15 @@ Item {
                             sourceSize.width: albumCard.width - 100
                             sourceSize.height: albumCard.width - 100
                             Layout.alignment: Qt.AlignHCenter
+                            asynchronous: true
                         }
 
                         Text {
                             text: albumCard.albumName
                             font.bold: true
                             font.pointSize: 16
+                            Layout.leftMargin: 5
+                            Layout.rightMargin: 5
                             color: "white"
                             Layout.alignment: Qt.AlignHCenter
                             Layout.fillWidth: true
@@ -131,6 +151,8 @@ Item {
                             text: albumCard.albumArtists.join(", ")
                             color: "white"
                             Layout.alignment: Qt.AlignHCenter
+                            Layout.leftMargin: 5
+                            Layout.rightMargin: 5
                             Layout.fillWidth: true
                             horizontalAlignment: Text.AlignHCenter
                             elide: Text.ElideRight
