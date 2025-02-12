@@ -24,6 +24,7 @@ class NowPlaying : public QObject
     Q_PROPERTY(QueueModel* queueModel READ queueModel WRITE setQueueModel NOTIFY queueModelChanged)
     Q_PROPERTY(QueueModelFilter* queueProxyModel READ queueProxyModel WRITE setQueueProxyModel NOTIFY queueProxyModelChanged)
     Q_PROPERTY(bool shuffle READ shuffle WRITE setShuffle NOTIFY shuffleChanged)
+    Q_PROPERTY(bool loop READ loop WRITE setLoop NOTIFY loopChanged)
 
 public:
     explicit NowPlaying(MediaPlayerController *mediaPlayerController, QObject *parent = nullptr);
@@ -43,6 +44,7 @@ public:
     void setQueueProxyModel(QueueModelFilter *newQueueProxyModel);
 
     bool shuffle() const;
+    bool loop() const;
 
 signals:
     void playSong(Song* song);
@@ -54,8 +56,8 @@ signals:
     void queueModelChanged();
     void queueProxyModelChanged();
 
-
     void shuffleChanged();
+    void loopChanged();
 
 public slots:
     void playAlbum(const QString &albumName, const QStringList &albumArtists, bool queue=false);
@@ -71,6 +73,7 @@ public slots:
     void onRemoveFromNowPlaying(int songID);
     void onCheckQueue();
     void setShuffle(bool newShuffle);
+    void setLoop(bool newLoop);
 
 private:
     QList<Queue> m_queues;
@@ -87,6 +90,7 @@ private:
     AlbumListModel *m_albumListModel;
     MediaPlayerController *m_mediaPlayer;
     bool m_shuffle = false;
+    bool m_loop = false;
 };
 
 #endif // NOWPLAYING_H

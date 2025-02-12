@@ -42,6 +42,7 @@ void NowPlaying::saveNowPlaying()
     settings.setValue("playingSong", curr_song_id);
     settings.setValue("nowPlayingSongPosition", QVariant::fromValue(position));
     settings.setValue("isShuffle", QVariant::fromValue(m_shuffle));
+    settings.setValue("isLoop", QVariant::fromValue(m_loop));
 
     settings.endGroup();
 }
@@ -54,7 +55,9 @@ void NowPlaying::loadFromSettings()
 
     qint64 position = settings.value("nowPlayingSongPosition", 0).toLongLong();
     bool isShuffle = settings.value("isShuffle", false).toBool();
+    bool isLoop = settings.value("isLoop", false).toBool();
     setShuffle(isShuffle);
+    setLoop(isLoop);
 
     QList<int> queue_IDs   = settings.value("queue").value<QList<int>>();
     QList<int> played_IDs  = settings.value("queueHistory").value<QList<int>>();
@@ -234,6 +237,18 @@ void NowPlaying::onPreviousClicked(int duration)
 void NowPlaying::onNextClicked()
 {
     if(m_queueModel->getLen() == 0){
+        if(m_playedSongs.size() > 0){ 
+            //add all the songs in played songs to queue
+            if(m_loop == true){
+                for(const auto &entry: m_playedSongs){
+                    m_queueModel->appendToQueue(entry->song);
+                }
+
+                playingSong = m_queueModel->popEntry(0);
+                emit playSong(playingSong->song);
+            }
+        }
+
         emit jumpToEnd();
         return;
     }
@@ -344,6 +359,11 @@ bool NowPlaying::shuffle() const
     return m_shuffle;
 }
 
+bool NowPlaying::loop() const
+{
+    return m_loop;
+}
+
 void NowPlaying::setShuffle(bool newShuffle)
 {
     if (m_shuffle == newShuffle)
@@ -357,3 +377,12 @@ void NowPlaying::setShuffle(bool newShuffle)
     emit shuffleChanged();
 }
 
+void NowPlaying::setLoop(bool newLoop)
+{
+    if(m_loop == newLoop){
+        return;
+    }
+    m_loop = newLoop;
+
+    emit loopChanged();
+}

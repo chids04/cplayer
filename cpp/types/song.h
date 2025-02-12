@@ -1,14 +1,14 @@
 #ifndef SONG_H
 #define SONG_H
 
-#include  <QtQml>
+#include <QtQml>
 #include <QUrl>
 #include <QPixmap>
 #include <QString>
 #include <QObject>
 #include <QMetaType>
 #include <QStringList>
-#include "SongData.h"
+#include "songdata.h"
 
 class Song : public QObject {
 

@@ -4,6 +4,7 @@ import QtQuick
 import QtQml.Models
 import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Effects
 
 import cplayer
 //![0]
@@ -13,7 +14,8 @@ Rectangle {
     width: 350
     height: 450
 
-    color: "#303132"
+    //color: "#303132"
+    color: "#262728"
     border.color: "#6e7173"
     border.width: 2
     radius: 5
@@ -53,6 +55,60 @@ Rectangle {
         }
 
         onButtonClicked: GlobalSingleton.playbackManager.nowPlaying.clearQueue()
+    }
+
+    CheckBox {
+        id: loopCheckBox
+        text: qsTr("loop")
+        checked: GlobalSingleton.playbackManager.nowPlaying.loop
+
+        onCheckedChanged: {
+            GlobalSingleton.playbackManager.nowPlaying.loop = checked
+        }
+
+        anchors{
+            top: clearBtn.bottom
+            topMargin: 5
+            horizontalCenter: parent.horizontalCenter
+        }
+
+        indicator: 
+            Rectangle {
+                implicitWidth: 26
+                implicitHeight: 26
+                x: loopCheckBox.leftPadding
+                y: parent.height / 2 - height / 2
+                radius: 3
+                border.color: "grey"
+                color: "#414344"
+                border.width: 2
+                
+
+                Image{
+                    id: sourceImage
+                    source: "qrc:/qt-project.org/imports/QtQuick/Controls/Basic/images/check.png"
+                    x: (parent.width - width) / 2
+                    y: (parent.height - height) / 2
+
+                    visible: loopCheckBox.checkState === Qt.Checked
+
+                    layer.enabled: true
+                    layer.effect: MultiEffect {
+                        colorization: 1
+                        brightness: 1
+                        colorizationColor: "grey"
+                    }
+                }
+            }
+
+        contentItem: Text {
+            text: loopCheckBox.text
+            font: loopCheckBox.font
+            opacity: enabled ? 1.0 : 0.3
+            color: "white"
+            verticalAlignment: Text.AlignVCenter
+            leftPadding: loopCheckBox.indicator.width + loopCheckBox.spacing
+        }
     }
 
     Component {
@@ -204,7 +260,7 @@ Rectangle {
         id: view
 
         anchors {
-            top: clearBtn.bottom
+            top: loopCheckBox.bottom
             left:parent.left
             right: parent.right
             rightMargin: 5

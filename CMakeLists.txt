@@ -25,10 +25,6 @@ elseif(UNIX)
     find_package(ZLIB)
     find_package(TagLib)
 
-elseif(UNIX)
-    find_package(ZLIB)
-    find_package(TagLib)
-
 endif()
 
 
@@ -168,6 +164,9 @@ qt_add_qml_module(appcplayer
 		cpp/models/playlist/playlistfilter.cpp
 		cpp/models/playlist/playlistfilter.h
 
+		cpp/models/folder/folderlistmodel.cpp
+		cpp/models/folder/folderlistmodel.h
+
 	#QML View Managers
     SOURCES
 
@@ -179,9 +178,6 @@ qt_add_qml_module(appcplayer
 
 		cpp/managers/playlistmanager.h
 		cpp/managers/playlistmanager.cpp
-
-		cpp/models/folder/folderlistmodel.h
-		cpp/models/folder/folderlistmodel.cpp
 
 		cpp/managers/songmanager.h
 		cpp/managers/songmanager.cpp
@@ -235,8 +231,8 @@ target_include_directories(appcplayer PRIVATE
 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/models/song
 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/models/album
 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/models/playlist
+		${CMAKE_CURRENT_SOURCE_DIR}/cpp/models/folder
 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/managers
-		${CMAKE_CURRENT_SOURCE_DIR}/cpp/managers/models
 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/playback
 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/playback/models
 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/utility)
