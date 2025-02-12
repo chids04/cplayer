@@ -34,6 +34,9 @@ Rectangle {
                 leftMargin: 20
                 rightMargin: 20
             }
+            
+            onTextChanged: GlobalSingleton.songManager.albumSearchModel.filterString = text
+
             height: 40
 
             placeholderText: "search for an album"
@@ -179,6 +182,8 @@ Rectangle {
         placeholderText: "search for a song"
         placeholderTextColor: "darkgrey"
         color: "white"
+        onTextChanged: GlobalSingleton.songManager.songModel.filterString = text
+
 
 
         background: Rectangle{

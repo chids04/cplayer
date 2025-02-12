@@ -25,11 +25,13 @@ protected:
 
 private:
     QString normalizeString(const QString &string) const;
-    int matchScore(const QString &text, const QString &query) const;
 
+    double computeMatchScore(const QStringList &tokens,
+        const QString &title,
+        const QString &artist,
+        const QString &album) const;
 signals:
     void filterStringChanged();
-
 private:
     QString m_filterString;
 };
