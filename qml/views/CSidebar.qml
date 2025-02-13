@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Effects
 
 Item {
     id: sideBar
@@ -220,8 +221,12 @@ Item {
 
                             required property var model
                             required property var modelData
+                            required property var index
 
-
+                            Layout.topMargin: {
+                                if(index == 0)
+                                    Layout.topMargin = 7
+                            }
                             Layout.preferredWidth: 50
                             Layout.preferredHeight: 50
                             radius: 10
@@ -230,11 +235,46 @@ Item {
                             Layout.alignment: Qt.AlignLeft
                             state: 'middle'
 
+                            SequentialAnimation{
+                                id: clickAnimation
+                                NumberAnimation{
+                                    target: button
+                                    property: "scale"
+                                    to: 0.9
+                                    duration: 100
+
+                                }
+
+                                NumberAnimation{
+                                    target: button
+                                    property: "scale"
+                                    to: 1
+                                    duration: 100
+                                }
+                            }
+
                             Rectangle{
                                 id: background
                                 anchors.fill: parent
                                 radius: 10
                                 color: '#1d1d1d'
+
+                                Behavior on opacity {
+                                    NumberAnimation{
+                                        duration: 200
+                                    }
+                                }
+
+                                layer.enabled: true
+                                layer.effect: MultiEffect{
+                                    id: shadowEffect
+                                    shadowEnabled: true
+                                    autoPaddingEnabled: true
+                                    shadowVerticalOffset: 2
+
+                                    shadowHorizontalOffset: 3  
+
+                                }
                             }
 
                             // Behavior on color {
@@ -289,28 +329,17 @@ Item {
                                         }
                                     }
                                 }
+
                             ]
 
                             transitions: [
                                 Transition {
                                     from: 'middle'
                                     to: 'left'
-
-                                    // NumberAnimation {
-                                    //     properties: 'Layout.leftMargin, Layout.preferredWidth, opacity'
-                                    //     duration: 300
-                                    //     easing.type: Easing.InOutSine
-                                    // }
                                 },
                                 Transition {
                                     from: 'left'
                                     to: 'middle'
-
-                                    // NumberAnimation {
-                                    //     properties: 'Layout.leftMargin, Layout.preferredWidth'
-                                    //     duration: 300
-                                    //     easing.type: Easing.InOutSine
-                                    // }
                                 }
                             ]
 
@@ -333,6 +362,7 @@ Item {
                                 }
 
                                 onClicked:{
+                                    clickAnimation.start()
                                     sideBar.sidebarStackView.push(button.modelData.qmlPath)
                                 }
                             }
