@@ -83,6 +83,11 @@ double SongFilterProxyModel::computeMatchScore(const QStringList &tokens,
     const QString &artist,
     const QString &album) const
 {
+    //each fuzzy score has max of val of 100, max score posssible is 300 before any multipliers
+    if(tokens.join(" ") == title){
+        return 400;
+    }
+
     double scoreSum = 0.0;
     for (const QString &token : tokens) {
         // Compute fuzzy scores (using rapidfuzz's partial_ratio)

@@ -15,6 +15,11 @@ QString AlbumSearchFilter::filterString() const
     return m_filterString;
 }
 
+int AlbumSearchFilter::length() const
+{
+    return rowCount();
+}
+
 void AlbumSearchFilter::setFilterString(const QString &newFilterString)
 {
     // Normalize the filter string: convert to lowercase and remove diacritical marks.
@@ -87,6 +92,8 @@ bool AlbumSearchFilter::filterAcceptsRow(int sourceRow, const QModelIndex &sourc
 
     // Accept the row if the score exceeds the threshold (adjust as needed)
     const double threshold = 40.0;
+
+
     return score > threshold;
 }
 

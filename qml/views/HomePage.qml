@@ -12,9 +12,9 @@ Rectangle {
     color: "#131314"
     topRightRadius: 20
 
-    Rectangle{
+    Rectangle {
         id: albumSlide
-        width: parent.width/4
+        width: parent.width / 4
         anchors {
             top: parent.top
             bottom: parent.bottom
@@ -23,10 +23,9 @@ Rectangle {
 
         color: "#232425"
 
-
         TextField {
             id: textfield
-            anchors{
+            anchors {
                 left: parent.left
                 right: parent.right
                 top: parent.top
@@ -34,7 +33,7 @@ Rectangle {
                 leftMargin: 20
                 rightMargin: 20
             }
-            
+
             onTextChanged: GlobalSingleton.songManager.albumSearchModel.filterString = text
 
             height: 40
@@ -43,39 +42,30 @@ Rectangle {
             placeholderTextColor: "darkgrey"
             color: "white"
 
-
-            background: Rectangle{
+            background: Rectangle {
                 border.color: "#343434"
                 border.width: 2
                 color: "#232425"
                 radius: 10
             }
-
         }
-
 
         ListView {
             id: albumListView
-//            anchors.fill: parent
-//            anchors.rightMargin: 10
-//            anchors.leftMargin: 10
-            width: parent.width-70+15
-
-
+            width: parent.width - 70 + 15
 
             anchors {
                 topMargin: 10
                 top: textfield.bottom
                 bottom: parent.bottom
                 horizontalCenter: parent.horizontalCenter
-
             }
+
             clip: true
 
-            Component{
+            Component {
                 id: albumDelegate
-
-                Rectangle{
+                Rectangle {
                     id: albumCard
                     color: "transparent"
                     radius: 10
@@ -83,10 +73,40 @@ Rectangle {
                     width: albumListView.width
                     height: albumListView.width
 
+                    function sayHello() {
+                        console.log("hello")
+                    }
+
+                    property alias albumImgWidth: albumImage.sourceSize.width
+                    property alias albumImgHeight: albumImage.sourceSize.height
 
                     required property string albumName
                     required property var albumObjRole
                     required property list<string> albumArtists
+
+                    property bool firstLoad: true
+
+                    Timer {
+                        id: resizeTimer
+                        interval: 700
+                        repeat: false
+
+                        onTriggered: {
+                            if (!albumCard.firstLoad) {
+                                albumImage.opacity = 0
+                                albumImage.sourceSize.width = albumCard.width - 80
+                                albumImage.sourceSize.height = albumCard.width - 80
+                            }
+                        }
+                    }
+
+                    // onWidthChanged: {
+                    //     resizeTimer.restart()
+                    // }
+
+                    // onHeightChanged: {
+                    //     resizeTimer.restart()
+                    // }
 
                     MouseArea {
                         anchors.fill: parent
@@ -94,33 +114,53 @@ Rectangle {
 
                         onEntered: {
                             albumCard.color = "#0b0b0b"
-
                         }
                         onExited: {
                             albumCard.color = "transparent"
                         }
 
-                        onDoubleClicked:{
-                            //AlbumFilterModel.setAlbumName(albumName)
+                        onDoubleClicked: {
                             GlobalSingleton.songManager.setAlbum(albumCard.albumObjRole)
                             GlobalSingleton.viewController.selectAlbum()
                         }
-
                     }
 
-                    ColumnLayout{
+                    ColumnLayout {
                         spacing: 0
                         anchors.fill: parent
 
                         Image {
+                            id: albumImage
                             source: "image://coverArt/" + albumCard.albumName + "/" + albumCard.albumArtists.join('%')
-                            // sourceSize.width: albumCard.width - 80
-                            // sourceSize.height: albumCard.width - 80
+                            property bool firstLoad: true
 
-                            sourceSize.width: 100
-                            sourceSize.height: 100
+                            Layout.preferredHeight: albumCard.width - 80
+                            Layout.preferredWidth: albumCard.width - 80
+
                             Layout.alignment: Qt.AlignHCenter
                             asynchronous: true
+
+                            OpacityAnimator {
+                                id: fadeAnimator
+                                target: albumImage
+                                from: 0
+                                to: 1
+                                duration: 500
+                                running: false
+                            }
+
+                            Timer {
+                                id: imgTimer
+                                interval: 1000
+                                running: false
+                                repeat: false
+                                onTriggered: albumCard.firstLoad = false
+                            }
+
+                            Component.onCompleted: {
+                                albumImage.sourceSize.width = albumCard.width - 80
+                                albumImage.sourceSize.height = albumCard.width - 80
+                            }
                         }
 
                         Text {
@@ -153,24 +193,14 @@ Rectangle {
 
             model: GlobalSingleton.songManager.albumSearchModel
             delegate: albumDelegate
-
-            // onWidthChanged: {
-            //     resizeTimer.restart()
-
-            // }
-            // onHeightChanged: {
-            //     resizeTimer.restart()
-            // }
-
         }
-
     }
 
     TextField {
         id: songSearchField
         height: 40
 
-        anchors{
+        anchors {
             left: albumSlide.right
             right: parent.right
             top: parent.top
@@ -184,20 +214,18 @@ Rectangle {
         color: "white"
         onTextChanged: GlobalSingleton.songManager.songModel.filterString = text
 
-
-
-        background: Rectangle{
+        background: Rectangle {
             border.color: "#343434"
             border.width: 2
             color: "#232425"
             radius: 10
         }
-
     }
+
     ListView {
         id: songsListView
 
-        anchors{
+        anchors {
             topMargin: 20
             leftMargin: 10
             left: albumSlide.right
@@ -206,15 +234,14 @@ Rectangle {
             bottom: parent.bottom
         }
 
-        clip:true
+        clip: true
 
         spacing: 5
 
         property int highlightedIndex: -1
 
-
         ScrollBar.vertical: ScrollBar {
-            id:songScrollbar
+            id: songScrollbar
             policy: ScrollBar.AlwaysOn
 
             width: 15
@@ -225,13 +252,13 @@ Rectangle {
                 color: "#606060"
             }
 
-            background: Rectangle{
+            background: Rectangle {
                 color: "transparent"
             }
         }
 
-        model: GlobalSingleton.songManager.songModel// This is the model exposed from C++
-        delegate: SongDelegate{
+        model: GlobalSingleton.songManager.songModel
+        delegate: SongDelegate {
             id: songDelegate
 
             songDelegateHeight: 63
@@ -239,7 +266,6 @@ Rectangle {
             highlightedIndex: songsListView.highlightedIndex
 
             onSongDelegateDoubleClicked: {
-                //NowPlaying.playNow(songObject)
                 GlobalSingleton.playbackManager.nowPlaying.playNow(songObj)
             }
 
@@ -250,22 +276,17 @@ Rectangle {
             }
         }
 
-        SongContextMenu{
+        SongContextMenu {
             id: contextMenu
             property SongDelegate currDelegate
 
             onPopupClosed: {
-                if(currDelegate){
+                if (currDelegate) {
                     songsListView.interactive = true
                     currDelegate.overlay = "transparent"
                     currDelegate.isContextMenuOpen = false
                 }
             }
-
         }
-
-
-
     }
-
 }

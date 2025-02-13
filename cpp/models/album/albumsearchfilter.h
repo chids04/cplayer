@@ -16,6 +16,9 @@ public:
     QString filterString() const;
     void setFilterString(const QString &newFilterString);
 
+public slots:
+    int length() const;
+
 protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
     bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
