@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Effects
 
 import cplayer
 
@@ -87,89 +88,20 @@ Item {
             }
 
 
-            Component{
-                id: albumDelegate
-
-                Rectangle{
-                    id: albumCard
-                    width: gridView.cellWidth - gridViewScrollbar.width
-                    height: gridView.cellHeight
-                    color: "transparent"
-                    radius: 10
-
-                    required property string albumName
-                    required property var albumObjRole
-                    required property list<string> albumArtists
-
-                    MouseArea {
-                        anchors.fill: parent
-                        hoverEnabled: true
-
-                        onEntered: {
-                            albumCard.color = "#0b0b0b"
-
-                        }
-                        onExited: {
-                            albumCard.color = "transparent"
-                        }
-
-                        onDoubleClicked:{
-                            //AlbumFilterModel.setAlbumName(albumName)
-                            GlobalSingleton.songManager.setAlbum(albumCard.albumObjRole)
-                            GlobalSingleton.viewController.selectAlbum()
-                        }
-
-                    }
-
-                    ColumnLayout{
-                        spacing: 0
-                        anchors.fill: parent
-                        anchors.bottomMargin: 5
-
-                        Image {
-                            source: "image://coverArt/" + albumCard.albumName + "/" + albumCard.albumArtists.join('%')
-                            sourceSize.width: albumCard.width - 100
-                            sourceSize.height: albumCard.width - 100
-                            Layout.alignment: Qt.AlignHCenter
-                            asynchronous: true
-                        }
-
-                        Text {
-                            text: albumCard.albumName
-                            font.bold: true
-                            font.pointSize: 16
-                            Layout.leftMargin: 5
-                            Layout.rightMargin: 5
-                            color: "white"
-                            Layout.alignment: Qt.AlignHCenter
-                            Layout.fillWidth: true
-                            horizontalAlignment: Text.AlignHCenter
-                            elide: Text.ElideRight
-                        }
-
-                        Text {
-                            text: albumCard.albumArtists.join(", ")
-                            color: "white"
-                            Layout.alignment: Qt.AlignHCenter
-                            Layout.leftMargin: 5
-                            Layout.rightMargin: 5
-                            Layout.fillWidth: true
-                            horizontalAlignment: Text.AlignHCenter
-                            elide: Text.ElideRight
-                        }
-                    }
-                }
-            }
+            
 
             model: GlobalSingleton.songManager.albumSearchModel
-            delegate: albumDelegate
+            delegate: AlbumDelegate{
+                itemWidth: gridView.cellWidth - gridViewScrollbar.width
+                itemHeight: gridView.cellHeight
+            }
 
             onWidthChanged: {
-                resizeTimer.restart()
+                //resizeTimer.restart()
 
             }
             onHeightChanged: {
-                resizeTimer.restart()
+                //resizeTimer.restart()
             }
 
         }

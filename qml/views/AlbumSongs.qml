@@ -30,7 +30,7 @@ Item {
                 Image{
                     id: albumCoverArt
 
-                    source: "image://coverArt/" + GlobalSingleton.songManager.albumName + "/" + GlobalSingleton.songManager.albumArtists[0]
+                    source: "image://coverArt/" + GlobalSingleton.songManager.albumName + "/" + GlobalSingleton.songManager.albumArtists.join("++?")
                     sourceSize.width: 170
                     sourceSize.height: 170
 

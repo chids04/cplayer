@@ -17,16 +17,18 @@ CoverImgProvider::CoverImgProvider() :
 
 QPixmap CoverImgProvider::requestPixmap(const QString &id, QSize *size, const QSize &requestedSize)
 {
-    QString delimiter = "/";
+    QString delimiter = "++?";
     QStringList artists;
     QString albumName;
 
-    int index = id.lastIndexOf(delimiter);
-
+    int index = id.lastIndexOf("/");
 
     if(index != -1){
         albumName = id.left(index);
-        artists = id.right(id.length()-index-delimiter.length()).split('%');
+        QString artistStr = id.mid(index+1);
+
+        artists = artistStr.split("++?");
+
 
         QPixmap coverArt;
 
@@ -58,7 +60,12 @@ QPixmap CoverImgProvider::requestPixmap(const QString &id, QSize *size, const QS
 
 void CoverImgProvider::addCover(const QStringList &artists, const QString &albumName, QByteArray &coverArt)
 {
+    if(coverArt.isEmpty()){
+        return;
+    }
+
     CoverArtKey key = {artists, albumName};
+
     coverArts.insert(key, coverArt);
 }
 

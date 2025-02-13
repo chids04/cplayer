@@ -54,7 +54,7 @@ Item{
                         Layout.preferredWidth: 80
                         Layout.alignment: Qt.AlignVCenter
                         //source: "qrc:/resource/ui/assets/unknownCover.png"
-                        source: "image://coverArt/" + GlobalSingleton.playbackManager.mediaPlayer.album + "/" + GlobalSingleton.playbackManager.mediaPlayer.albumArtists.join("%")
+                        source: "image://coverArt/" + GlobalSingleton.playbackManager.mediaPlayer.album + "/" + GlobalSingleton.playbackManager.mediaPlayer.albumArtists.join("++?")
                         sourceSize.width: 80
                         sourceSize.height: 80
 

@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls.Basic
+import QtQuick.Effects
 
 import cplayer
 
@@ -65,10 +66,8 @@ Rectangle {
 
             Component {
                 id: albumDelegate
-                Rectangle {
+                Item {
                     id: albumCard
-                    color: "transparent"
-                    radius: 10
 
                     width: albumListView.width
                     height: albumListView.width
@@ -77,6 +76,63 @@ Rectangle {
                         console.log("hello")
                     }
 
+                    Behavior on scale {
+                        NumberAnimation {
+                            duration: 200
+                            easing.type: Easing.OutBack
+                        }
+                    }
+                    states: [
+                            State {
+                                name: "doubleClicked"
+                                PropertyChanges {
+                                    albumCard{
+                                        scale: 0.95
+                                    }
+                                }
+                            }
+                        ]
+
+                    transitions: [
+                            Transition {
+                                from: ""
+                                to: "doubleClicked"
+                                reversible: true
+                                property int timesRun: 0
+
+                                NumberAnimation {
+                                    target: albumCard
+                                    property: "scale"
+                                    duration: 200
+                                    easing.type: Easing.OutBack
+                                }
+
+                                onRunningChanged: {
+                                    timesRun++
+                                    if (!running) {
+                                        if(timesRun == 4){
+                                            timesRun = 0
+                                            GlobalSingleton.songManager.setAlbum(albumCard.albumObjRole)
+                                            GlobalSingleton.viewController.selectAlbum()
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+
+                    Rectangle {
+                        id: overlay
+                        anchors.fill: parent
+                        color : "#121212"
+                        radius: 10
+                        opacity : 0
+
+                        Behavior on opacity {
+                            NumberAnimation{
+                                duration: 200
+                            }
+                        }
+                    }
                     property alias albumImgWidth: albumImage.sourceSize.width
                     property alias albumImgHeight: albumImage.sourceSize.height
 
@@ -86,42 +142,25 @@ Rectangle {
 
                     property bool firstLoad: true
 
-                    Timer {
-                        id: resizeTimer
-                        interval: 700
-                        repeat: false
-
-                        onTriggered: {
-                            if (!albumCard.firstLoad) {
-                                albumImage.opacity = 0
-                                albumImage.sourceSize.width = albumCard.width - 80
-                                albumImage.sourceSize.height = albumCard.width - 80
-                            }
-                        }
-                    }
-
-                    // onWidthChanged: {
-                    //     resizeTimer.restart()
-                    // }
-
-                    // onHeightChanged: {
-                    //     resizeTimer.restart()
-                    // }
-
                     MouseArea {
                         anchors.fill: parent
                         hoverEnabled: true
 
                         onEntered: {
-                            albumCard.color = "#0b0b0b"
+                            overlay.opacity = 0.5
                         }
                         onExited: {
-                            albumCard.color = "transparent"
+                            overlay.opacity = 0
+                        }
+
+                        onReleased: {
+                            albumCard.state = ""
                         }
 
                         onDoubleClicked: {
-                            GlobalSingleton.songManager.setAlbum(albumCard.albumObjRole)
-                            GlobalSingleton.viewController.selectAlbum()
+                            albumCard.state = "doubleClicked"
+                            //GlobalSingleton.songManager.setAlbum(albumCard.albumObjRole)
+                            //GlobalSingleton.viewController.selectAlbum()
                         }
                     }
 
@@ -131,36 +170,49 @@ Rectangle {
 
                         Image {
                             id: albumImage
-                            source: "image://coverArt/" + albumCard.albumName + "/" + albumCard.albumArtists.join('%')
+                            source: "image://coverArt/" + albumCard.albumName + "/" + albumCard.albumArtists.join("++?")
                             property bool firstLoad: true
 
+                            sourceSize.width: 200
+                            sourceSize.height: 200
                             Layout.preferredHeight: albumCard.width - 80
                             Layout.preferredWidth: albumCard.width - 80
 
                             Layout.alignment: Qt.AlignHCenter
                             asynchronous: true
 
-                            OpacityAnimator {
-                                id: fadeAnimator
-                                target: albumImage
-                                from: 0
-                                to: 1
-                                duration: 500
-                                running: false
-                            }
+                            layer.enabled: true
+                            layer.effect: MultiEffect {
+                                source: albumImage
+                                x: albumImage.x
+                                y: albumImage.y
+                                width: albumImage.width
+                                height: albumImage.height
+                                autoPaddingEnabled: true
+                                shadowEnabled: true
+                                shadowVerticalOffset: 10
+                                shadowHorizontalOffset: 12  
 
-                            Timer {
-                                id: imgTimer
-                                interval: 1000
-                                running: false
-                                repeat: false
-                                onTriggered: albumCard.firstLoad = false
-                            }
+                                maskEnabled: true
+                                maskSource: mask
+                                }
 
-                            Component.onCompleted: {
-                                albumImage.sourceSize.width = albumCard.width - 80
-                                albumImage.sourceSize.height = albumCard.width - 80
-                            }
+                                Item{
+                                    id: mask
+                                    width: albumImage.width
+                                    height: albumImage.height
+                                    layer.enabled: true
+                                    visible: false
+
+                                    Rectangle {
+                                        width: albumImage.width
+                                        height: albumImage.height
+                                        radius: 30
+                                        color: "black"
+                                    }
+                                }
+                                
+                            
                         }
 
                         Text {

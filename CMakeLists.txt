@@ -65,6 +65,7 @@ qt_add_qml_module(appcplayer
 	    qml/delegates/SongDelegate.qml
 		qml/delegates/FolderDelegate.qml
 		qml/delegates/SongViewDelegate.qml
+		qml/delegates/AlbumDelegate.qml
 
 		#QML Components
     QML_FILES

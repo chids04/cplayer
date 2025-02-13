@@ -189,7 +189,7 @@ Rectangle {
                         anchors.fill: parent
 
                         Image{
-                                source: "image://coverArt/" + dragArea.album + "/" + dragArea.albumArtists.join('%')
+                                source: "image://coverArt/" + dragArea.album + "/" + dragArea.albumArtists.join("++?")
                                 sourceSize.height: 55
                                 sourceSize.width: 55
                                 Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter

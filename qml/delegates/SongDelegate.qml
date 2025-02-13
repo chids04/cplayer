@@ -1,8 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 
-import "../components"
-
 import cplayer
 
 Rectangle {
@@ -185,7 +183,7 @@ Rectangle {
                     id: albumImage
                     Layout.preferredWidth:60
                     Layout.preferredHeight:60
-                    source: "image://coverArt/" + songRect.songObj.album + "/" + songRect.songObj.albumArtists.join('%')
+                    source: "image://coverArt/" + songRect.songObj.album + "/" + songRect.songObj.albumArtists.join('++?')
                     sourceSize.width: 60
                     sourceSize.height: 60
                     Layout.rightMargin: 10
