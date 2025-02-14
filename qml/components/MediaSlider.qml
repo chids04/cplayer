@@ -58,6 +58,20 @@ Item{
                         sourceSize.width: 80
                         sourceSize.height: 80
 
+                        layer.enabled: true
+                        layer.effect: MultiEffect {
+                            source: songArt
+                            x: songArt.x
+                            y: songArt.y
+                            width: songArt.width
+                            height: songArt.height
+                            autoPaddingEnabled: true
+                            shadowEnabled: true
+                            shadowVerticalOffset: 10
+                            shadowHorizontalOffset: 10
+                            
+                        }
+
                         Connections{
                             target: GlobalSingleton.playbackManager.mediaPlayer
                             function onCoverArtChanged(){
@@ -147,6 +161,20 @@ Item{
                                 width: 30
                                 source: shuffle == true ? "qrc:/resource/ui/assets/shuffle_on.png" : "qrc:/resource/ui/assets/shuffle.png"
 
+                                layer.enabled: true
+                                layer.effect: MultiEffect {
+                                    source: shuffleSongs
+                                    x: shuffleSongs.x
+                                    y: shuffleSongs.y
+                                    width: shuffleSongs.width
+                                    height: shuffleSongs.height
+                                    autoPaddingEnabled: true
+                                    shadowEnabled: true
+                                    shadowVerticalOffset: 5
+                                    shadowHorizontalOffset: 1
+                                    
+                                }
+
                                 MouseArea{
                                     anchors.fill: parent
                                     hoverEnabled: true
@@ -197,6 +225,20 @@ Item{
                                 anchors.right: parent.right
                                 anchors.verticalCenter: parent.verticalCenter
 
+                                layer.enabled: true
+                                layer.effect: MultiEffect {
+                                    source: previousBtn
+                                    x: previousBtn.x
+                                    y: previousBtn.y
+                                    width: previousBtn.width
+                                    height: previousBtn.height
+                                    autoPaddingEnabled: true
+                                    shadowEnabled: true
+                                    shadowVerticalOffset: 5
+                                    shadowHorizontalOffset: 1
+                                    
+                                }
+
                                 MouseArea{
                                     anchors.fill: parent
                                     hoverEnabled: true
@@ -237,7 +279,25 @@ Item{
 
                                 sourceSize.width: 40
                                 sourceSize.height: 40
+
+                                Layout.preferredHeight: 40
+                                Layout.preferredWidth: 40
+
                                 anchors.centerIn: parent
+                                
+                                layer.enabled: true
+                                layer.effect: MultiEffect {
+                                    source: playBtn
+                                    x: playBtn.x
+                                    y: playBtn.y
+                                    width: playBtn.width
+                                    height: playBtn.height
+                                    autoPaddingEnabled: true
+                                    shadowEnabled: true
+                                    shadowVerticalOffset: 5
+                                    shadowHorizontalOffset: 1
+                                    
+                                }
 
                                 Shortcut{
                                     sequence: "Space"
@@ -301,6 +361,20 @@ Item{
                                 source: "qrc:/resource/ui/assets/next.png"
                                 anchors.left: parent.left
                                 anchors.verticalCenter: parent.verticalCenter
+
+                                layer.enabled: true
+                                layer.effect: MultiEffect {
+                                    source: nextBtn
+                                    x: nextBtn.x
+                                    y: nextBtn.y
+                                    width: nextBtn.width
+                                    height: nextBtn.height
+                                    autoPaddingEnabled: true
+                                    shadowEnabled: true
+                                    shadowVerticalOffset: 5
+                                    shadowHorizontalOffset: 1
+                                    
+                                }
                                 MouseArea {
                                     anchors.fill: parent
                                     hoverEnabled: true
@@ -345,6 +419,16 @@ Item{
                                 source: repeat == true ? "qrc:/resource/ui/assets/repeat_individual.png" : "qrc:/resource/ui/assets/repeat.png"
                                 anchors.centerIn: parent
 
+                                layer.enabled: true
+                                layer.effect: MultiEffect {
+                                    source: repeatSongs
+                                    anchors.fill: repeatSongs
+                                    autoPaddingEnabled: true
+                                    shadowEnabled: true
+                                    shadowVerticalOffset: 5
+                                    shadowHorizontalOffset: 1
+                                    
+                                }
                                 MouseArea{
                                     anchors.fill: parent
                                     hoverEnabled: true
@@ -426,6 +510,7 @@ Item{
                             }
 
                             background: Rectangle {
+                                    id: musicSliderBackground
                                     x: control.leftPadding
                                     y: control.topPadding + control.availableHeight / 2 - height / 2
                                     implicitWidth: 200
@@ -434,6 +519,17 @@ Item{
                                     height: implicitHeight
                                     radius: 2
                                     color: "#2e2e2e"
+
+                                    layer.enabled: true
+                                    layer.effect: MultiEffect {
+                                        source: musicSliderBackground
+                                        anchors.fill: musicSliderBackground
+                                        autoPaddingEnabled: true
+                                        shadowEnabled: true
+                                        shadowVerticalOffset: 5
+                                        shadowHorizontalOffset: 1
+                                        
+                                    }
 
                                     Rectangle {
                                         width: control.visualPosition * parent.width
@@ -501,6 +597,16 @@ Item{
                         id: nowPlayingImage
                         source: "qrc:/resource/ui/assets/now_playing.png"
 
+                        layer.enabled: true
+                        layer.effect: MultiEffect {
+                            source: nowPlayingImage
+                            anchors.fill: nowPlayingImage
+                            autoPaddingEnabled: true
+                            shadowEnabled: true
+                            shadowVerticalOffset: 5
+                            shadowHorizontalOffset: 1
+                            
+                        }
                         anchors {
                             right: audioImage.left
                             rightMargin: 5
@@ -551,6 +657,17 @@ Item{
                         sourceSize.height: 20
                         sourceSize.width: 20
 
+                        layer.enabled: true
+                        layer.effect: MultiEffect {
+                            source: audioImage
+                            anchors.fill: audioImage
+                            autoPaddingEnabled: true
+                            shadowEnabled: true
+                            shadowVerticalOffset: 5
+                            shadowHorizontalOffset: 1
+                            
+                        }
+
                         anchors{
                             right: volumeStatus.left
                             rightMargin: 5
@@ -594,6 +711,17 @@ Item{
                         sourceSize.height: 20
                         sourceSize.width: 20
 
+                        layer.enabled: true
+                        layer.effect: MultiEffect {
+                            source: volumeStatus
+                            anchors.fill: volumeStatus
+                            autoPaddingEnabled: true
+                            shadowEnabled: true
+                            shadowVerticalOffset: 5
+                            shadowHorizontalOffset: 1
+                            
+                        }
+
                         anchors{
                             right: volumeSlider.left
                             verticalCenter: parent.verticalCenter
@@ -616,6 +744,7 @@ Item{
                         }
 
                         background: Rectangle {
+                                id: volumeSliderBackground
                                 x: volumeSlider.leftPadding
                                 y: volumeSlider.topPadding + volumeSlider.availableHeight / 2 - height / 2
                                 implicitWidth: 200
@@ -624,6 +753,17 @@ Item{
                                 height: implicitHeight
                                 radius: 2
                                 color: "#2e2e2e"
+
+                                layer.enabled: true
+                                layer.effect: MultiEffect {
+                                    source: volumeSliderBackground
+                                    anchors.fill: volumeSliderBackground
+                                    autoPaddingEnabled: true
+                                    shadowEnabled: true
+                                    shadowVerticalOffset: 5
+                                    shadowHorizontalOffset: 1
+                                    
+                                }
 
                                 Rectangle {
                                     width: volumeSlider.visualPosition * parent.width
