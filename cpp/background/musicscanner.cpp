@@ -106,7 +106,7 @@ void MusicScanner::onFileRecieved(const QString &localPath)
     }
 }
 
-int MusicScanner::scanDirectory(const QString &folderPath)
+void MusicScanner::scanDirectory(const QString &folderPath)
 {
     QDir dir(folderPath);
     // Take a snapshot of the directory's contents (files & folders, excluding . and ..)
@@ -115,7 +115,6 @@ int MusicScanner::scanDirectory(const QString &folderPath)
     
     // Local map for grouping MP3 files based on album presence in folder name.
     std::unordered_map<QString, QStringList> localMap;
-    int localSongCount = 0;
 
     for (const QFileInfo &entry : entries) {
         if (entry.isDir()) {
@@ -125,7 +124,7 @@ int MusicScanner::scanDirectory(const QString &folderPath)
             
         }
         else if (entry.isFile() && entry.suffix().toLower() == "mp3") {
-            localSongCount++;
+            m_songCount++;
             QString filePath = entry.absoluteFilePath();
 
             // Parse the MP3 file using TagLib.
@@ -265,7 +264,6 @@ int MusicScanner::scanDirectory(const QString &folderPath)
         albumFoldersList.append(localMap);
     }
 
-    // If no subdirectories were found, emit a signal to indicate that the current directory has been scanned.
     
 }
 
@@ -278,10 +276,10 @@ void MusicScanner::onFolderRecieved(const QUrl &folderUrl)
     // Clear previous album folder snapshots.
     albumFoldersList.clear();
     // Start the recursive directory snapshot scan.
-    int songCount = scanDirectory(folderPath);
+    scanDirectory(folderPath);
     // Emit the current song ID for persistence.
     QDir dir(folderPath);
 
-    emit scanningFinished(dir.dirName(), folderPath, songCount);
+    emit scanningFinished(dir.dirName(), folderPath, m_songCount);
     emit saveID(id);
 }

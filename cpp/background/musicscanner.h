@@ -94,9 +94,8 @@ private:
      * For each subdirectory, a snapshot is taken. MP3 files are parsed and, if the current
      * folder's name contains the song's album name, the file is added to a grouping map.
      * @param folderPath The absolute path of the directory to scan.
-     * @return the number of songs found in the directory.
      */
-    int scanDirectory(const QString &folderPath);
+    void scanDirectory(const QString &folderPath);
 };
 
 #endif // MUSICSCANNER_H
