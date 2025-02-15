@@ -57,6 +57,7 @@ Item{
                         source: "image://coverArt/" + GlobalSingleton.playbackManager.mediaPlayer.album + "/" + GlobalSingleton.playbackManager.mediaPlayer.albumArtists.join("++?")
                         sourceSize.width: 80
                         sourceSize.height: 80
+                        asynchronous: true
 
                         layer.enabled: true
                         layer.effect: MultiEffect {
@@ -67,8 +68,8 @@ Item{
                             height: songArt.height
                             autoPaddingEnabled: true
                             shadowEnabled: true
-                            shadowVerticalOffset: 10
-                            shadowHorizontalOffset: 10
+                            shadowVerticalOffset: 5
+                            shadowHorizontalOffset: 2
                             
                         }
 
@@ -540,12 +541,24 @@ Item{
                                 }
 
                                 handle: Rectangle {
+                                    id: handle
                                     x: control.leftPadding + control.visualPosition * (control.availableWidth - width)
                                     y: control.topPadding + control.availableHeight / 2 - height / 2
                                     implicitWidth: 16
                                     implicitHeight: 16
                                     radius: 8
                                     color: "#606060"
+
+                                    layer.enabled: true
+                                    layer.effect: MultiEffect {
+                                        source: handle
+                                        anchors.fill: handle
+                                        autoPaddingEnabled: true
+                                        shadowEnabled: true
+                                        shadowVerticalOffset: 5
+                                        shadowHorizontalOffset: 1
+                                        
+                                    }
                                 }
 
                             }

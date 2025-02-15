@@ -44,10 +44,14 @@ double AlbumSearchFilter::computeMatchScore(const QStringList &tokens,
                                               const QString &albumName,
                                               const QStringList &albumArtists) const
 {
+    if(tokens.join(" ") == albumName){
+        return 400;
+    }
+
     double scoreSum = 0.0;
     for (const QString &token : tokens) {
         // Fuzzy score for album name
-        double albumNameScore = rapidfuzz::fuzz::partial_ratio(albumName.toStdString(), token.toStdString());
+        double albumNameScore = rapidfuzz::fuzz::partial_ratio(albumName.toStdString(), token.toStdString())/100;
 
         // Compute the best fuzzy score among all album artists.
         double maxArtistScore = 0.0;
@@ -55,11 +59,14 @@ double AlbumSearchFilter::computeMatchScore(const QStringList &tokens,
             double artistScore = rapidfuzz::fuzz::partial_ratio(artist.toStdString(), token.toStdString());
             maxArtistScore = std::max(maxArtistScore, artistScore);
         }
-        // Weight the artist score more (e.g., 1.5×)
-        double weightedArtistScore = maxArtistScore * 1.5;
+
+        maxArtistScore /= 100;
+
+        // Weight the album  score more (e.g., 1.5×)
+        albumNameScore = albumNameScore * 1.5;
 
         // For this token, take the higher score (album name vs. weighted artist)
-        double tokenScore = std::max(albumNameScore, weightedArtistScore);
+        double tokenScore = albumNameScore + maxArtistScore;
         scoreSum += tokenScore;
     }
     return scoreSum / tokens.size();
@@ -81,6 +88,11 @@ bool AlbumSearchFilter::filterAcceptsRow(int sourceRow, const QModelIndex &sourc
     for (int i = 0; i < albumArtists.size(); ++i) {
         albumArtists[i] = normalizeString(albumArtists[i].toLower());
     }
+
+    if(albumName.contains(m_filterString) || albumArtists.join(" ").contains(m_filterString)){
+        return true;
+    }
+
 
     // Tokenize the filter string (split by whitespace)
     QStringList tokens = m_filterString.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);

@@ -49,33 +49,37 @@ bool SongFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &so
     artist = normalizeString(artist);
     album  = normalizeString(album);
 
-    // Tokenize the filter string. For example, "Beatles Yesterday" becomes ["beatles", "yesterday"]
-    QStringList tokens = m_filterString.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
-    if (tokens.isEmpty())
+    if(title.contains(m_filterString) || artist.contains(m_filterString) || album.contains(m_filterString)){
         return true;
-
-    // For each token, we require that it “appears” in at least one field.
-    // First, try a simple substring match; if that fails, fall back to fuzzy matching.
-    const int fuzzyThreshold = 60; // adjust this threshold as needed
-    for (const QString &token : tokens) {
-        bool tokenMatched = (title.contains(token, Qt::CaseInsensitive) ||
-                             artist.contains(token, Qt::CaseInsensitive) ||
-                             album.contains(token, Qt::CaseInsensitive));
-
-        if (!tokenMatched) {
-            // Fallback to fuzzy matching each field against the token
-            int titleScore  = rapidfuzz::fuzz::partial_ratio(title.toStdString(), token.toStdString());
-            int artistScore = rapidfuzz::fuzz::partial_ratio(artist.toStdString(), token.toStdString());
-            int albumScore  = rapidfuzz::fuzz::partial_ratio(album.toStdString(), token.toStdString());
-            int maxScore = std::max({ titleScore, artistScore, albumScore });
-
-            // If none of the fields has a fuzzy score above the threshold, then reject this row.
-            if (maxScore < fuzzyThreshold)
-                return false;
-        }
     }
-    // All tokens matched in at least one field.
-    return true;
+
+    // Tokenize the filter string. For example, "Beatles Yesterday" becomes ["beatles", "yesterday"]
+    // QStringList tokens = m_filterString.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
+    // if (tokens.isEmpty())
+    //     return true;
+
+    // // For each token, we require that it “appears” in at least one field.
+    // // First, try a simple substring match; if that fails, fall back to fuzzy matching.
+    // const int fuzzyThreshold = 60; // adjust this threshold as needed
+    // for (const QString &token : tokens) {
+    //     bool tokenMatched = (title.contains(token, Qt::CaseInsensitive) ||
+    //                          artist.contains(token, Qt::CaseInsensitive) ||
+    //                          album.contains(token, Qt::CaseInsensitive));
+
+    //     if (!tokenMatched) {
+    //         // Fallback to fuzzy matching each field against the token
+    //         int titleScore  = rapidfuzz::fuzz::partial_ratio(title.toStdString(), token.toStdString());
+    //         int artistScore = rapidfuzz::fuzz::partial_ratio(artist.toStdString(), token.toStdString());
+    //         int albumScore  = rapidfuzz::fuzz::partial_ratio(album.toStdString(), token.toStdString());
+    //         int maxScore = std::max({ titleScore, artistScore, albumScore });
+
+    //         // If none of the fields has a fuzzy score above the threshold, then reject this row.
+    //         if (maxScore < fuzzyThreshold)
+    //             return false;
+    //     }
+    // }
+    // // All tokens matched in at least one field.
+    // return true;
 }
 
 double SongFilterProxyModel::computeMatchScore(const QStringList &tokens,
@@ -83,7 +87,7 @@ double SongFilterProxyModel::computeMatchScore(const QStringList &tokens,
     const QString &artist,
     const QString &album) const
 {
-    //each fuzzy score has max of val of 100, max score posssible is 300 before any multipliers
+    //match score capped to 1
     if(tokens.join(" ") == title){
         return 400;
     }
@@ -91,23 +95,25 @@ double SongFilterProxyModel::computeMatchScore(const QStringList &tokens,
     double scoreSum = 0.0;
     for (const QString &token : tokens) {
         // Compute fuzzy scores (using rapidfuzz's partial_ratio)
-        double titleScore  = rapidfuzz::fuzz::partial_ratio(title.toStdString(), token.toStdString());
-        double artistScore = rapidfuzz::fuzz::partial_ratio(artist.toStdString(), token.toStdString());
-        double albumScore  = rapidfuzz::fuzz::partial_ratio(album.toStdString(), token.toStdString());
+        double titleScore  = rapidfuzz::fuzz::partial_ratio(title.toStdString(), token.toStdString())/100;
+        double artistScore = rapidfuzz::fuzz::partial_ratio(artist.toStdString(), token.toStdString())/100;
+        double albumScore  = rapidfuzz::fuzz::partial_ratio(album.toStdString(), token.toStdString())/100;
 
         // Weight the title more heavily (adjust the weight factors as desired)
         
+        
         if(title == token){
-            titleScore = 100;
+            titleScore *= 1.5;
         }
 
         
         double weightedTitle = titleScore * 1.5;
-        double tokenScore = std::max({ weightedTitle, artistScore, albumScore });
+        //double tokenScore = std::max({ weightedTitle, artistScore, albumScore });
+        double tokenScore = weightedTitle + artistScore + albumScore;
         scoreSum += tokenScore;
     }
     // Return the average score across tokens
-    return scoreSum / tokens.size();
+    return scoreSum;
 }
 
 bool SongFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const

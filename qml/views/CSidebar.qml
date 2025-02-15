@@ -216,6 +216,8 @@ Item {
                             {buttonText: 'playlists', fileName: "Playlist.svg", qmlPath: "Playlists.qml"},
                             {buttonText: 'settings', fileName: "Settings.svg", qmlPath: "Settings.qml"}]
 
+                            property string activeTab
+
                         delegate: Rectangle {
                             id: button
 
@@ -234,6 +236,13 @@ Item {
                             color: "transparent"
                             Layout.alignment: Qt.AlignLeft
                             state: 'middle'
+
+                            Behavior on scale {
+                                NumberAnimation{
+                                    duration: 200
+                                    easing.type: Easing.InOutQuad
+                                }
+                            }
 
                             SequentialAnimation{
                                 id: clickAnimation
@@ -352,6 +361,10 @@ Item {
                                 onEntered: {
                                     if(button.state == "left"){
                                         background.opacity = 1
+                                        button.scale = 1.05
+                                    }
+                                    else{
+                                        button.scale = 1.2
                                     }
                                 }
 
@@ -359,18 +372,51 @@ Item {
                                     if(button.state == "left"){
                                         background.opacity = 0
                                     }
+                                    button.scale = 1
                                 }
 
                                 onClicked:{
-                                    clickAnimation.start()
+                                    //clickAnimation.start()
+                                    columnItems.activeTab = button.modelData.buttonText
                                     sideBar.sidebarStackView.push(button.modelData.qmlPath)
+                                }
+
+                                onPressedChanged: {
+                                    if(pressed){
+                                        button.scale = 0.9
+                                    }
+                                    else{
+                                        if(button.state == "left"){
+                                            button.scale = 1.05
+                                        }
+                                        else{
+                                            button.scale = 1.2
+                                        }
+                                    }
                                 }
                             }
 
                             Image {
+                                id: buttonImage
                                 source: "qrc:/resource/ui/assets/" + button.modelData.fileName
                                 sourceSize: Qt.size(30, 30)
                                 anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 10 }
+
+                                layer.enabled: true
+                                layer.effect: MultiEffect{
+                                    source: buttonImage
+                                    anchors.fill: buttonImage
+                                    colorization: 1.0
+                                    colorizationColor: {
+                                        if(columnItems.activeTab === button.modelData.buttonText){
+                                            return "#4a5b5e"
+                                        }
+                                        else{
+                                            return "white"
+                                        }
+                                    }
+
+                                }
                             }
 
                             Text {
