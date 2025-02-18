@@ -177,9 +177,9 @@ Rectangle {
                             sourceSize.height: 200
                             Layout.preferredHeight: albumCard.width - 80
                             Layout.preferredWidth: albumCard.width - 80
+                            asynchronous: true
 
                             Layout.alignment: Qt.AlignHCenter
-                            asynchronous: true
 
                             layer.enabled: true
                             layer.effect: MultiEffect {
@@ -192,27 +192,7 @@ Rectangle {
                                 shadowEnabled: true
                                 shadowVerticalOffset: 10
                                 shadowHorizontalOffset: 12  
-
-                                maskEnabled: true
-                                maskSource: mask
-                                }
-
-                                Item{
-                                    id: mask
-                                    width: albumImage.width
-                                    height: albumImage.height
-                                    layer.enabled: true
-                                    visible: false
-
-                                    Rectangle {
-                                        width: albumImage.width
-                                        height: albumImage.height
-                                        radius: 30
-                                        color: "black"
-                                    }
-                                }
-                                
-                            
+                            }
                         }
 
                         Text {

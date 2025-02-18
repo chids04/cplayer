@@ -402,6 +402,7 @@ Item {
                                 source: "qrc:/resource/ui/assets/" + button.modelData.fileName
                                 sourceSize: Qt.size(30, 30)
                                 anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 10 }
+                                asynchronous: true
 
                                 layer.enabled: true
                                 layer.effect: MultiEffect{
