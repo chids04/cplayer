@@ -32,7 +32,17 @@ Item {
             placeholderTextColor: "darkgrey"
             color: "white"
 
-            onTextChanged: GlobalSingleton.songManager.songModel.filterString = text
+            onTextChanged: debounceTimer.restart()
+
+            Timer {
+                id: debounceTimer
+                interval: 500  // delay in milliseconds
+                repeat: false
+                onTriggered: {
+                    // Update the filter string after the delay expires.
+                    GlobalSingleton.songManager.songModel.filterString = textfield.text
+                }
+            }
 
             background: Rectangle{
                 border.color: "#343434"

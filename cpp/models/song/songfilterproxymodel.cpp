@@ -38,6 +38,10 @@ bool SongFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &so
     if (m_filterString.isEmpty())
         return true;
 
+    QStringList tokens = m_filterString.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
+    if (tokens.isEmpty())
+        return true;
+
     // Get data from the source model
     QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
     QString title  = sourceModel()->data(index, SongListModel::TitleRole).toString().toLower();
@@ -49,10 +53,16 @@ bool SongFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &so
     artist = normalizeString(artist);
     album  = normalizeString(album);
 
+
     if(title.contains(m_filterString) || artist.contains(m_filterString) || album.contains(m_filterString)){
         return true;
     }
 
+    double score = computeMatchScore(tokens, title, artist, album);
+
+    const double threshold = 40.0;
+
+    return score > threshold;
     // Tokenize the filter string. For example, "Beatles Yesterday" becomes ["beatles", "yesterday"]
     // QStringList tokens = m_filterString.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
     // if (tokens.isEmpty())
@@ -107,13 +117,12 @@ double SongFilterProxyModel::computeMatchScore(const QStringList &tokens,
         }
 
         
-        double weightedTitle = titleScore * 1.5;
         //double tokenScore = std::max({ weightedTitle, artistScore, albumScore });
-        double tokenScore = weightedTitle + artistScore + albumScore;
+        double tokenScore = titleScore + artistScore + albumScore;
         scoreSum += tokenScore;
     }
     // Return the average score across tokens
-    return scoreSum;
+    return scoreSum / tokens.size() ;
 }
 
 bool SongFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const

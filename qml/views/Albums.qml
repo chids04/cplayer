@@ -39,6 +39,7 @@ Item {
         }
 
         TextField {
+            id: searchField
             Layout.fillWidth: true
             Layout.topMargin: 10
             Layout.preferredHeight: 40
@@ -47,7 +48,7 @@ Item {
             placeholderTextColor: "darkgrey"
             color: "white"
 
-            onTextChanged: GlobalSingleton.songManager.albumSearchModel.filterString = text
+            onTextChanged: debounceTimer.restart()
 
             background: Rectangle{
                 border.color: "#343434"
@@ -55,6 +56,17 @@ Item {
                 color: "#232425"
                 radius: 10
             }
+
+            Timer {
+                id: debounceTimer
+                interval: 500  // delay in milliseconds
+                repeat: false
+                onTriggered: {
+                    // Update the filter string after the delay expires.
+                    GlobalSingleton.songManager.albumSearchModel.filterString = searchField.text
+                }
+            }
+
 
         }
 

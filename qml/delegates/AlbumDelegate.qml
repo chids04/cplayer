@@ -120,20 +120,20 @@ Item{
             Layout.alignment: Qt.AlignHCenter
             asynchronous: true
 
-            layer.enabled: true
-            layer.effect: MultiEffect {
-                source: albumImage
-                x: albumImage.x
-                y: albumImage.y
-                width: albumImage.width
-                height: albumImage.height
+            // layer.enabled: true
+            // layer.effect: MultiEffect {
+            //     source: albumImage
+            //     x: albumImage.x
+            //     y: albumImage.y
+            //     width: albumImage.width
+            //     height: albumImage.height
 
-                autoPaddingEnabled: true
-                shadowEnabled: true
-                shadowVerticalOffset: 10
-                shadowHorizontalOffset: 20  
+            //     autoPaddingEnabled: true
+            //     shadowEnabled: true
+            //     shadowVerticalOffset: 10
+            //     shadowHorizontalOffset: 20
 
-            }
+            // }
         }
 
         Text {

@@ -25,7 +25,7 @@ Rectangle {
         color: "#232425"
 
         TextField {
-            id: textfield
+            id: albumSearchField
             anchors {
                 left: parent.left
                 right: parent.right
@@ -35,7 +35,17 @@ Rectangle {
                 rightMargin: 20
             }
 
-            onTextChanged: GlobalSingleton.songManager.albumSearchModel.filterString = text
+            onTextChanged: albumDebounceTimer.restart()
+
+            Timer {
+                id: albumDebounceTimer
+                interval: 500  // delay in milliseconds
+                repeat: false
+                onTriggered: {
+                    // Update the filter string after the delay expires.
+                    GlobalSingleton.songManager.albumSearchModel.filterString = albumSearchField.text
+                }
+            }
 
             height: 40
 
@@ -57,7 +67,7 @@ Rectangle {
 
             anchors {
                 topMargin: 10
-                top: textfield.bottom
+                top: albumSearchField.bottom
                 bottom: parent.bottom
                 horizontalCenter: parent.horizontalCenter
             }
@@ -244,7 +254,17 @@ Rectangle {
         placeholderText: "search for a song"
         placeholderTextColor: "darkgrey"
         color: "white"
-        onTextChanged: GlobalSingleton.songManager.songModel.filterString = text
+        onTextChanged: songDebounceTimer.restart()
+
+        Timer {
+            id: songDebounceTimer
+            interval: 500  // delay in milliseconds
+            repeat: false
+            onTriggered: {
+                // Update the filter string after the delay expires.
+                GlobalSingleton.songManager.songModel.filterString = songSearchField.text
+            }
+        }
 
         background: Rectangle {
             border.color: "#343434"
