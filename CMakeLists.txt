@@ -4,36 +4,22 @@ project(cplayer VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
+set(PYBIND11_FINDPYTHON ON)
+set(SC_LIB_PATH "${CMAKE_SOURCE_DIR}/extern/sc-lib-fork")
+
+
+include("$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
 
 find_package(Qt6 6.8 REQUIRED COMPONENTS Multimedia Quick Widgets Core)
-
-
-if(WIN32)
-     # set(TAGLIB_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/xtras/taglib)
-
-     # find_path(TAGLIB_INCLUDE_DIR taglib/tag.h
-     #     PATHS ${TAGLIB_ROOT}/include)
-
-     # find_library(TAGLIB_LIBRARY NAMES tag taglib
-     #      PATHS ${TAGLIB_ROOT}/lib)
-    set(TagLib_DIR "C:\\pkg_static\\lib\\cmake\\taglib")
-    include($ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
-    find_package(ZLIB)
-    find_package(TagLib)
-
-elseif(UNIX)
-    find_package(ZLIB)
-    find_package(TagLib)
-
-endif()
-
+find_package(TagLib)
+find_package(Python 3.13.2 COMPONENTS Interpreter Development REQUIRED)
 
 add_subdirectory(3rdparty/RapidFuzz)
+add_subdirectory(extern/pybind11)
 
 qt_standard_project_setup()
-qt_policy(
-        SET QTP0001 NEW
-        SET QTP0004 NEW)
+qt_policy(SET QTP0001 NEW)
+qt_policy(SET QTP0004 NEW)
 
 qt_add_executable(appcplayer
     main.cpp
@@ -59,6 +45,7 @@ qt_add_qml_module(appcplayer
 		qml/views/Sidebar.qml
 		qml/views/HomePage.qml
 		qml/views/CSidebar.qml
+        qml/views/Search.qml
 
 	#QML Delegates
 	QML_FILES
@@ -80,6 +67,7 @@ qt_add_qml_module(appcplayer
 		qml/components/AudioDevicesPopup.qml
 		qml/components/EditPlaylist.qml
 		qml/components/EditSong.qml
+        qml/components/loading/RectangleLoader.qml
 
 
 
@@ -186,8 +174,17 @@ qt_add_qml_module(appcplayer
 		cpp/managers/playbackmanager.h
 		cpp/managers/playbackmanager.cpp
 
-    #C++ utlities
+        cpp/managers/downloadmanager.h
+        cpp/managers/downloadmanager.cpp
+
+    #downloaders
     SOURCES
+
+    cpp/downloaders/soundcloud.cpp
+    cpp/downloaders/soundcloud.h
+
+    cpp/downloaders/soundcloud/soundcloudmodel.h
+    cpp/downloaders/soundcloud/soundcloudmodel.cpp
 
 )
 
@@ -205,13 +202,16 @@ set_target_properties(appcplayer PROPERTIES
 
 
 #link_directories(appcplayer PRIVATE ${TAGLIB_INSTALL_DIR}/lib)
-
+target_compile_definitions(appcplayer PRIVATE
+    SC_LIB_PATH="${SC_LIB_PATH}"
+    TAGLIB_STATIC
+)
 if(WIN32)
 
-    target_compile_definitions(appcplayer PRIVATE TAGLIB_STATIC)
+    #target_compile_definitions(appcplayer PRIVATE TAGLIB_STATIC)
     target_link_libraries(appcplayer
         PRIVATE Qt6::Quick Qt6::Multimedia Qt6::Widgets Qt6::Core
-        rapidfuzz::rapidfuzz TagLib::tag
+        rapidfuzz::rapidfuzz TagLib::tag pybind11::embed
     )
 
 elseif(UNIX)
@@ -226,7 +226,9 @@ target_include_directories(appcplayer PRIVATE
 		${CMAKE_CURRENT_SOURCE_DIR}/cpp
 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/types
 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/background
-		${CMAKE_CURRENT_SOURCE_DIR}/cpp/cpp_models
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/downloaders
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/downloaders/soundcloud
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/cpp_models
 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/image_providers
 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/models
 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/models/song

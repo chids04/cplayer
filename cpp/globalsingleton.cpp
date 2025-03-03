@@ -9,6 +9,7 @@ void GlobalSingleton::init(CoverImgProvider *coverProvider, PlaylistImageProvide
     setPlaylistManager(new PlaylistManager(m_songManager->getSongListModel(), playlistProvider));
     setFolderManager(new FolderManager(m_songManager, coverProvider));
     setViewController(new ViewController);
+    setDownloadManager(new DownloadManager);
 
     //injecting dependencies in cases where there are circular dependencies
     m_playbackManager->nowPlaying()->setModels(m_songManager);
@@ -92,4 +93,17 @@ void GlobalSingleton::setViewController(ViewController *newViewController)
 {
     m_viewController = newViewController;
     emit viewControllerChanged();
+}
+
+DownloadManager *GlobalSingleton::downloadManager() const
+{
+    return m_downloadManager;
+}
+
+void GlobalSingleton::setDownloadManager(DownloadManager *newDownloadManager)
+{
+    if (m_downloadManager == newDownloadManager)
+        return;
+    m_downloadManager = newDownloadManager;
+    emit downloadManagerChanged();
 }

@@ -11,6 +11,7 @@
 #include "viewcontroller.h"
 #include "coverimgprovider.h"
 #include "playlistimageprovider.h"
+#include "downloadmanager.h"
 
 
 class GlobalSingleton : public QObject
@@ -27,6 +28,7 @@ public:
     Q_PROPERTY(PlaylistManager *playlistManager READ playlistManager WRITE setPlaylistManager NOTIFY playlistManagerChanged)
     Q_PROPERTY(FolderManager *folderManager READ folderManager WRITE setFolderManager NOTIFY folderManagerChanged)
     Q_PROPERTY(ViewController *viewController READ viewController WRITE setViewController NOTIFY viewControllerChanged)
+    Q_PROPERTY(DownloadManager *downloadManager READ downloadManager WRITE setDownloadManager NOTIFY downloadManagerChanged)
 
     SongManager *songManager() const;
     void setSongManager(SongManager *newSongManager);
@@ -43,6 +45,9 @@ public:
     ViewController *viewController() const;
     void setViewController(ViewController *newViewController);
 
+    DownloadManager *downloadManager() const;
+    void setDownloadManager(DownloadManager *newDownloadManager);
+
 signals:
 
     void songManagerChanged();
@@ -55,6 +60,8 @@ signals:
 
     void viewControllerChanged();
 
+    void downloadManagerChanged();
+
 public slots:
     void save();
 
@@ -64,6 +71,7 @@ private:
     PlaylistManager *m_playlistManager = nullptr;
     FolderManager *m_folderManager = nullptr;
     ViewController *m_viewController;
+    DownloadManager *m_downloadManager = nullptr;
 };
 
 #endif // GLOBALSINGLETON_H

@@ -214,8 +214,8 @@ Item {
                             {buttonText: 'songs', fileName: "Song.svg", qmlPath: "Songs.qml"},
                             {buttonText: 'albums', fileName: "Album.svg", qmlPath: "Albums.qml"},
                             {buttonText: 'playlists', fileName: "Playlist.svg", qmlPath: "Playlists.qml"},
-                            {buttonText: 'settings', fileName: "Settings.svg", qmlPath: "Settings.qml"}]
-                            //{buttonText: 'search', fileName: "Search.svg", qmlPath: "Search.qml"}]
+                            {buttonText: 'settings', fileName: "Settings.svg", qmlPath: "Settings.qml"},
+                            {buttonText: 'search', fileName: "Search.svg", qmlPath: "Search.qml"}]
 
                             property string activeTab
 

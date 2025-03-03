@@ -160,8 +160,8 @@ void MusicScanner::scanDirectory(const QString &folderPath)
                 QStringList features;
                 QString leadingArtist;
                 auto splitArtists = [](const QString &artists, QString &leadingArtist, QStringList &features) {
-                    if (artists.contains(" / ")) {
-                        QStringList artistList = artists.split(" / ");
+                    if (artists.contains("/")) {
+                        QStringList artistList = artists.split("/");
                         leadingArtist = artistList.first();
                         features = artistList.mid(1);
                     } else {
@@ -170,6 +170,7 @@ void MusicScanner::scanDirectory(const QString &folderPath)
                 };
                 splitArtists(artists, leadingArtist, features);
 
+                qDebug() << features;
                 QStringList albumArtists;
                 TagLib::StringList albumArtistsList = properties["ALBUMARTIST"];
                 for (const auto &albumArtist : albumArtistsList) {
@@ -197,34 +198,42 @@ void MusicScanner::scanDirectory(const QString &folderPath)
                     if(!coverImgProvider->hasCover(albumArtists, albumName)){
 
                         if(QFileInfo::exists(coverPath)){
-                            QImage coverFile(coverPath);
+                            QFile coverFile(coverPath);
 
-                            if (!coverFile.isNull()){
-                                QByteArray coverArray;
-                                QBuffer buffer(&coverArray);
-                                buffer.open(QIODevice::WriteOnly);
+                            coverFile.open(QIODevice::ReadOnly);
+                            QByteArray coverArray = coverFile.readAll();
 
-                                if(!coverFile.save(&buffer, "JPG")){
-                                    qDebug() << "Failed to save cover art to buffer";
-                                }
-                                else{
-                                    
-                                    QFile file("/Users/chids/Documents/programming/c++/cplayer_new/cplayer/cover.jpg");
-                                    file.open(QIODevice::WriteOnly);
-                                    file.write(coverArray);
-                                    file.close();
-
-                                    if(!coverArray.isNull()){
-                                        coverImgProvider->addCover(albumArtists, albumName, coverArray);
-                                    }
-                                }
-
-                                buffer.close();
-
-                                // if(!coverImgProvider->hasCover(albumArtists, albumName)){
-                                //     coverImgProvider->addCover(albumArtists, albumName, coverData);
-                                // }
+                            if(!coverArray.isNull()){
+                                coverImgProvider->addCover(albumArtists, albumName, coverArray);
                             }
+
+                            coverFile.close();
+                            // if (!coverFile.isNull()){
+                            //     // QByteArray coverArray;
+                            //     // QBuffer buffer(&coverArray);
+                            //     // buffer.open(QIODevice::WriteOnly);
+
+                            //     // if(!coverFile.save(&buffer, "JPG")){
+                            //     //     qDebug() << "Failed to save cover art to buffer";
+                            //     // }
+                            //     // else{
+                                    
+                            //     //     QFile file("/Users/chids/Documents/programming/c++/cplayer_new/cplayer/cover.jpg");
+                            //     //     file.open(QIODevice::WriteOnly);
+                            //     //     file.write(coverArray);
+                            //     //     file.close();
+
+                            //     //     if(!coverArray.isNull()){
+                            //     //         coverImgProvider->addCover(albumArtists, albumName, coverArray);
+                            //     //     }
+                            //     // }
+
+                            //     // buffer.close();
+
+                            //     // // if(!coverImgProvider->hasCover(albumArtists, albumName)){
+                            //     // //     coverImgProvider->addCover(albumArtists, albumName, coverData);
+                            //     // // }
+                            // }
                         }
                     }
 

@@ -5,6 +5,8 @@
 
 #include "globalsingleton.h"
 
+#include <pybind11/pybind11.h>
+
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
@@ -12,6 +14,8 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("cplayer");
 
     QSettings settings;
+
+    py::scoped_interpreter guard{};
 
     int fontId = QFontDatabase::addApplicationFont(":/resource/ui/fonts/Satoshi-Medium.otf");
 
