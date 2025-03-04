@@ -1,10 +1,13 @@
 #include "soundcloudmodel.h"
+#include "soundcloudsearchworker.h"
 
+#include <QThread>
+#include <pybind11/pybind11.h>
 
 SoundcloudModel::SoundcloudModel(QObject *parent)
     : QAbstractListModel{parent}
 {
-    wrapper = new SoundcloudWrapper(SC_LIB_PATH);
+    //wrapper = new SoundcloudWrapper(SC_LIB_PATH);
     dlProcess = new QProcess;
 }
 
@@ -88,14 +91,31 @@ QString SoundcloudModel::formatDuration(int64_t milliseconds) const
     return QString("%1:%2").arg(minutes).arg(seconds, 2, 10, QLatin1Char('0'));
 }
 
-void SoundcloudModel::newSearch(const QString &query)
-{
-    if(query.isEmpty()){
+void SoundcloudModel::newSearch(const QString &query) {
+    if (query.isEmpty()) {
         return;
     }
 
-    setResults(wrapper->search(query.toStdString(), 20));
+    QThread* searchThread = new QThread(this);
+    SoundcloudSearchWorker* worker = new SoundcloudSearchWorker(SC_LIB_PATH, query);
+    worker->moveToThread(searchThread);
 
+    connect(searchThread, &QThread::started, worker, &SoundcloudSearchWorker::performSearch);
+    connect(worker, &SoundcloudSearchWorker::searchCompleted, this, &SoundcloudModel::handleSearchResults);
+    connect(worker, &SoundcloudSearchWorker::searchCompleted, searchThread, &QThread::quit);
+    connect(worker, &SoundcloudSearchWorker::searchCompleted, worker, &QObject::deleteLater);
+    connect(searchThread, &QThread::finished, searchThread, &QObject::deleteLater);
+
+    searchThread->start();
+    //auto results = wrapper->search(query.toStdString(), 20);
+    //setResults(results);
+
+}
+
+void SoundcloudModel::handleSearchResults(const std::vector<SoundcloudItem>& results)
+{
+    qDebug() << "handling search results";
+    setResults(results);
 }
 
 void SoundcloudModel::download(int index)

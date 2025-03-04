@@ -16,6 +16,7 @@ int main(int argc, char *argv[])
     QSettings settings;
 
     py::scoped_interpreter guard{};
+    pybind11::gil_scoped_release release;
 
     int fontId = QFontDatabase::addApplicationFont(":/resource/ui/fonts/Satoshi-Medium.otf");
 

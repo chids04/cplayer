@@ -182,9 +182,10 @@ qt_add_qml_module(appcplayer
 
     cpp/downloaders/soundcloud.cpp
     cpp/downloaders/soundcloud.h
-
     cpp/downloaders/soundcloud/soundcloudmodel.h
     cpp/downloaders/soundcloud/soundcloudmodel.cpp
+    cpp/downloaders/soundcloud/soundcloudsearchworker.h
+
 
 )
 

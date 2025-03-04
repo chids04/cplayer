@@ -11,7 +11,6 @@
 #include <optional>
 #include <QUrl>
 #include <QObject>
-#include <QThread>
 
 namespace py = pybind11;
 
@@ -56,25 +55,4 @@ public:
     std::string getStreamUrl(const std::string& track_url);
 };
 
-class SoundcloudSearchWorker : public QObject
-{
-    Q_OBJECT
-public:
-    explicit SoundcloudSearchWorker(SoundcloudWrapper* wrapper, const QString& query, QObject* parent = nullptr)
-        : QObject(parent), m_wrapper(wrapper), m_query(query) {}
 
-signals:
-    void searchCompleted(const std::vector<SoundcloudItem>& results);
-
-public slots:
-    void performSearch() {
-        if (m_wrapper) {
-            auto results = m_wrapper->search(m_query.toStdString(), 20);
-            emit searchCompleted(results);
-        }
-    }
-
-private:
-    SoundcloudWrapper* m_wrapper;
-    QString m_query;
-};

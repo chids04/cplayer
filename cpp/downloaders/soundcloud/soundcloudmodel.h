@@ -35,17 +35,20 @@ public:
     void setResults(const std::vector<SoundcloudItem>& results);
     const SoundcloudItem& getItem(int index) const;
 
+
 public slots:
     void newSearch(const QString &query);
     void download(int index);
+    void handleSearchResults(const std::vector<SoundcloudItem>& results);
 
 private:
     std::vector<SoundcloudItem> m_results;
     QString formatDuration(int64_t milliseconds) const;
 
-    SoundcloudWrapper *wrapper;
     QString downloader = "scdl";
     QProcess *dlProcess;
+    QThread *searchThread;
+    SoundcloudWrapper *wrapper;
 
 };
 
