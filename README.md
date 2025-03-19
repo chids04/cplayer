@@ -2,7 +2,7 @@
 
 a simple, fast cross platform music player written with Qt (wip)
 
-##reqs
+## reqs
 1) Qt 6.8 [here](https://doc.qt.io/qt-6/qt-online-installation.html)
    - Make sure you select QMediaPlayer in the installer
 2) vcpkg [here](https://learn.microsoft.com/en-us/vcpkg/get_started/get-started?pivots=shell-bash)
