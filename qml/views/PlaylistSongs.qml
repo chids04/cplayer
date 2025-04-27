@@ -15,50 +15,39 @@ Item {
 
         Item{
             id: playlistInfo
-            Layout.preferredHeight: parent.height * 0.3
             Layout.fillWidth: true
             Layout.topMargin: 10
+            Layout.preferredHeight: childrenRect.height
 
             clip: true
 
-
-
-            RowLayout{
-                anchors.fill: parent
+            ColumnLayout{
                 spacing: 10
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                    top: parent.top
+                }
+
                 Image{
                     id: playlistCoverArt
-                    Layout.preferredHeight: parent.height - 10
-                    Layout.preferredWidth: parent.height - 10
-
+                    Layout.alignment: Qt.AlignHCenter
                     source: GlobalSingleton.playlistManager.hasCover ? "image://playlistCovers" + "/" + GlobalSingleton.playlistManager.playlistID : "qrc:/resource/ui/assets/unknownCover.png"
-                    sourceSize.width: parent.height - 10
-                    sourceSize.height: parent.height - 10
+                    sourceSize.width: 200
+                    sourceSize.height: 200
+                    asynchronous: true
                     cache: false
 
                 }
 
-                ColumnLayout{
-                    Layout.fillHeight: true
-
-
-                    Text{
-                        id: loadedPlaylistName
-                        color: "white"
-                        text: GlobalSingleton.playlistManager.playlistName
-                        font.bold: true
-                        font.pointSize: 40
-
-
-                    }
-
-                }
-
-                Rectangle{ //filler item
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    color: "transparent"
-                }
+                Text{
+                    id: loadedPlaylistName
+                    color: "white"
+                    text: GlobalSingleton.playlistManager.playlistName
+                    Layout.alignment: Qt.AlignHCenter
+                    font.bold: true
+                    font.pointSize: 40
+                } 
             }
         }
         RowLayout{
@@ -66,18 +55,17 @@ Item {
             CButton{
                 id: playPlaylistBtn
                 buttonText: "Play Playlist"
-
+                buttonTextSize: 10
                 onButtonClicked: {
                     GlobalSingleton.playbackManager.nowPlaying.playPlaylist(GlobalSingleton.playlistManager.currentPlaylist)
 
                 }
-
             }
 
             CButton{
                 id: queuePlaylistBtn
                 buttonText: "Queue Playlist"
-
+                buttonTextSize: 10
                 onButtonClicked: {
                     GlobalSingleton.playbackManager.nowPlaying.playPlaylist(GlobalSingleton.playlistManager.currentPlaylist, true)
                 }
@@ -89,7 +77,6 @@ Item {
             id: songList
             Layout.fillHeight: true
             Layout.fillWidth: true
-            Layout.topMargin: playPlaylistBtn.height
 
             color: "transparent"
             ListView {

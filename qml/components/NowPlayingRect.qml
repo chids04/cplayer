@@ -34,6 +34,7 @@ Rectangle {
     Rectangle{
         id: seperator
         height:1
+        color: "#6e7173"
         anchors {
             topMargin: 10
             top: nextUpText.bottom

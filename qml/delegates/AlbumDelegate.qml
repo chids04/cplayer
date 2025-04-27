@@ -67,8 +67,8 @@ Item {
         Image {
             id: albumImage
             source: "image://coverArt/" + albumCard.albumName + "/" + albumCard.albumArtists.join("++?")
-            sourceSize.width: 100
-            sourceSize.height: 100
+            sourceSize.width: 200
+            sourceSize.height: 200
 
             Layout.preferredHeight: albumCard.width - 80
             Layout.preferredWidth: albumCard.width - 80

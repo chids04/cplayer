@@ -86,9 +86,13 @@ void QueueModel::setQueue(QList<std::shared_ptr<QueueEntry> > queue_entries)
 
 std::shared_ptr<QueueEntry> QueueModel::popEntry(int index)
 {
-    beginRemoveRows(QModelIndex(), index, index);
-    auto removed_song = m_queue.takeAt(index);
-    endRemoveRows();
+    std::shared_ptr<QueueEntry> removed_song = nullptr;
+
+    if(index >= 0 && index < m_queue.size()){
+        beginRemoveRows(QModelIndex(), index, index);
+        removed_song = m_queue.takeAt(index);
+        endRemoveRows();
+    }
 
     return removed_song;
 }

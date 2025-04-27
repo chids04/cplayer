@@ -237,7 +237,6 @@ void FolderListModel::readFolders()
     settings.endGroup();
 
     QList<Folder> folders = settings.value("foldersToScan").value<QList<Folder>>();
-    qDebug() << folders[0].getFolderPath();
 
     for(const Folder &folder : folders){
         bool success = scanForChanges(folder);

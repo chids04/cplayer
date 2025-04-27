@@ -16,68 +16,67 @@ Item {
 
         Item{
             id: albumInfo
-            Layout.preferredHeight: parent.height * 0.3
             Layout.fillWidth: true
             Layout.topMargin: 10
+            Layout.preferredHeight: childrenRect.height
 
             clip: true
 
 
 
-            RowLayout{
-                anchors.fill: parent
+            ColumnLayout{
                 spacing: 10
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                    top: parent.top
+                }
+
                 Image{
                     id: albumCoverArt
-
+                    Layout.alignment: Qt.AlignHCenter
                     source: "image://coverArt/" + GlobalSingleton.songManager.albumName + "/" + GlobalSingleton.songManager.albumArtists.join("++?")
-                    sourceSize.width: 170
-                    sourceSize.height: 170
+                    sourceSize.width: 250
+                    sourceSize.height: 250
 
                 }
 
-                ColumnLayout{
-                    Layout.fillHeight: true
-
-
-                    Text{
-                        id: loadedAlbumName
-                        color: "white"
-                        text: GlobalSingleton.songManager.albumName
-                        Layout.fillWidth: true
-                        elide: Text.ElideRight
-                        font.bold: true
-                        font.pointSize: 40
-
-                    }
-
-                    Text{
-                        id: loadedAlbumArtists
-                        text: GlobalSingleton.songManager.albumArtists.join(", ")
-                        color:"white"
-                        font.pointSize: 20
-                    }
-
-                    Text{
-                        id: loadedAlbumGenre
-                        text: GlobalSingleton.songManager.albumGenre
-                        color: "white"
-                        font.pointSize: 10
-                    }
-
-                    Text{
-                        id: loadedAlbumYear
-                        text: GlobalSingleton.songManager.albumYear
-                        color: "white"
-                        font.pointSize: 10
-                    }
-                }
-
-                Rectangle{ //filler item
+                Text{
+                    id: loadedAlbumName
+                    color: "white"
+                    text: GlobalSingleton.songManager.albumName
+                    horizontalAlignment: Text.AlignHCenter
                     Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    color: "transparent"
+                    elide: Text.ElideRight
+                    font.bold: true
+                    font.pointSize: 32
+
                 }
+
+                Text{
+                    id: loadedAlbumArtists
+                    Layout.alignment: Qt.AlignHCenter
+                    text: GlobalSingleton.songManager.albumArtists.join(", ")
+                    color:"white"
+                    font.pointSize: 20
+                }
+
+                Text{
+                    id: loadedAlbumGenre
+                    Layout.alignment: Qt.AlignHCenter
+                    text: GlobalSingleton.songManager.albumGenre
+                    color: "white"
+                    font.pointSize: 10
+                }
+
+                Text{
+                    id: loadedAlbumYear
+                    Layout.alignment: Qt.AlignHCenter
+                    text: GlobalSingleton.songManager.albumYear
+                    color: "white"
+                    font.pointSize: 10
+                }
+
             }
         }
 
@@ -87,6 +86,8 @@ Item {
             CButton{
                 id: playAlbumBtn
                 buttonText: "Play Now"
+                buttonTextSize: 10
+                
 
                 onButtonClicked: {
                     GlobalSingleton.playbackManager.nowPlaying.playAlbum(GlobalSingleton.songManager.albumName, GlobalSingleton.songManager.albumArtists, false);
@@ -97,6 +98,7 @@ Item {
             CButton{
                 id: queueAlbumBtn
                 buttonText: "Add to Queue"
+                buttonTextSize: 10
 
                 onButtonClicked: {
                     GlobalSingleton.playbackManager.nowPlaying.playAlbum(GlobalSingleton.songManager.albumName, GlobalSingleton.songManager.albumArtists, true);

@@ -110,16 +110,21 @@ void NowPlaying::loadFromSettings()
             emit songLoaded(playingSong->song);
             emit positionLoaded(position);
         }
-        else{
+        else if(m_queueModel->getLen() > 0) {
             //just get first item in queue
             playingSong = m_queueModel->popEntry(0);
-            emit songLoaded(playingSong->song);
+
+            if(playingSong != nullptr){
+                emit songLoaded(playingSong->song);
+            }
         }
     }
     else if(queue_entries.isEmpty() && playingSong != nullptr){
         emit positionLoaded(position);
         emit songLoaded(playingSong->song);
     }
+
+    qDebug() << "loaded now playing from settings";
 }
 
 void NowPlaying::setModels(SongManager *songManager)
@@ -177,7 +182,9 @@ void NowPlaying::playAlbum(const QString &albumName, const QStringList &albumArt
         }
 
         playingSong = m_queueModel->popEntry(0);
-        emit playSong(playingSong->song);
+        if(playingSong != nullptr){
+            emit playSong(playingSong->song);
+        }
     }
 
 
@@ -213,7 +220,10 @@ void NowPlaying::playPlaylist(const Playlist &playlist, bool queue)
         }
 
         playingSong = m_queueModel->popEntry(0);
-        emit playSong(playingSong->song);
+
+        if(playingSong != nullptr){
+            emit playSong(playingSong->song);
+        }
     }
 
 }
@@ -245,7 +255,10 @@ void NowPlaying::onNextClicked()
                 }
 
                 playingSong = m_queueModel->popEntry(0);
-                emit playSong(playingSong->song);
+
+                if(playingSong != nullptr){
+                    emit playSong(playingSong->song);
+                }
             }
         }
 
@@ -265,7 +278,10 @@ void NowPlaying::onNextClicked()
         }
 
         playingSong = m_queueModel->popEntry(0);
-        emit playSong(playingSong->song);
+
+        if(playingSong != nullptr){
+            emit playSong(playingSong->song);
+        }
     }
 }
 
@@ -284,8 +300,11 @@ void NowPlaying::playNow(Song* song)
 
     m_queueModel->insertAtIndex(0, song);
     playingSong = m_queueModel->popEntry(0);
-    emit playSong(playingSong->song);
-    m_playedSongs.push_back(playingSong);
+
+    if(playingSong != nullptr){
+        emit playSong(playingSong->song);
+        m_playedSongs.push_back(playingSong);
+    }
 }
 
 void NowPlaying::moveSong(int from, int to)
@@ -322,7 +341,10 @@ void NowPlaying::onCheckQueue()
     }
     else{
         playingSong = m_queueModel->popEntry(0);
-        emit playSong(playingSong->song);
+
+        if(playingSong != nullptr){
+            emit playSong(playingSong->song);
+        }
     }
 }
 
