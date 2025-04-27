@@ -2,26 +2,19 @@
 
 a simple, fast cross platform music player written with Qt (wip)
 
+## reqs
+1) Qt 6.8 [here](https://doc.qt.io/qt-6/qt-online-installation.html)
+   - Make sure you select QMediaPlayer in the installer
+2) vcpkg [here](https://learn.microsoft.com/en-us/vcpkg/get_started/get-started?pivots=shell-bash)
+   - May want to add it to your path
+3) cmake
+
 ## build
 1) Install Qt 6.8 from [here](https://doc.qt.io/qt-6/qt-online-installation.html)
 2) clone into this repo
 3) run `git submodule --init` to fetch all submodules
+4) build with cmake in ur fav ide or from command line
 
-### windows
-  1. use MSVC compiler kit in qt creator
-  2. build [taglib](https://github.com/taglib/taglib/blob/master/INSTALL.md#build-options)
-     - follow the MSVC build and install instructions, including the installtion of vcpkg, zlib and utf8cpp
-     - makes sure `-DENABLE_STATIC_RUNTIME=ON` `-DBUILD_SHARED_LIBS=OFF` are added to the cmake build command
-  3. ammend the line `set(TagLib_DIR "C:\\pkg_static\\lib\\cmake\\taglib")` in CMakeLists.txt to match directoy of where you installed taglib
-
-### mac
-1. install [homebrew](https://brew.sh/)
-2. install zlib and utf8cpp `brew install zlib utf8cpp`
-3. install taglib `brew install taglib --HEAD`
-4. make sure homebrew is added to your path variable!
-
-### linux
-not tested on linux yet but if taglib is not in your fav package manager, you may need to [build from source](https://github.com/taglib/taglib/blob/master/INSTALL.md)
 
 ## screenshots
 ui is bad i know, will do a full redesign
