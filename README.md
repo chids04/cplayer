@@ -18,9 +18,10 @@ a simple, fast cross platform music player written with Qt (wip)
 
 ## screenshots
 ui is bad i know, will do a full redesign
-![image](https://github.com/user-attachments/assets/df0ef2a6-75e6-4c5e-841d-2faaabc3364f)
-![image](https://github.com/user-attachments/assets/886f402f-c569-4b21-8312-1a42755db632)
-![image](https://github.com/user-attachments/assets/123d7c0c-7aad-418d-9b8c-f5499338694d)
+![image](https://github.com/user-attachments/assets/a8593829-45e0-448a-8c64-5895f32b35e6)
+![image](https://github.com/user-attachments/assets/8b259440-c43f-47b4-9ca9-df4736e60884)
+![image](https://github.com/user-attachments/assets/1e139440-9f5c-4741-9c16-b8dd40bef1b9)
+
 
 ### todo
 - save song edits to song file metadata (using tagwriter from taglib)
