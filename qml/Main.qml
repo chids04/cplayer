@@ -11,8 +11,6 @@ ApplicationWindow {
     id: window
     width: 1280
     height: 720
-    minimumWidth: 1024
-    minimumHeight: 576
     visible: true
     title: qsTr("c")
 

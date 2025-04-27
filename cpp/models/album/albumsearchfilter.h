@@ -24,15 +24,11 @@ protected:
     bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
 
 private:
-    // Returns a normalized version of the string (lowercase, de-accented)
     QString normalizeString(const QString &string) const;
 
-    // Computes an overall fuzzy matching score for the album.
-    // Tokens from the filter string are compared against the album name and album artists.
-    // The album artist score is weighted more heavily.
     double computeMatchScore(const QStringList &tokens,
-                             const QString &albumName,
-                             const QStringList &albumArtists) const;
+        const QString &albumName,
+        const QStringList &albumArtists) const;
 
 signals:
     void filterStringChanged();

@@ -7,7 +7,7 @@ import QtQuick.Controls.Basic
 import cplayer
 
 Popup {
-    id: DlPopup
+    id: dlPopup
     modal: true
     focus: true
     padding: 20
@@ -20,14 +20,14 @@ Popup {
                 ParallelAnimation {
                     id: popIn
                     PropertyAnimation {
-                        target: DlPopup
+                        target: dlPopup
                         property: "scale"
                         from: 0.9
                         to: 1
                         duration: 50
                     }
                     PropertyAnimation {
-                        target: DlPopup
+                        target: dlPopup
                         property: "opacity"
                         from: 0.9
                         to: 1
@@ -39,14 +39,14 @@ Popup {
                 ParallelAnimation {
                     id: popOut
                     PropertyAnimation {
-                        target: DlPopup
+                        target: dlPopup
                         property: "scale"
                         from: 1
                         to: 0.9
                         duration: 50
                     }
                     PropertyAnimation {
-                        target: DlPopup
+                        target: dlPopup
                         property: "opacity"
                         from: 1
                         to: 0.9
@@ -143,7 +143,7 @@ Popup {
 
                             CButton{
                                 buttonText: "download"
-                                onButtonClicked: GlobalSingleton.downloadManager.scModel.download(index);
+                                onButtonClicked: GlobalSingleton.downloadManager.scModel.download(scSearchDelegate.index);
                             }
 
                             CButton{

@@ -9,7 +9,7 @@ import cplayer
 import "../components"
 
 Item {
-
+    id: view
     ColumnLayout{
         anchors.fill: parent
         spacing: 0

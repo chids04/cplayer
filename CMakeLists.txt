@@ -30,7 +30,6 @@ qt_add_executable(appcplayer
 qt_add_qml_module(appcplayer
     URI cplayer
     VERSION 1.0
-    NO_CACHEGEN
     QML_FILES
         qml/Main.qml
 
