@@ -12,9 +12,21 @@ FolderListModel::FolderListModel(FolderManager *folderManager, QObject *parent) 
 
 void FolderListModel::addFolder(const Folder &folder)
 {
+    QString path = QDir(folder.getFolderPath()).canonicalPath();
+    
+    //check if folder alr exists for scanning
+    //so we dont add folder twice but we add to filesystem watcher
+    for (const Folder &f : m_folders) {
+        QString topPath = QDir(f.getFolderPath()).canonicalPath();
+
+        qDebug() << topPath << path;
+        if (path.startsWith(topPath)){
+            folderManager->addToWatcher(folder.getFolderPath());
+            return;
+        }
+    }
     folderManager->addToWatcher(folder.getFolderPath());
     QString folderPath = folder.getFolderPath();
-    qDebug() << folderPath;
 
     QDir dir(folderPath);
     QStringList dirList = dir.entryList(QDir::Files | QDir::NoDotAndDotDot | QDir::Readable);
@@ -103,8 +115,7 @@ bool FolderListModel::folderExists(const QUrl &folderPath)
     return false;
 }
 
-
-void FolderListModel::scanForChanges(Folder folder)
+bool FolderListModel::scanForChanges(const Folder &folder)
 {
     //on startup, check if songs present on last file save or still present now
 
@@ -113,15 +124,17 @@ void FolderListModel::scanForChanges(Folder folder)
 
 
     QDir dir(folderPath);
+    if (!dir.exists()) {
+        qWarning() << "Directory does not exist:" << folderPath;
+        return false;
+    }
     QStringList dirList = dir.entryList(QDir::Files | QDir::NoDotAndDotDot | QDir::Readable);
 
 
-    qDebug() << "scanning folder" << folder.getFolderPath() << "for any new songs";
     
     QHash<QString, QStringList> folderFileMap = folderManager->getFolderFileMap();
 
     QStringList prevDirList = folderFileMap.value(folderPath);
-    qDebug() <<  "\nprev dir list" << prevDirList;
     QStringList newFiles;
 
     for(const QString &file : dirList){
@@ -155,8 +168,8 @@ void FolderListModel::scanForChanges(Folder folder)
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     m_folders << folder;
     endInsertRows();
-    
-    folderManager->addToWatcher(folder.getFolderPath());
+
+    return true;
 }
 
 void FolderListModel::saveFolders()
@@ -182,7 +195,6 @@ void FolderListModel::saveFolders()
 
         QString fileListString = files.join("%10");
         QString key = QString::number(qHash(folderPath));
-        qDebug() << "writing folder" << folderPath << "to file";
 
         //keys in qsettings cannot contain forward or backslahes so will store hash
 
@@ -209,12 +221,10 @@ void FolderListModel::readFolders()
     // Iterate through all keys (folder paths) in the settings group
     QStringList folderHashes = settings.childKeys();
 
-    qDebug() << "folder file map keys" << folderHashes;
 
     for (const QString &folderHash : folderHashes) {
         QString folderPath = settings.value(folderHash + "_path").toString();
         QString fileListString = settings.value(folderHash).toString();
-
         // Split the stored string back into a list of files
         QStringList files = fileListString.split("%10", Qt::SkipEmptyParts);
 
@@ -227,10 +237,29 @@ void FolderListModel::readFolders()
     settings.endGroup();
 
     QList<Folder> folders = settings.value("foldersToScan").value<QList<Folder>>();
+    qDebug() << folders[0].getFolderPath();
 
     for(const Folder &folder : folders){
-        scanForChanges(folder);
+        bool success = scanForChanges(folder);
+
+        if(success){
+            QDir parentDir(folder.getFolderPath());
+            QStringList subfolders = parentDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+
+            for (const QString &subfolder : subfolders) {
+                QDir subDir(parentDir.filePath(subfolder));
+                // Check if the subfolder contains any files (excluding subdirs)
+                QStringList files = subDir.entryList(QDir::Files | QDir::NoDotAndDotDot);
+                if (!files.isEmpty()) {
+                    QString absPath = subDir.absolutePath();
+                    folderManager->addToWatcher(absPath);
+                    qDebug() << "added"  << absPath << "to watcher";
+                }
+            }
+        }
+        
     }
+
 }
 
 

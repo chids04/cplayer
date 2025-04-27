@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.30)
 
 project(cplayer VERSION 0.1 LANGUAGES CXX)
 
@@ -6,15 +6,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
 set(PYBIND11_FINDPYTHON ON)
 set(SC_LIB_PATH "${CMAKE_SOURCE_DIR}/extern/sc-lib-fork")
+set(PY_LIB_PATH "${CMAKE_SOURCE_DIR}/extern/python-libs") 
 
 
 include("$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
 
 find_package(Qt6 6.8 REQUIRED COMPONENTS Multimedia Quick Widgets Core)
-find_package(TagLib)
+find_package(TagLib REQUIRED)
 find_package(Python 3.13.2 COMPONENTS Interpreter Development REQUIRED)
 
-add_subdirectory(3rdparty/RapidFuzz)
+add_subdirectory(extern/RapidFuzz)
 add_subdirectory(extern/pybind11)
 
 qt_standard_project_setup()
@@ -22,15 +23,16 @@ qt_policy(SET QTP0001 NEW)
 qt_policy(SET QTP0004 NEW)
 
 qt_add_executable(appcplayer
-    main.cpp
+    cpp/main.cpp
     resources.qrc
 )
 
 qt_add_qml_module(appcplayer
     URI cplayer
     VERSION 1.0
+    NO_CACHEGEN
     QML_FILES
-        Main.qml
+        qml/Main.qml
 
     #QML Views
     QML_FILES
@@ -68,6 +70,8 @@ qt_add_qml_module(appcplayer
 		qml/components/EditPlaylist.qml
 		qml/components/EditSong.qml
         qml/components/loading/RectangleLoader.qml
+		qml/components/DlPopup.qml
+		qml/components/AlbumInfo.qml
 
 
 
@@ -180,48 +184,41 @@ qt_add_qml_module(appcplayer
     #downloaders
     SOURCES
 
-    cpp/downloaders/soundcloud.cpp
-    cpp/downloaders/soundcloud.h
+    cpp/downloaders/soundcloud/soundcloud.cpp
+    cpp/downloaders/soundcloud/soundcloud.h
     cpp/downloaders/soundcloud/soundcloudmodel.h
     cpp/downloaders/soundcloud/soundcloudmodel.cpp
     cpp/downloaders/soundcloud/soundcloudsearchworker.h
+	cpp/downloaders/soundcloud/scplaylist.h
+	cpp/downloaders/soundcloud/scplaylist.cpp
 
 
-)
-
-
-# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
-# If you are developing for iOS or macOS you should consider setting an
-# explicit, fixed bundle identifier manually though.
-set_target_properties(appcplayer PROPERTIES
-#    MACOSX_BUNDLE_GUI_IDENTIFIER com.example.appcplayer
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-    MACOSX_BUNDLE TRUE
-    WIN32_EXECUTABLE TRUE
-)
-
-
-#link_directories(appcplayer PRIVATE ${TAGLIB_INSTALL_DIR}/lib)
-target_compile_definitions(appcplayer PRIVATE
-    SC_LIB_PATH="${SC_LIB_PATH}"
-    TAGLIB_STATIC
 )
 if(WIN32)
+    add_custom_target(kill_appcplayer
+        COMMAND taskkill /IM appcplayer.exe /F || exit 0
+        COMMENT "Killing previous instance of appcplayer.exe"
+    )
+else()  # Linux/macOS
+    add_custom_target(kill_appcplayer
+        COMMAND killall -9 appcplayer || true
+        COMMENT "Killing previous instance of appcplayer"
+    )
+endif()
 
-    #target_compile_definitions(appcplayer PRIVATE TAGLIB_STATIC)
-    target_link_libraries(appcplayer
+add_dependencies(appcplayer kill_appcplayer)
+
+
+target_compile_definitions(appcplayer PRIVATE
+    SC_LIB_PATH="${SC_LIB_PATH}"
+	PY_LIB_PATH="${PY_LIB_PATH}"
+    TAGLIB_STATIC
+)
+
+target_link_libraries(appcplayer
         PRIVATE Qt6::Quick Qt6::Multimedia Qt6::Widgets Qt6::Core
         rapidfuzz::rapidfuzz TagLib::tag pybind11::embed
     )
-
-elseif(UNIX)
-    target_link_libraries(appcplayer
-        PRIVATE Qt6::Quick Qt6::Multimedia Qt6::Widgets Qt6::Core TagLib::tag
-        rapidfuzz::rapidfuzz
-    )
-
-endif()
 
 target_include_directories(appcplayer PRIVATE
 		${CMAKE_CURRENT_SOURCE_DIR}/cpp

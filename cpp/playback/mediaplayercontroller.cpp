@@ -60,7 +60,6 @@ void MediaPlayerController::onMediaStatusChanged(QMediaPlayer::MediaStatus statu
 
         case QMediaPlayer::LoadedMedia:
             //only set position if this is the first song that has been loaded
-            qDebug() << "setting pos";
             if(firstSong){
                 player->setPosition(posFromFile);
                 firstSong = false;
@@ -221,10 +220,6 @@ void MediaPlayerController::onSongLoaded(Song* song)
 
     player->setSource(QUrl::fromLocalFile(song->m_filePath));
 
-    qDebug() << "setting position to " << posFromFile;
-
-    qDebug() << "player is at position" << player->position();
-
     setTrackTitle(song->m_title);
     setLeadingArtist(song->m_artist);
     setFilePath(song->m_filePath);
@@ -258,7 +253,6 @@ void MediaPlayerController::onPositionLoaded(qint64 position)
 
 void MediaPlayerController::onRemoveCurrentPlaying(const QString &filePath)
 {
-    qDebug() << "removing from mediaPlayerController";
     if(filePath == m_filePath){
         player->setSource(QUrl());
 

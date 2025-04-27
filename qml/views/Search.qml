@@ -9,12 +9,27 @@ import cplayer
 Item {
 
     RectangleLoader{
-
+        id: loadIcon
         anchors.centerIn: parent
         barCount: 5
         width: 60
         height: 60
         color: "#343434"
+        visible: false
+    }
+
+    Connections{
+        target: GlobalSingleton.downloadManager.scModel
+
+        function onSearchStart(){
+            searchResults.opacity = 0
+            loadIcon.visible = true
+        }
+
+        function onSearchEnd(){
+            searchResults.opacity = 1
+            loadIcon.visible = false
+        }
     }
 
     ColumnLayout{
@@ -28,7 +43,7 @@ Item {
             Layout.preferredHeight: 40
             Layout.rightMargin: 10
             placeholderText: "search for a song.."
-            placeholderTextColor: "darkgrey"
+            placeholderTextColor: "white"
             color: "white"
 
 
@@ -55,6 +70,13 @@ Item {
             clip: true
 
             spacing: 5
+
+            Behavior on opacity{
+                NumberAnimation{
+                    duration: 300
+                    easing.type: Easing.InOutQuad
+                }
+            }
 
             model: GlobalSingleton.downloadManager.scModel
 

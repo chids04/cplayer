@@ -28,12 +28,9 @@ Popup{
         id: audioDevices
         width: 200
         height: 100
-        //x: volumeStatus.x-100
-        //y: -100
-        //visible: false
 
-        color: "#303132"
-        border.color: "#6e7173"
+        color: "#202020"
+        border.color: "#424345"
         border.width: 2
         radius: 5
 
@@ -42,23 +39,23 @@ Popup{
             anchors.top: parent.top
             anchors.topMargin: 5
             anchors.horizontalCenter: parent.horizontalCenter
-            text: "Select Audio Device"
+            text: "outputs"
             font.bold: true
-            font.pointSize: 16
+            font.pointSize: 14
             color: "white"
         }
 
         Rectangle{
             id: seperator
             height: 1
-            border.color: "white"
+            border.color: "grey"
             border.width: 1
             anchors.top: selectAudioText.bottom
             anchors.left: parent.left
             anchors.right: parent.right
 
-            anchors.topMargin: 5
-            anchors.bottomMargin: 5
+            anchors.topMargin: 10
+            anchors.bottomMargin: 10
             anchors.leftMargin: 10
             anchors.rightMargin: 10
         }
@@ -71,7 +68,7 @@ Popup{
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.leftMargin: 5
-            anchors.topMargin: 5
+            anchors.topMargin: 10
 
             model: GlobalSingleton.playbackManager.mediaPlayer.audioDeviceModel
             clip: true
@@ -90,7 +87,7 @@ Popup{
 
                 background: Rectangle {
                     implicitWidth: 10
-                    color: "#7a7a7a"
+                    color: "grey"
                     radius: 3
                 }
             }
@@ -99,19 +96,21 @@ Popup{
                 id: deviceDelegate
                 width: audioDeviceList.width - 14
                 height: 40
+                radius: 5
 
                 required property string deviceName
                 required property int index
                 required property bool isSelected
 
-                color: isSelected ? "#6e7173" : "transparent"
+                color: isSelected ? "#343434" : "transparent"
 
                 Text{
                     text: deviceDelegate.deviceName
                     color: "white"
                     width: deviceDelegate.width
                     elide: Text.ElideRight
-                    anchors.leftMargin: 4
+                    horizontalAlignment: Text.AlignHCenter
+                    font.pointSize: 10
                     anchors.verticalCenter: parent.verticalCenter
                 }
 

@@ -52,6 +52,7 @@ signals:
     void removeCurrentPlaying(const QString &path);
     void removeFromNowPlaying(int songID);
     void updateAlbum(Song*);
+    void refreshProxy();
 
 
 public slots:

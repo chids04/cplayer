@@ -38,6 +38,7 @@ void FolderManager::startFolderScanningThread(const QUrl &filePath, bool firstSc
 
 void FolderManager::onScanningFinished(const QString &folderName, const QString &folderPath, int songCount) {
     QUrl folderURL = QUrl::fromLocalFile(folderPath);
+
     if (m_folderListModel->folderExists(folderURL)) {
         return;
     }
@@ -58,53 +59,47 @@ void FolderManager::removeFolder(int index, const QString &folderPath) {
 }
 
 void FolderManager::onFileChanged(const QString &path) {
-    // for now assume that all changes mean just remove from library
-    songListModel->removeSong(path);
-
-    // create error popup that can show system notifs
+    qDebug() << path;
 }
 
 void FolderManager::onDirectoryChanged(const QString &path) {
-    // for now, it deletes on ANY modification, will change to allow renames
-    // make sure we are not currently scanning for music in the music scanner
-    // thread may modify this so that the whole code runs in a diff thread
-    qDebug() << "detected changes in dir" << path;
+    //need to rework this, good for now
+    //may move to queue based approach but i believe qt signal slots are already queued
+    //since the slot to this function is in a different thread
+    qDebug() << path;
 
-    if (!workerThread.isRunning()) {
-        qDebug() << "hello";
-        QDir directory(path);
-        QStringList updatedDir = directory.entryList(
-            QDir::Files | QDir::NoDotAndDotDot | QDir::Readable);
+    QDir directory(path);
+    QStringList updatedDir = directory.entryList(
+        QDir::Files | QDir::NoDotAndDotDot | QDir::Readable);
 
-        QStringList existingFiles = getFilesInFolder(path);
-        QStringList newFiles;
+    QStringList existingFiles = getFilesInFolder(path);
+    QStringList newFiles;
 
-        for (const QString &file : updatedDir) {
-            if (!existingFiles.contains(file)) {
-                newFiles.append(file);
-            }
-        }
-
-        if (!newFiles.isEmpty()) {
-            // start new scanning thread here
-            for (int i = 0; i < newFiles.size(); ++i) {
-                QString fullPath = directory.filePath(newFiles[i]);
-                // run in seperate thread
-                emit scanFile(fullPath);
-            }
-
-            addFilesToFolder(path, newFiles);
-        }
-
-        for (const QString &file : existingFiles) {
-            if (!updatedDir.contains(file)) {
-                qDebug() << "removing song at" << file;
-                removeFilesFromFolder(path, file);
-                QString fullPath = directory.filePath(file);
-                songListModel->removeSong(fullPath);
-            }
+    for (const QString &file : updatedDir) {
+        if (!existingFiles.contains(file)) {
+            newFiles.append(file);
         }
     }
+
+    if (!newFiles.isEmpty()) {
+        // start new scanning thread here
+        for (int i = 0; i < newFiles.size(); ++i) {
+            QString fullPath = directory.filePath(newFiles[i]);
+            // run in seperate thread
+            emit scanFile(fullPath);
+        }
+
+        addFilesToFolder(path, newFiles);
+    }
+
+    for (const QString &file : existingFiles) {
+        if (!updatedDir.contains(file)) {
+            removeFilesFromFolder(path, file);
+            QString fullPath = directory.filePath(file);
+            songListModel->removeSong(fullPath);
+        }
+    }
+    
 }
 
 void FolderManager::onSaveID(int id)
@@ -178,15 +173,11 @@ void FolderManager::removeFilesFromFolder(const QString &folderPath,
 void FolderManager::removeFolderFromMap(const QString &folderPath) {
     QString path = folderPath;
 
-    qDebug() << folderDirHash;
 
     if (folderDirHash.contains(path)) {
-        qDebug() << "removing" << path;
         folderDirHash.remove(path);
     }
 
-    qDebug() << folderPath;
-    qDebug() << folderDirHash;
 
     m_folderListModel->saveFolders();
 }

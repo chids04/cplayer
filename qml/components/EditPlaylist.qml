@@ -29,8 +29,6 @@ Popup {
         popUp.playlistName = name
         popUp.hasCover = hasCover
 
-        console.log(popUp.playlistID)
-        console.log(popUp.hasCover)
         popUp.open()
 
     }

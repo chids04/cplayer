@@ -17,8 +17,14 @@ public:
     SoundcloudModel *scModel() const;
     void setScModel(SoundcloudModel *newScModel);
 
+public slots:
+    void onShowMsg(const QString &msg);
+
 signals:
     void scModelChanged();
+    void showMsg(const QString &msg);
+    void scanForMusic(const QUrl &path);
+
 private:
     SoundcloudModel *m_scModel = nullptr;
 };

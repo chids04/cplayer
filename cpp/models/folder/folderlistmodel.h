@@ -36,7 +36,7 @@ public:
     bool folderExists(const QUrl &folderPath);
     void saveFolders();
     void readFolders();
-    void scanForChanges(Folder folder);
+    bool scanForChanges(const Folder &folder);
 
 public slots:
 

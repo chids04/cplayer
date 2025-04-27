@@ -55,6 +55,8 @@ public:
 
 private:
     QHash<CoverArtKey, QByteArray> coverArts;
+
+
 };
 
 #endif // COVERIMGPROVIDER_H

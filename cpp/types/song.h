@@ -46,8 +46,10 @@ public:
          const QStringList &featuringArtists, const QStringList &albumArtists, int year, int length, int trackNum, int id,
          QObject *parent = nullptr);
 
+    void updateFile(const QString &cover_path);
     SongData toSongData() const;       // Convert Song to SongData
     void fromSongData(const SongData &data); // Populate Song from SongData
+
 signals:
     void filePathChanged();
     void titleChanged();

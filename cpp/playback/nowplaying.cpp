@@ -281,9 +281,9 @@ void NowPlaying::addToQueue(Song* song)
 
 void NowPlaying::playNow(Song* song)
 {
+
     m_queueModel->insertAtIndex(0, song);
     playingSong = m_queueModel->popEntry(0);
-    qDebug() << "playing song" << playingSong->song->m_title;
     emit playSong(playingSong->song);
     m_playedSongs.push_back(playingSong);
 }
@@ -300,7 +300,6 @@ void NowPlaying::clearQueue()
 
 void NowPlaying::onRemoveFromNowPlaying(int songID)
 {
-    qDebug() << "removing" << songID << "from nowplaying";
     for(int i=0; i<m_playedSongs.size(); ++i) {
         if(m_playedSongs[i]->songID == songID){
             m_playedSongs.removeAt(i);

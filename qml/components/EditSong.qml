@@ -5,16 +5,19 @@ import QtQuick.Layouts
 import Qt.labs.platform
 import QtQuick.Controls.Basic
 
-import cplayer
-import "../components"
+
 Popup {
     id: popUp
-    width: 650
-    height: 500
+    //width: 660
+    //height: 500
     modal: true
     focus: true
     dim: true
-    anchors.centerIn: Overlay.overlay
+    parent: Overlay.overlay
+    padding: 8
+
+    x: Math.round((parent.width - implicitWidth) / 2)
+    y: Math.round((parent.height - implicitHeight) / 2) - 10
 
     property string songTitle
     property string songAlbum
@@ -86,22 +89,25 @@ Popup {
             }
         }
     }
-    // Pop-up content
+
     background: Rectangle {
         id: popUpDelegate
         anchors.fill: parent
         color: "#202020"
+        radius: 5
 
         border.color: "#424345"
         border.width: 5
     }
 
     contentItem: Item{
-        width: popUp.width
-        height: popUp.height
+        //width: popUp.width
+        //height: popUp.height-40
+
+        implicitWidth: 700
+        implicitHeight: childrenRect.height
         ColumnLayout{
             anchors.fill: parent
-
 
             RowLayout{
                 Layout.fillWidth: true
@@ -116,6 +122,28 @@ Popup {
                 CButton{
                     buttonText: "select Image"
                     onButtonClicked: imageFileDialog.open()
+                    buttonTextSize: 10
+                }
+
+                CButton{
+                    buttonText: "import details from album"
+                    onButtonClicked: albumInfo.openPopup()
+                    buttonTextSize: 10
+
+                }
+
+                AlbumInfo{
+                    id: albumInfo
+
+                    onAlbumSelected: (album) => {
+                        genreText.text = album.genre
+                        albumText.text = album.name
+                        yearText.text = album.year
+                        songImg.source = "image://coverArt/" + album.name + "/" + album.artist.join('%')
+
+                        GlobalSingleton.songManager.setAlbumArtistsToEdit(album.artist)
+
+                    }
                 }
             }
 
@@ -137,7 +165,7 @@ Popup {
                     text: popUp.songTrackNum
                     color: "white"
                     validator: IntValidator { bottom:0 }
-                    horizontalAlignment: TextInput.AlignHCenter
+                    horizontalAlignment: TextField.AlignHCenter
                     Layout.preferredWidth: trackNumTextmetric.width + 20
                     background: Rectangle{
                         border.color: "#343434"
@@ -456,8 +484,8 @@ Popup {
                 Layout.alignment: Qt.AlignRight
 
                 onButtonClicked: {
-                    GlobalSingleton.songManager.saveChanges(popUp.songObj, titleText.text, leadingArtistText.text, albumText.text,
-                                                            genreText.text, parseInt(yearText.text), parseInt(trackNumText.text), popUp.hasCover)
+                    GlobalSingleton.songManager.saveChanges(popUp.songObj, titleText.text.trim(), leadingArtistText.text.trim(), albumText.text.trim(),
+                                                            genreText.text.trim(), parseInt(yearText.text.trim()), parseInt(trackNumText.text.trim()), songImg.source)
 
                     popUp.close()
                 }
@@ -466,7 +494,7 @@ Popup {
 
         FileDialog{
             id: imageFileDialog
-            title: "Select Playlist Cover Image"
+            title: "select song cover img"
             nameFilters: ["Image files (*.png *.jpg *.jpeg *.bmp)"]
 
             onAccepted: {

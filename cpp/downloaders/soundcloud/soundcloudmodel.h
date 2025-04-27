@@ -22,7 +22,8 @@ public:
         ArtworkUrlRole,
         DurationRole,
         DownloadableRole,
-        TrackCountRole
+        TrackCountRole,
+        PlaylistSongsRole,
     };
     explicit SoundcloudModel(QObject *parent = nullptr);
 
@@ -35,11 +36,20 @@ public:
     void setResults(const std::vector<SoundcloudItem>& results);
     const SoundcloudItem& getItem(int index) const;
 
+signals:
+    void searchStart();
+    void searchEnd();
+    void showMsg(const QString &msg);
+    void downloadFailed();
+    void scanForMusic(const QUrl &folderPath);
 
 public slots:
     void newSearch(const QString &query);
     void download(int index);
     void handleSearchResults(const std::vector<SoundcloudItem>& results);
+
+private slots:
+    void onSongDlFinished(int exitCode, QProcess::ExitStatus exitStatus = QProcess::NormalExit);
 
 private:
     std::vector<SoundcloudItem> m_results;
@@ -49,6 +59,10 @@ private:
     QProcess *dlProcess;
     QThread *searchThread;
     SoundcloudWrapper *wrapper;
+    QString dlPath = R"(C:\Users\c\Music\scdl\)";
+    int currentDlIdx = -1;
+
+    
 
 };
 

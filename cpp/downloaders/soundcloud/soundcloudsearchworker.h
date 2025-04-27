@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <pybind11/pybind11.h>
 
+
 class SoundcloudSearchWorker : public QObject
 {
     Q_OBJECT
@@ -26,7 +27,6 @@ public slots:
         try {
             SoundcloudWrapper wrapper(m_repo_path);
             auto results = wrapper.search(m_query.toStdString(), 20);
-            qDebug() << "finished search";
             emit searchCompleted(results);
         } catch (const std::exception &ex) {
             qDebug() << "Error in performSearch: " << ex.what();

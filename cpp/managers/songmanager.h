@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QStringListModel>
+#include "coverimgprovider.h"
 #include "songlistmodel.h"
 #include "playlistmanager.h"
 #include "playbackmanager.h"
@@ -19,7 +20,7 @@ class SongManager : public QObject
     Q_PROPERTY(AlbumFilterProxyModel *albumSongsModel READ albumSongsModel WRITE setAlbumSongsModel NOTIFY albumSongsModelChanged)
     Q_PROPERTY(AlbumSearchFilter *albumSearchModel READ albumSearchModel WRITE setAlbumSearchModel NOTIFY albumSearchModelChanged)
 
-    Q_PROPERTY(Album currentAlbum READ currentAlbum WRITE setCurrentAlbum NOTIFY currentAlbumChanged)
+    Q_PROPERTY(Album* currentAlbum READ currentAlbum WRITE setCurrentAlbum NOTIFY currentAlbumChanged)
     //store album info here for now, will change to where each page has its own class
     //which i can access thru view controller, cus i also need to implement go forward and back
     Q_PROPERTY(QString albumName READ albumName WRITE setAlbumName NOTIFY albumNameChanged)
@@ -36,7 +37,7 @@ class SongManager : public QObject
 public:
     SongManager(PlaybackManager *playbackManager, QObject *parent=nullptr);
 
-    void initPlaylists(PlaylistManager *playlistManager);
+    void init(PlaylistManager *playlistManager, CoverImgProvider *coverImgProvider);
     void loadFromSettings();
     void saveToSettings();
 
@@ -49,8 +50,8 @@ public:
     AlbumSearchFilter *albumSearchModel() const;
     void setAlbumSearchModel(AlbumSearchFilter *newAlbumSearchModel);
 
-    Album currentAlbum() const;
-    void setCurrentAlbum(const Album &newCurrentAlbum);
+    Album* currentAlbum() const;
+    void setCurrentAlbum(Album *newCurrentAlbum);
 
 
     SongListModel *getSongListModel() const;
@@ -76,7 +77,7 @@ public:
     void setAlbumArtistsList(QStringListModel *newAlbumArtistsList);
 
 public slots:
-    void setAlbum(const Album &album);
+    void setAlbum(Album *album);
 
     //song editing functions
     void insertFeature(const QString &feature);
@@ -89,7 +90,7 @@ public slots:
     void moveArtist(int src, int dst);
     void removeArtist(int index);
     void saveChanges(Song *song, const QString &title, const QString &leadingArtist, const QString &album,
-                     const QString &genre, int year, int trackNum, bool hasCover, const QUrl &coverPath = QUrl());
+                     const QString &genre, int year, int trackNum, const QUrl &coverPath = QUrl());
 
 signals:
     void songModelChanged();
@@ -119,13 +120,15 @@ private:
     SongFilterProxyModel *m_songModel = nullptr;
     AlbumFilterProxyModel *m_albumSongsModel = nullptr;
     AlbumSearchFilter *m_albumSearchModel = nullptr;
-    Album m_currentAlbum;
+    Album *m_currentAlbum;
     QString m_albumName;
     QStringList m_albumArtists;
     QString m_albumGenre;
     int m_albumYear;
     QStringListModel *m_featuresList = nullptr;
     QStringListModel *m_albumArtistsList = nullptr;
+
+    CoverImgProvider *coverArts;
 };
 
 #endif // SONGMANAGER_H

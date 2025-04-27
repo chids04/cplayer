@@ -61,9 +61,11 @@ signals:
     void viewControllerChanged();
 
     void downloadManagerChanged();
+    void showMsg(const QString &msg);
 
 public slots:
     void save();
+    void onMsgRecieved(const QString &msg);
 
 private:
     SongManager *m_songManager = nullptr;

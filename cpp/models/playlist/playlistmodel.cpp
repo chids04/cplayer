@@ -147,7 +147,6 @@ void PlaylistModel::readPlaylists()
         std::shared_ptr<Playlist> playlistPtr = std::make_shared<Playlist>(playlist);
         beginInsertRows(QModelIndex(), rowCount(), rowCount());
         m_playlists.append(playlistPtr);
-        qDebug() << "appendednewplaylist";
         endInsertRows();
     }
 

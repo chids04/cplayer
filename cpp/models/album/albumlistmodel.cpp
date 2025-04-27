@@ -4,7 +4,7 @@ AlbumListModel::AlbumListModel(QObject *parent) : QAbstractListModel(parent) {
 }
 
 
-void AlbumListModel::addAlbum(const Album &album)
+void AlbumListModel::addAlbum(Album *album)
 {
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     m_albums << album;
@@ -15,8 +15,8 @@ void AlbumListModel::addAlbum(const Album &album)
 QModelIndex AlbumListModel::findAlbumIndex(const QString &albumName, const QStringList &albumArtists)
 {
     for(int row=0; row<m_albums.count(); row++) {
-        const Album &album = m_albums.at(row);
-        if(album.getName() == albumName && album.getArtist() == albumArtists){
+        const Album *album = m_albums.at(row);
+        if(album->getName() == albumName && album->getArtist() == albumArtists){
             return index(row);
         }
     }
@@ -27,15 +27,15 @@ QModelIndex AlbumListModel::findAlbumIndex(const QString &albumName, const QStri
 void AlbumListModel::updateAlbum(Song* song)
 {
 
-    for(Album &album: m_albums){
-        if(album.getName() == song->m_album && album.getArtist() == song->m_albumArtists){
-            album.addSong(song);
+    for(const auto &album: m_albums){
+        if(album->getName() == song->m_album && album->getArtist() == song->m_albumArtists){
+            album->addSong(song);
             return;
         }
     }
     //album doesnt exist, need to create a new one
-    Album album(song->m_album, song->m_albumArtists, song->m_genre, song->m_year);
-    album.addSong(song);
+    Album *album = new Album(song->m_album, song->m_albumArtists, song->m_genre, song->m_year);
+    album->addSong(song);
     addAlbum(album);
 }
 
@@ -52,27 +52,27 @@ QVariant AlbumListModel::data(const QModelIndex &index, int role) const
         return QVariant();
     }
 
-    const Album &album = m_albums[index.row()];
+    const auto album = m_albums[index.row()];
 
     switch(role) {
 
         case AlbumNameRole:
-            return album.getName();
+            return album->getName();
 
         case AlbumGenreRole:
-            return album.getGenre();
+            return album->getGenre();
 
         case AlbumSongsRole:
-            return QVariant::fromValue(album.getSongs());
+            return QVariant::fromValue(album->getSongs());
 
         case AlbumArtistRole:
-            return album.getArtist();
+            return album->getArtist();
 
         case AlbumYearRole:
-            return album.getYear();
+            return album->getYear();
 
         case AlbumSongCountRole:
-            return album.getSongCount();
+            return album->getSongCount();
 
         case AlbumObjRole:
             return QVariant::fromValue(album);
@@ -98,7 +98,7 @@ QHash<int, QByteArray> AlbumListModel::roleNames() const
     return roles;
 }
 
-QList<Album> AlbumListModel::getAlbums()
+QList<Album*> AlbumListModel::getAlbums()
 {
     return m_albums;
 }
@@ -116,8 +116,8 @@ void AlbumListModel::clear()
 void AlbumListModel::decrementAlbum(const QString &albumName, const QStringList &albumArtists)
 {
     for (int i = m_albums.size() - 1; i >= 0; --i) {
-        if (m_albums[i].getName() == albumName && m_albums[i].getArtist() == albumArtists) {
-            m_albums[i].decrementCount();
+        if (m_albums[i]->getName() == albumName && m_albums[i]->getArtist() == albumArtists) {
+            m_albums[i]->decrementCount();
 
         }
     }
@@ -126,7 +126,7 @@ void AlbumListModel::decrementAlbum(const QString &albumName, const QStringList 
 void AlbumListModel::deleteAlbums()
 {
     for (int i = m_albums.size() - 1; i >= 0; --i) {
-        if (m_albums[i].getSongCount() == 0) {
+        if (m_albums[i]->getSongCount() == 0) {
             beginRemoveRows(QModelIndex(), i, i);
             m_albums.removeAt(i);
             endRemoveRows();

@@ -5,16 +5,24 @@
 #include <QObject>
 #include <QStringList>
 
-#include <memory>
 #include "song.h"
 
 
-class Album
+class Album : public QObject
 {
+    Q_OBJECT
+    QML_ELEMENT
+
+    Q_PROPERTY(QString name READ getName WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(QStringList artist READ getArtist WRITE setArtist NOTIFY artistChanged)
+    Q_PROPERTY(QString genre READ getGenre WRITE setGenre NOTIFY genreChanged)
+    Q_PROPERTY(int year READ getYear WRITE setYear NOTIFY yearChanged)
+
 
 public:
-    Album();
-    Album(QString &name, QStringList &artist, QString &genre, int &year);
+    explicit Album(QObject *parent = nullptr);
+    Album(QString &name, QStringList &artist, QString &genre, int &year,
+        QObject *parent = nullptr);
 
     QString getName() const;
     QString getGenre() const;
@@ -23,9 +31,21 @@ public:
     QStringList getArtist() const;
     QList<Song*> getSongs() const;
 
+    void setName(const QString &newName);
+    void setArtist(const QStringList &newArtist);
+    void setGenre(const QString &newGenre);
+    void setYear(int newYear);
+
+
     void addSong(Song* song);
     void incrementCount();
     void decrementCount();
+
+signals:
+    void nameChanged();
+    void artistChanged();
+    void genreChanged();
+    void yearChanged();
 
 private:
     QString name;

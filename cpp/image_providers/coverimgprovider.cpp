@@ -30,7 +30,6 @@ QPixmap CoverImgProvider::requestPixmap(const QString &id, QSize *size, const QS
         artists = artistStr.split("++?");
 
 
-        qDebug() << "getting cover for" << artists;
         QPixmap coverArt;
 
         QByteArray coverArtBytes;
@@ -39,14 +38,13 @@ QPixmap CoverImgProvider::requestPixmap(const QString &id, QSize *size, const QS
 
         if(coverArt.isNull()){
             QPixmap defaultCover(":/resource/ui/assets/unknownCover.png");
-            qDebug() << "cover not found";
             defaultCover = defaultCover.scaled(requestedSize.width(), requestedSize.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
             return defaultCover;
+
         }
 
         coverArt = coverArt.scaled(requestedSize.width(), requestedSize.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
-
 
         return coverArt;
 
@@ -63,7 +61,7 @@ QPixmap CoverImgProvider::requestPixmap(const QString &id, QSize *size, const QS
 
 void CoverImgProvider::addCover(const QStringList &artists, const QString &albumName, QByteArray &coverArt)
 {
-    if(coverArt.isEmpty()){
+    if(coverArt.isEmpty() || coverArt.isNull()){
         return;
     }
 
@@ -95,7 +93,6 @@ void CoverImgProvider::loadFromSettings()
 
     QStringList keys = settings.childKeys();
     for (const QString &key : keys) {
-        qDebug() << "cover loaded key" << key;
         CoverArtKey coverKey = CoverArtKey::fromString(key);  // Convert string back to CoverArtKey
         QByteArray coverArt = settings.value(key).toByteArray();
         coverArts.insert(coverKey, coverArt);  // Insert into the QHash
@@ -113,11 +110,11 @@ void CoverImgProvider::saveCoverArts()
 
     for (auto it = coverArts.begin(); it != coverArts.end(); ++it) {
         QString key = it.key().toString();  // Convert CoverArtKey to QString
-        qDebug() << "cover saved key:" << key;
         QByteArray coverArt = it.value();
         settings.setValue(key, coverArt);  // Store the cover art
     }
 
+    
     settings.endGroup();
 }
 

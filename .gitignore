@@ -4,3 +4,4 @@ CMakeLists.txt.user
 .DS_Store
 .cache/
 .qmlls.ini
+extern/python_libs/

@@ -1,9 +1,9 @@
 #include "album.h"
 
-Album::Album(){}
+Album::Album(QObject *parent) : QObject(parent){}
 
-Album::Album(QString &name, QStringList &artist, QString &genre, int &year) :
-    name(name), artist(artist), genre(genre), year(year){}
+Album::Album(QString &name, QStringList &artist, QString &genre, int &year, QObject *parent) :
+    name(name), artist(artist), genre(genre), year(year), QObject(parent){}
 
 QString Album::getName() const
 {
@@ -28,6 +28,41 @@ QStringList Album::getArtist() const
 QList<Song*> Album::getSongs() const
 {
     return songList;
+}
+
+void Album::setName(const QString &newName) {
+    if(name == newName){
+        return;
+    }
+
+    name = newName;
+    emit nameChanged();
+}
+
+void Album::setArtist(const QStringList &newArtist) {
+    if(artist == newArtist){
+        return;
+    }
+    artist = newArtist;
+    emit artistChanged();
+}
+
+void Album::setGenre(const QString &newGenre) {
+    if(genre == newGenre){
+        return;
+    }
+
+    genre = newGenre;
+    emit genreChanged();
+}
+
+void Album::setYear(int newYear) {
+    if(year == newYear){
+        return;
+    }
+
+    year = newYear;
+    emit yearChanged();
 }
 
 void Album::addSong(Song* song)

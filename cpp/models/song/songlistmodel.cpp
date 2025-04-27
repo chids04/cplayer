@@ -106,8 +106,11 @@ void SongListModel::updateSong(int id)
         }
     }
 
-    QModelIndex modelIndex = createIndex(index, 0);
-    emit dataChanged(modelIndex, modelIndex);
+    if(index != -1){
+        emit dataChanged(this->index(index), this->index(index));
+        emit refreshProxy();
+
+    }
 }
 
 

@@ -14,7 +14,6 @@ Item{
         target: GlobalSingleton.viewController
 
         function onSongViewSelected(){
-            console.log("song view selected")
             stackView.push("HomePage.qml")
             //stackView.push("Songs.qml")
         }
@@ -59,8 +58,40 @@ Item{
             Layout.fillWidth: true
             clip: true
 
-            pushEnter: null
-            pushExit: null
+
+            pushEnter: Transition {
+                PropertyAnimation {
+                    property: "opacity"
+                    from: 0
+                    to:1
+                    duration: 200
+                }
+            }
+            pushExit: Transition {
+                PropertyAnimation {
+                    property: "opacity"
+                    from: 1
+                    to:0
+                    duration: 200
+                }
+            }
+
+            popEnter: Transition {
+                PropertyAnimation {
+                    property: "opacity"
+                    from: 0
+                    to:1
+                    duration: 200
+                }
+            }
+            popExit: Transition {
+                PropertyAnimation {
+                    property: "opacity"
+                    from: 1
+                    to:0
+                    duration: 200
+                }
+            }
 
             Component.onCompleted:{
                 stackView.push("HomePage.qml")

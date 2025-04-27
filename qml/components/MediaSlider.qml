@@ -59,9 +59,11 @@ Item{
                         sourceSize.height: 80
                         asynchronous: true
 
+
                         layer.enabled: true
                         layer.effect: MultiEffect {
                             source: songArt
+
                             x: songArt.x
                             y: songArt.y
                             width: songArt.width
@@ -76,7 +78,7 @@ Item{
                         Connections{
                             target: GlobalSingleton.playbackManager.mediaPlayer
                             function onCoverArtChanged(){
-                                songArt.source = "image://coverArt/" + GlobalSingleton.playbackManager.mediaPlayer.album + "/" + GlobalSingleton.playbackManager.mediaPlayer.albumArtists.join("%")
+                                songArt.source = "image://coverArt/" + GlobalSingleton.playbackManager.mediaPlayer.album + "/" + GlobalSingleton.playbackManager.mediaPlayer.albumArtists.join("++?")
                             }
                         }
                     }
@@ -506,8 +508,20 @@ Item{
                             value: GlobalSingleton.playbackManager.mediaPlayer.position
 
                             Layout.preferredWidth: mediaControls.width-60
-                            onValueChanged: {
-                                GlobalSingleton.playbackManager.mediaPlayer.position = value
+
+                            onPressedChanged : {
+                                if(!pressed){
+                                    GlobalSingleton.playbackManager.mediaPlayer.position = value
+                                }
+                            }
+
+                            Connections {
+                                target: GlobalSingleton.playbackManager.mediaPlayer
+                                function onPositionChanged(){
+                                    if(!control.pressed){
+                                        control.value = GlobalSingleton.playbackManager.mediaPlayer.position
+                                    }
+                                }
                             }
 
                             background: Rectangle {

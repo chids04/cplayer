@@ -10,6 +10,7 @@
 #include <QBuffer>
 
 // TagLib includes
+#include <qnamespace.h>
 #include <taglib/tag.h>
 #include <taglib/fileref.h>
 #include <taglib/mpegfile.h>
@@ -17,6 +18,7 @@
 #include <taglib/tpropertymap.h>
 #include <taglib/id3v2tag.h>
 #include <taglib/attachedpictureframe.h>
+
 
 MusicScanner::MusicScanner(CoverImgProvider *coverImgProvider, QObject *parent)
     : QObject(parent), coverImgProvider(coverImgProvider)
@@ -58,13 +60,15 @@ void MusicScanner::onFileRecieved(const QString &localPath)
         QString leadingArtist;
 
         auto splitArtists = [](const QString &artists, QString &leadingArtist, QStringList &features) {
-            if(artists.contains(" / ")){
-                QStringList artistList = artists.split(" / ");
-                leadingArtist = artistList.first();
-                features = artistList.mid(1);
-            }
-            else {
-                leadingArtist = artists;
+            QStringList parts = artists.split('/', Qt::SkipEmptyParts);
+            for (int i = 0; i < parts.size(); ++i)
+                parts[i] = parts[i].trimmed();
+            if (!parts.isEmpty()) {
+                leadingArtist = parts.first();
+                if (parts.size() > 1)
+                    features = parts.mid(1);
+            } else {
+                leadingArtist = artists.trimmed();
             }
         };
 
@@ -96,13 +100,16 @@ void MusicScanner::onFileRecieved(const QString &localPath)
         id++;
     }
     else {
-        if(f.tag()->isEmpty()){
-            QFileInfo fi(localPath);
-            emit songDataFetched(localPath, fi.fileName(), QString(), fi.fileName(),
-                                  QString(), QStringList(), QStringList(fi.fileName()),
-                                  int(), int(), int(), id);
-            id++;
+        if(!f.isNull()){
+            if(f.tag()->isEmpty()){
+                QFileInfo fi(localPath);
+                emit songDataFetched(localPath, fi.fileName(), QString(), fi.fileName(),
+                                    QString(), QStringList(), QStringList(fi.fileName()),
+                                    int(), int(), int(), id);
+                id++;
+            }
         }
+        
     }
 }
 
@@ -139,43 +146,60 @@ void MusicScanner::scanDirectory(const QString &folderPath)
 
             if(!f.isNull() && !f.tag()->isEmpty()){
                 // Extract album name.
+                auto t = f.tag();
 
 //win and unix handle special characters differently so need to use different methods to convert to QString
 #if defined(Q_OS_WIN)
-                QString albumName = QString::fromStdWString(f.tag()->album().toWString());
-                QString title = QString::fromStdWString(f.tag()->title().toWString());
-                QString artists = QString::fromStdWString(f.tag()->artist().toWString());
+                QString albumName = QString::fromStdWString(t->album().toWString());
+                QString title = QString::fromStdWString(t->title().toWString());
+                QString artists = QString::fromStdWString(t->artist().toWString());
 #else
-                QString albumName = QString::fromUtf8(f.tag()->album().to8Bit(true));
-                QString title = QString::fromUtf8(f.tag()->title().to8Bit(true));
-                QString artists = QString::fromUtf8(f.tag()->artist().to8Bit(true));
+                QString albumName = QString::fromUtf8(t->album().to8Bit(true));
+                QString title = QString::fromUtf8(t->title().to8Bit(true));
+                QString artists = QString::fromUtf8(t->artist().to8Bit(true));
 #endif
 
-                QString genre = QString::fromUtf8(f.tag()->genre().to8Bit(true));
-                int year = f.tag()->year();
+                QString genre = QString::fromUtf8(t->genre().to8Bit(true));
+                int year = t->year();
                 int length = 0;
-                int trackNum = f.tag()->track();
+                int trackNum = t->track();
                 TagLib::PropertyMap properties = f.properties();
 
                 QStringList features;
                 QString leadingArtist;
+
                 auto splitArtists = [](const QString &artists, QString &leadingArtist, QStringList &features) {
-                    if (artists.contains("/")) {
-                        QStringList artistList = artists.split("/");
-                        leadingArtist = artistList.first();
-                        features = artistList.mid(1);
+                    QStringList parts = artists.split('/', Qt::SkipEmptyParts);
+                    for (int i = 0; i < parts.size(); ++i)
+                        parts[i] = parts[i].trimmed();
+                    if (!parts.isEmpty()) {
+                        leadingArtist = parts.first();
+                        if (parts.size() > 1)
+                            features = parts.mid(1);
                     } else {
-                        leadingArtist = artists;
+                        leadingArtist = artists.trimmed();
                     }
                 };
                 splitArtists(artists, leadingArtist, features);
 
-                qDebug() << features;
+
                 QStringList albumArtists;
+
                 TagLib::StringList albumArtistsList = properties["ALBUMARTIST"];
                 for (const auto &albumArtist : albumArtistsList) {
-                    albumArtists << QString::fromStdWString(albumArtist.toWString());
+
+                    QString artist = QString::fromStdWString(albumArtist.toWString());
+
+                    if(artist.contains(',')){
+                        QStringList artists_list = artist.split(',', Qt::SkipEmptyParts);
+                        albumArtists.append(artists_list);
+                    }
+                    else{
+                        albumArtists << artist;
+                    }
+
                 }
+
                 if (albumArtists.isEmpty())
                     albumArtists << leadingArtist;
 
@@ -186,6 +210,7 @@ void MusicScanner::scanDirectory(const QString &folderPath)
                     albumArtists = QStringList(entry.fileName());
                 if (albumName.isEmpty())
                     albumName = entry.fileName();
+
 
                 // Check if the current folder name (dir.dirName()) contains  the album name (case-insensitive).
                 if (dir.dirName().contains(albumName, Qt::CaseInsensitive)) {
@@ -208,32 +233,6 @@ void MusicScanner::scanDirectory(const QString &folderPath)
                             }
 
                             coverFile.close();
-                            // if (!coverFile.isNull()){
-                            //     // QByteArray coverArray;
-                            //     // QBuffer buffer(&coverArray);
-                            //     // buffer.open(QIODevice::WriteOnly);
-
-                            //     // if(!coverFile.save(&buffer, "JPG")){
-                            //     //     qDebug() << "Failed to save cover art to buffer";
-                            //     // }
-                            //     // else{
-                                    
-                            //     //     QFile file("/Users/chids/Documents/programming/c++/cplayer_new/cplayer/cover.jpg");
-                            //     //     file.open(QIODevice::WriteOnly);
-                            //     //     file.write(coverArray);
-                            //     //     file.close();
-
-                            //     //     if(!coverArray.isNull()){
-                            //     //         coverImgProvider->addCover(albumArtists, albumName, coverArray);
-                            //     //     }
-                            //     // }
-
-                            //     // buffer.close();
-
-                            //     // // if(!coverImgProvider->hasCover(albumArtists, albumName)){
-                            //     // //     coverImgProvider->addCover(albumArtists, albumName, coverData);
-                            //     // // }
-                            // }
                         }
                     }
 
@@ -246,7 +245,13 @@ void MusicScanner::scanDirectory(const QString &folderPath)
                     TagLib::VariantMap imgData = f.complexProperties("PICTURE").front();
                     TagLib::ByteVector coverArt = imgData.value("data").toByteVector();
                     QByteArray loadedCover(coverArt.data(), coverArt.size());
-                    coverImgProvider->addCover(albumArtists, albumName, loadedCover);
+
+                    QImage image(loadedCover);
+
+                    if(!image.isNull()){
+                        coverImgProvider->addCover(albumArtists, albumName, loadedCover);
+                    }
+
                 }
 
                 if (title.isEmpty())

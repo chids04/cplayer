@@ -290,7 +290,6 @@ Item {
 
                             onClicked: mouse => {
                                 if(mouse.button === Qt.RightButton){
-                                    console.log(playlistCard.playlistID, playlistCard.playlistHasCover)
                                     playlistCard.isContextMenuOpened = true
                                     playlistContextMenu.openContextMenu(playlistCard.playlistID, playlistCard.playlistName, playlistCard.playlistHasCover)
                                 }

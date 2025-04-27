@@ -41,13 +41,12 @@ public:
     QHash<QString,QStringList> getFolderFileMap();
 
     FolderListModel *folderListModel() const;
+
     void folderListModel(FolderListModel *newFolderListModel);
-
     void setFolderListModel(FolderListModel *newFolderListModel);
-
     void setSongListModel(SongListModel *newSongListModel);
-
     void setCoverProvider(CoverImgProvider *newCoverProvider);
+
 
 signals:
     void onSongsLoaded();

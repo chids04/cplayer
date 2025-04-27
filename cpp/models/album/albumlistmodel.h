@@ -6,7 +6,6 @@
 #include <QString>
 #include <QAbstractListModel>
 
-#include <memory>
 
 #include "album.h"
 #include "song.h"
@@ -27,16 +26,15 @@ public:
         AlbumYearRole,
         AlbumSongCountRole,
         AlbumObjRole
-
     };
 
-    void addAlbum(const Album &album);
+    void addAlbum(Album *album);
     QModelIndex findAlbumIndex(const QString &albumName, const QStringList &albumArtits);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
-    QList<Album> getAlbums();
+    QList<Album*> getAlbums();
     void clear();
 
 public slots:
@@ -44,8 +42,11 @@ public slots:
     void decrementAlbum(const QString &albumName, const QStringList &albumArtists);
     void deleteAlbums();
 
+    //need to add a slot here for when a songs album has been changed
+    
+
 private:
-    QList<Album> m_albums;
+    QList<Album*> m_albums;
 };
 
 

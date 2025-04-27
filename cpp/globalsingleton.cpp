@@ -1,5 +1,9 @@
 #include "globalsingleton.h"
 #include "coverimgprovider.h"
+#include "downloadmanager.h"
+#include "folder.h"
+
+
 
 void GlobalSingleton::init(CoverImgProvider *coverProvider, PlaylistImageProvider *playlistProvider)
 {
@@ -11,15 +15,20 @@ void GlobalSingleton::init(CoverImgProvider *coverProvider, PlaylistImageProvide
     setViewController(new ViewController);
     setDownloadManager(new DownloadManager);
 
+
     //injecting dependencies in cases where there are circular dependencies
     m_playbackManager->nowPlaying()->setModels(m_songManager);
-    m_songManager->initPlaylists(m_playlistManager);
+    m_songManager->init(m_playlistManager, coverProvider);
 
     //now load data from settings, start with loading songs since nowplaying depends on it
     m_songManager->loadFromSettings();
     m_playbackManager->loadFromSettings();
     m_folderManager->loadFromSettings();
     m_playlistManager->loadFromSettings();
+
+    connect(m_downloadManager,&DownloadManager::showMsg, this, &GlobalSingleton::onMsgRecieved);
+    connect(m_downloadManager, &DownloadManager::scanForMusic, m_folderManager, &FolderManager::scanFolder);
+    
 }
 
 void GlobalSingleton::save()
@@ -30,6 +39,11 @@ void GlobalSingleton::save()
     m_playlistManager->saveToSettings();
 
 }
+
+void GlobalSingleton::onMsgRecieved(const QString &msg) {
+    emit showMsg(msg);
+}
+
 
 
 SongManager *GlobalSingleton::songManager() const
