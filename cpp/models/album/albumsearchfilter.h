@@ -2,6 +2,8 @@
 #define ALBUMSEARCHFILTER_H
 
 #include <QSortFilterProxyModel>
+#include <QString>
+
 #include "albumlistmodel.h"
 
 class AlbumSearchFilter : public QSortFilterProxyModel

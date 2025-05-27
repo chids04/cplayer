@@ -22,8 +22,6 @@ Item {
 
             clip: true
 
-
-
             ColumnLayout{
                 spacing: 10
                 anchors {
