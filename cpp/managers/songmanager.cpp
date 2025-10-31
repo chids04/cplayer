@@ -238,7 +238,7 @@ special characters handled differently on win and unix
     std::wstring saved_albumArtists = albumArtistStr.toStdWString();
     std::wstring saved_album = album.toStdWString();
 #else
-    QByteArray temp = artistStr.trimmed().toUtf8();
+    temp = artistStr.trimmed().toUtf8();
     const char* saved_artist = temp.constData();
 
     temp = title.trimmed().toUtf8();

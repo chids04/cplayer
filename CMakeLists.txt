@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.30)
+cmake_minimum_required(VERSION 3.29)
 
 project(cplayer VERSION 0.1 LANGUAGES CXX)
 
@@ -7,16 +7,48 @@ set(CMAKE_AUTORCC ON)
 set(PYBIND11_FINDPYTHON ON)
 set(SC_LIB_PATH "${CMAKE_SOURCE_DIR}/extern/sc-lib-fork")
 set(PY_LIB_PATH "${CMAKE_SOURCE_DIR}/extern/python-libs") 
+set(QT_QML_GENERATE_QMLLS_INI ON)
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+	set(VCPKG_TARGET_TRIPLET "x64-windows")
+
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin") # macOS
+	if(CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
+		set(VCPKG_TARGET_TRIPLET "arm64-osx")
+
+	elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+		set(VCPKG_TARGET_TRIPLET "x64-osx")
+
+	else()
+		set(VCPKG_TARGET_TRIPLET "x64-osx")
+	endif()
+
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+   if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+	   set(VCPKG_TARGET_TRIPLET "x64-linux")
+   else()
+	   set(VCPKG_TARGET_TRIPLET "x64-linux")
+   endif()
+endif()
+
 
 
 include("$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
 
-find_package(Qt6 6.8 REQUIRED COMPONENTS Multimedia Quick Widgets Core)
+find_package(Qt6 REQUIRED COMPONENTS Multimedia Quick Widgets Core)
+find_package(ZLIB REQUIRED)
 find_package(TagLib REQUIRED)
-find_package(Python 3.13.2 COMPONENTS Interpreter Development REQUIRED)
+find_package(Python COMPONENTS Interpreter Development REQUIRED)
+
 
 add_subdirectory(extern/RapidFuzz)
 add_subdirectory(extern/pybind11)
+add_subdirectory(cpp/types)
+add_subdirectory(cpp/models)
+add_subdirectory(cpp/playback)
+add_subdirectory(cpp/image_providers)
+add_subdirectory(cpp/background)
+add_subdirectory(cpp/managers)
 
 qt_standard_project_setup()
 qt_policy(SET QTP0001 NEW)
@@ -30,8 +62,9 @@ qt_add_executable(appcplayer
 qt_add_qml_module(appcplayer
     URI cplayer
     VERSION 1.0
+	NO_CACHEGEN
     QML_FILES
-        qml/Main.qml
+	    qml/Main.qml
 
     #QML Views
     QML_FILES
@@ -74,122 +107,122 @@ qt_add_qml_module(appcplayer
 
 
 
-	#Singleton
-	SOURCES
-	    cpp/globalsingleton.h
-		cpp/globalsingleton.cpp
+	# #Singleton
+	# SOURCES
+	#     cpp/globalsingleton.h
+	# 	cpp/globalsingleton.cpp
 
 
-	#C++ Types
-	SOURCES
-	    cpp/types/song.h
-		cpp/types/song.cpp
+	# #C++ Types
+	# SOURCES
+	#     cpp/types/song.h
+	# 	cpp/types/song.cpp
 
-		cpp/types/album.h
-		cpp/types/album.cpp
+	# 	cpp/types/album.h
+	# 	cpp/types/album.cpp
 
-		cpp/types/folder.h
-		cpp/types/folder.cpp
+	# 	cpp/types/folder.h
+	# 	cpp/types/folder.cpp
 
-		cpp/types/playlist.h
-		cpp/types/playlist.cpp
+	# 	cpp/types/playlist.h
+	# 	cpp/types/playlist.cpp
 
-        cpp/types/songdata.cpp
-        cpp/types/songdata.h
+    #     cpp/types/songdata.cpp
+    #     cpp/types/songdata.h
 
-	#C++ Models
-    SOURCES
+	# #C++ Models
+    # SOURCES
 
-	#C++ background tasks
-	SOURCES
-		cpp/background/musicscanner.h
-		cpp/background/musicscanner.cpp
+	# #C++ background tasks
+	# SOURCES
+	# 	cpp/background/musicscanner.h
+	# 	cpp/background/musicscanner.cpp
 
-    #C++ Playback Control
-    SOURCES
-        cpp/playback/mediaplayercontroller.h
-        cpp/playback/mediaplayercontroller.cpp
+    # #C++ Playback Control
+    # SOURCES
+    #     cpp/playback/mediaplayercontroller.h
+    #     cpp/playback/mediaplayercontroller.cpp
 
-        cpp/playback/nowplaying.h
-        cpp/playback/nowplaying.cpp
+    #     cpp/playback/nowplaying.h
+    #     cpp/playback/nowplaying.cpp
 
-        cpp/playback/queue.h
-        cpp/playback/queue.cpp
+    #     cpp/playback/queue.h
+    #     cpp/playback/queue.cpp
 
-		cpp/playback/models/queuemodel.h
-		cpp/playback/models/queuemodel.cpp
+	# 	cpp/playback/models/queuemodel.h
+	# 	cpp/playback/models/queuemodel.cpp
 
-		cpp/playback/models/queuemodelfilter.h
-		cpp/playback/models/queuemodelfilter.cpp
+	# 	cpp/playback/models/queuemodelfilter.h
+	# 	cpp/playback/models/queuemodelfilter.cpp
 
-		cpp/playback/models/audiodevicemodel.h
-		cpp/playback/models/audiodevicemodel.cpp
+	# 	cpp/playback/models/audiodevicemodel.h
+	# 	cpp/playback/models/audiodevicemodel.cpp
 
-    #C++ Image Providers
-    SOURCES
-        cpp/image_providers/playlistimageprovider.h
-        cpp/image_providers/playlistimageprovider.cpp
+    # #C++ Image Providers
+    # SOURCES
+    #     cpp/image_providers/playlistimageprovider.h
+    #     cpp/image_providers/playlistimageprovider.cpp
 
-		cpp/image_providers/coverimgprovider.h
-		cpp/image_providers/coverimgprovider.cpp
+	# 	cpp/image_providers/coverimgprovider.h
+	# 	cpp/image_providers/coverimgprovider.cpp
 
-    #C++ QML Models
-    SOURCES
-	    cpp/models/album/albumfilterproxymodel.h
-		cpp/models/album/albumfilterproxymodel.cpp
+    # #C++ QML Models
+    # SOURCES
+	#     cpp/models/album/albumfilterproxymodel.h
+	# 	cpp/models/album/albumfilterproxymodel.cpp
 
-		cpp/models/album/albumlistmodel.h
-		cpp/models/album/albumlistmodel.cpp
+	# 	cpp/models/album/albumlistmodel.h
+	# 	cpp/models/album/albumlistmodel.cpp
 
-		cpp/models/album/albumsearchfilter.h
-		cpp/models/album/albumsearchfilter.cpp
+	# 	cpp/models/album/albumsearchfilter.h
+	# 	cpp/models/album/albumsearchfilter.cpp
 
-		cpp/models/song/songlistmodel.h
-		cpp/models/song/songlistmodel.cpp
+	# 	cpp/models/song/songlistmodel.h
+	# 	cpp/models/song/songlistmodel.cpp
 
-		cpp/models/song/songfilterproxymodel.h
-		cpp/models/song/songfilterproxymodel.cpp
+	# 	cpp/models/song/songfilterproxymodel.h
+	# 	cpp/models/song/songfilterproxymodel.cpp
 
-		cpp/models/playlist/playlistmodel.h
-		cpp/models/playlist/playlistmodel.cpp
+	# 	cpp/models/playlist/playlistmodel.h
+	# 	cpp/models/playlist/playlistmodel.cpp
 
-		cpp/models/playlist/playlistfilter.cpp
-		cpp/models/playlist/playlistfilter.h
+	# 	cpp/models/playlist/playlistfilter.cpp
+	# 	cpp/models/playlist/playlistfilter.h
 
-		cpp/models/folder/folderlistmodel.cpp
-		cpp/models/folder/folderlistmodel.h
+	# 	cpp/models/folder/folderlistmodel.cpp
+	# 	cpp/models/folder/folderlistmodel.h
 
-	#QML View Managers
-    SOURCES
+	# #QML View Managers
+    # SOURCES
 
-		cpp/managers/foldermanager.h
-		cpp/managers/foldermanager.cpp
+	# 	cpp/managers/foldermanager.h
+	# 	cpp/managers/foldermanager.cpp
 
-		cpp/managers/viewcontroller.h
-		cpp/managers/viewcontroller.cpp
+	# 	cpp/managers/viewcontroller.h
+	# 	cpp/managers/viewcontroller.cpp
 
-		cpp/managers/playlistmanager.h
-		cpp/managers/playlistmanager.cpp
+	# 	cpp/managers/playlistmanager.h
+	# 	cpp/managers/playlistmanager.cpp
 
-		cpp/managers/songmanager.h
-		cpp/managers/songmanager.cpp
+	# 	cpp/managers/songmanager.h
+	# 	cpp/managers/songmanager.cpp
 
-		cpp/managers/playbackmanager.h
-		cpp/managers/playbackmanager.cpp
+	# 	cpp/managers/playbackmanager.h
+	# 	cpp/managers/playbackmanager.cpp
 
-        cpp/managers/downloadmanager.h
-        cpp/managers/downloadmanager.cpp
+    #     cpp/managers/downloadmanager.h
+    #     cpp/managers/downloadmanager.cpp
 
-    #downloaders
-    SOURCES
+    # #downloaders
+    # SOURCES
 
-    cpp/downloaders/soundcloud/soundcloud.cpp
-    cpp/downloaders/soundcloud/soundcloud.h
-    cpp/downloaders/soundcloud/soundcloudmodel.h
-    cpp/downloaders/soundcloud/soundcloudmodel.cpp
-    cpp/downloaders/soundcloud/soundcloudsearchworker.h
-	cpp/downloaders/soundcloud/scplaylist.h
-	cpp/downloaders/soundcloud/scplaylist.cpp
+    # cpp/downloaders/soundcloud/soundcloud.cpp
+    # cpp/downloaders/soundcloud/soundcloud.h
+    # cpp/downloaders/soundcloud/soundcloudmodel.h
+    # cpp/downloaders/soundcloud/soundcloudmodel.cpp
+    # cpp/downloaders/soundcloud/soundcloudsearchworker.h
+	# cpp/downloaders/soundcloud/scplaylist.h
+	# cpp/downloaders/soundcloud/scplaylist.cpp
 
 
 )
@@ -216,26 +249,32 @@ target_compile_definitions(appcplayer PRIVATE
 
 target_link_libraries(appcplayer
         PRIVATE Qt6::Quick Qt6::Multimedia Qt6::Widgets Qt6::Core
-        rapidfuzz::rapidfuzz TagLib::tag pybind11::embed
+		rapidfuzz::rapidfuzz TagLib::tag pybind11::embed
+		cplayer_types
+    cplayer_models
+    cplayer_playback
+    cplayer_background
+    cplayer_managers
+    cplayer_image_providers
     )
 
-target_include_directories(appcplayer PRIVATE
-		${CMAKE_CURRENT_SOURCE_DIR}/cpp
-		${CMAKE_CURRENT_SOURCE_DIR}/cpp/types
-		${CMAKE_CURRENT_SOURCE_DIR}/cpp/background
-        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/downloaders
-        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/downloaders/soundcloud
-        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/cpp_models
-		${CMAKE_CURRENT_SOURCE_DIR}/cpp/image_providers
-		${CMAKE_CURRENT_SOURCE_DIR}/cpp/models
-		${CMAKE_CURRENT_SOURCE_DIR}/cpp/models/song
-		${CMAKE_CURRENT_SOURCE_DIR}/cpp/models/album
-		${CMAKE_CURRENT_SOURCE_DIR}/cpp/models/playlist
-		${CMAKE_CURRENT_SOURCE_DIR}/cpp/models/folder
-		${CMAKE_CURRENT_SOURCE_DIR}/cpp/managers
-		${CMAKE_CURRENT_SOURCE_DIR}/cpp/playback
-		${CMAKE_CURRENT_SOURCE_DIR}/cpp/playback/models
-		${CMAKE_CURRENT_SOURCE_DIR}/cpp/utility)
+# target_include_directories(appcplayer PRIVATE
+# 		${CMAKE_CURRENT_SOURCE_DIR}/cpp
+# 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/types
+# 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/background
+#         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/downloaders
+#         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/downloaders/soundcloud
+#         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/cpp_models
+# 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/image_providers
+# 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/models
+# 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/models/song
+# 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/models/album
+# 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/models/playlist
+# 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/models/folder
+# 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/managers
+# 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/playback
+# 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/playback/models
+# 		${CMAKE_CURRENT_SOURCE_DIR}/cpp/utility)
 
 
 include(GNUInstallDirs)

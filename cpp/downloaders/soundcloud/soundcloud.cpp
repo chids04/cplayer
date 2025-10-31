@@ -2,23 +2,21 @@
 
 #include <iostream>
 #include <regex>
-#include <QUrlQuery>
+#include <QRegularExpression>
 #include <filesystem>
 
+//this class uses a python library to interact with the Souncloud API
+//may rewrite this in c++, but for now this is okay
 SoundcloudWrapper::SoundcloudWrapper(const std::string& repo_path) {
     try {
-        // Ensure the interpreter is acquired
+        // ensure the interpreter is acquired
         py::gil_scoped_acquire gil;
 
-        // Use site.addsitedir with predefined paths
         py::module_ site = py::module_::import("site");
-        site.attr("addsitedir")(SC_LIB_PATH);  // For sclib (extern/sc-lib-fork)
-        site.attr("addsitedir")(PY_LIB_PATH);  // For python-libs (extern/python-libs)
+        site.attr("addsitedir")(SC_LIB_PATH);  // for sclib (extern/sc-lib-fork)
+        site.attr("addsitedir")(PY_LIB_PATH);  // for python-libs (extern/python-libs)
 
-        // Debug: Print sys.path to verify
-        py::print(py::module_::import("sys").attr("path"));
 
-        // Import sclib.sync and initialize SoundcloudAPI
         py::module_ sclib = py::module_::import("sclib.sync");
         api_instance = sclib.attr("SoundcloudAPI")();
 
@@ -36,26 +34,25 @@ SoundcloudWrapper::SoundcloudWrapper(const std::string& repo_path) {
 }
 
 SoundcloudWrapper::~SoundcloudWrapper() {
-    // Not strictly necessary due to GIL management, but good practice
     py::gil_scoped_acquire gil;
     api_instance = py::none();
 }
 
 std::string SoundcloudWrapper::encodeSearchString(const std::string& query) const {
-    // Trim whitespace and encode spaces as %20
+    // trim whitespace and encode spaces as %20
     std::string trimmed;
 
-    // Trim leading whitespace
+    // trim leading whitespace
     auto start = query.find_first_not_of(" \t\r\n");
     if (start == std::string::npos) {
         return "";  // All whitespace
     }
 
-    // Trim trailing whitespace
+    // trim trailing whitespace
     auto end = query.find_last_not_of(" \t\r\n");
     trimmed = query.substr(start, end - start + 1);
 
-    // Replace spaces with %20
+    // replace spaces with %20
     std::string result;
     for (char c : trimmed) {
         if (c == ' ') {
@@ -75,27 +72,27 @@ std::vector<SoundcloudItem> SoundcloudWrapper::search(const std::string& search_
     std::string query = encodeSearchString(search_str);
 
     try {
-        // Search using the API
+        // search using the API
         py::list py_results = api_instance.attr("search")(query, limit, offset);
 
-        // Convert Python results to C++ objects
+        // convert Python results to C++ objects
         for (const auto& py_item : py_results) {
             SoundcloudItem item;
 
-            // Get the kind (track or playlist)
+            // get the kind (track or playlist)
             std::string kind = py::str(py_item.attr("kind"));
             item.type = kind;
 
-            // Common attributes
+            // common attributes
             item.title = py::str(py_item.attr("title"));
             item.permalink_url = py::str(py_item.attr("permalink_url"));
 
-            // Get the artwork URL if available
+            // get the artwork URL if available
             if (py::hasattr(py_item, "artwork_url") && !py_item.attr("artwork_url").is_none()) {
                 item.artwork_url = py::str(py_item.attr("artwork_url"));
             }
 
-            // Get duration
+            // get duration
             if (py::hasattr(py_item, "duration") && !py_item.attr("duration").is_none()) {
                 item.duration = py::int_(py_item.attr("duration"));
             }
@@ -171,23 +168,23 @@ std::optional<SoundcloudItem> SoundcloudWrapper::resolve(const std::string& url)
     try {
         py::object item = api_instance.attr("resolve")(url);
 
-        // Create a SoundcloudItem from the Python object
+        // create a SoundcloudItem from the Python object
         SoundcloudItem result;
 
-        // Get the kind (track or playlist)
+        // get the kind (track or playlist)
         std::string kind = py::str(item.attr("kind"));
         result.type = kind;
 
-        // Common attributes
+        // common attributes
         result.title = py::str(item.attr("title"));
         result.permalink_url = py::str(item.attr("permalink_url"));
 
-        // Get the artwork URL if available
+        // get the artwork URL if available
         if (py::hasattr(item, "artwork_url") && !item.attr("artwork_url").is_none()) {
             result.artwork_url = py::str(item.attr("artwork_url"));
         }
 
-        // Get duration
+        // get duration
         if (py::hasattr(item, "duration") && !item.attr("duration").is_none()) {
             result.duration = py::int_(item.attr("duration"));
         }
@@ -224,22 +221,22 @@ bool SoundcloudWrapper::downloadTrack(const std::string& track_url, const std::s
     try {
         py::object track_obj = api_instance.attr("resolve")(track_url);
 
-        // Validate that the item is a track
+        // validate that the item is a track
         if (!py::hasattr(track_obj, "artist") || track_obj.attr("artist").is_none()) {
             throw std::runtime_error("The resolved URL is not a track.");
         }
 
-        // Use Python's built-in open() to create a file object in binary mode
+        // use Python's built-in open() to create a file object in binary mode
         py::object builtins = py::module::import("builtins");
         py::object file = builtins.attr("open")(filename, "wb+");
 
-        // Debug output
+        // debug output
         std::cout << "Downloading track: " << py::str(track_obj.attr("title")) << std::endl;
 
-        // Call the track's write_mp3_to(file) method
+        // call the track's write_mp3_to(file) method
         track_obj.attr("write_mp3_to")(file);
 
-        // Close the file
+        // close the file
         file.attr("close")();
 
         std::cout << "Download completed: " << filename << std::endl;
@@ -256,16 +253,26 @@ std::string SoundcloudWrapper::getStreamUrl(const std::string& track_url) {
     try {
         py::object track_obj = api_instance.attr("resolve")(track_url);
 
-        // Validate that the item is a track
+        // validate that the item is a track
         if (!py::hasattr(track_obj, "artist") || track_obj.attr("artist").is_none()) {
             throw std::runtime_error("The resolved URL is not a track.");
         }
 
-        // Get the stream URL
+        // get the stream URL
         return py::str(track_obj.attr("get_stream_url")());
     }
     catch (const std::exception& ex) {
         std::cerr << "Error getting stream URL: " << ex.what() << std::endl;
         return "";
     }
+
+}
+
+std::string SoundcloudWrapper::cleanDisplayText(const std::string& input) {
+    // remove control characters except for newline and tab
+    
+    QString cleaned = QString::fromStdString(input);
+    cleaned.remove(QRegularExpression(QStringLiteral("[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F\\x7F]")));
+    cleaned.remove(QRegularExpression(QStringLiteral("[\\uFDD0-\\uFDEF\\uFFFE\\uFFFF]")));
+    return cleaned.toStdString();
 }

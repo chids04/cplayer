@@ -8,6 +8,8 @@
 #include <QFileInfoList>
 #include <QImage>
 #include <QBuffer>
+#include <QRegularExpression>
+#include <QStandardPaths>
 
 // TagLib includes
 #include <qnamespace.h>
@@ -120,7 +122,7 @@ void MusicScanner::scanDirectory(const QString &folderPath)
     QFileInfoList entries = dir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
     bool hasSubDirs = false;
     
-    // Local map for grouping MP3 files based on album presence in folder name.
+    // map for grouping MP3 files based on album presence in folder name.
     std::unordered_map<QString, QStringList> localMap;
 
     for (const QFileInfo &entry : entries) {
@@ -130,6 +132,7 @@ void MusicScanner::scanDirectory(const QString &folderPath)
             scanDirectory(entry.absoluteFilePath());
             
         }
+        
         else if (entry.isFile() && entry.suffix().toLower() == "mp3") {
             m_songCount++;
             QString filePath = entry.absoluteFilePath();
@@ -211,42 +214,56 @@ void MusicScanner::scanDirectory(const QString &folderPath)
                 if (albumName.isEmpty())
                     albumName = entry.fileName();
 
-
-                // Check if the current folder name (dir.dirName()) contains  the album name (case-insensitive).
+                //bool to keep valid cover exists, used when adding cover path to album class
+                bool coverInPath = false;
                 if (dir.dirName().contains(albumName, Qt::CaseInsensitive)) {
                     localMap[folderPath].push_back(filePath);
 
-                    //can also check if a cover.jpg exists the in the current directory and this can be used as the cover art instead
+                    // Can also check if a cover.jpg exists in the current directory and use it as the cover art instead
                     QString coverPath = dir.absoluteFilePath("cover.jpg"); 
-
                     
-                    if(!coverImgProvider->hasCover(albumArtists, albumName)){
+                    // if a cover.jpg doesn't exist, extract cover and create one
+                    if (!coverImgProvider->coverExists(albumArtists, albumName)) {
 
-                        if(QFileInfo::exists(coverPath)){
-                            QFile coverFile(coverPath);
+                        if (QFileInfo::exists(coverPath)) {
+                            coverInPath = true;
+                        }
+                        else{
+                            TagLib::VariantMap imgData = f.complexProperties("PICTURE").front();
+                            TagLib::ByteVector coverArt = imgData.value("data").toByteVector();
+                            QByteArray loadedCover(coverArt.data(), coverArt.size());
 
-                            coverFile.open(QIODevice::ReadOnly);
-                            QByteArray coverArray = coverFile.readAll();
-
-                            if(!coverArray.isNull()){
-                                coverImgProvider->addCover(albumArtists, albumName, coverArray);
+                            QImage image(loadedCover);
+                            if (!image.isNull()) {
+                                image.save(coverPath, "JPG");
                             }
-
-                            coverFile.close();
                         }
                     }
-
                 }
 
-                // extract cover art from the mp3 file if no cover.jpg found
-                // could make this an option in settings
 
+                //here is for when the folder doesnt match the songs album
+                //extract images and store in a cache location
                 if (!coverImgProvider->hasCover(albumArtists, albumName)) {
                     TagLib::VariantMap imgData = f.complexProperties("PICTURE").front();
                     TagLib::ByteVector coverArt = imgData.value("data").toByteVector();
                     QByteArray loadedCover(coverArt.data(), coverArt.size());
 
+                    // save cover image to a cache directory for fast loading
+                    QString cacheDirPath = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/covers";
+                    QDir cacheDir(cacheDirPath);
+                    if (!cacheDir.exists()) {
+                        cacheDir.mkpath(".");
+                    }
+                    // generate a unique filename based on albumArtists and albumName
+                    QString cacheFileName = albumArtists.join("_") + "_" + albumName + ".jpg";
+                    cacheFileName.replace(QRegularExpression("[^a-zA-Z0-9_]"), "_"); // sanitize filename
+                    QString cacheFilePath = cacheDir.filePath(cacheFileName);
+
                     QImage image(loadedCover);
+                    if (!image.isNull()) {
+                        image.save(cacheFilePath, "JPG");
+                    }
 
                     if(!image.isNull()){
                         coverImgProvider->addCover(albumArtists, albumName, loadedCover);

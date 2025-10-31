@@ -50,6 +50,37 @@ public:
     SongData toSongData() const;       // Convert Song to SongData
     void fromSongData(const SongData &data); // Populate Song from SongData
 
+    //for serialising and deserialising
+    friend QDataStream &operator<<(QDataStream &out, const Song &song) {
+        out << song.m_filePath
+            << song.m_title
+            << song.m_artist
+            << song.m_album
+            << song.m_genre
+            << song.m_albumArtists
+            << song.m_featuringArtists
+            << song.m_length
+            << song.m_trackNum
+            << song.m_year
+            << song.m_id;
+        return out;
+    }
+
+    friend QDataStream &operator>>(QDataStream &in, Song &song) {
+        in >> song.m_filePath
+           >> song.m_title
+           >> song.m_artist
+           >> song.m_album
+           >> song.m_genre
+           >> song.m_albumArtists
+           >> song.m_featuringArtists
+           >> song.m_length
+           >> song.m_trackNum
+           >> song.m_year
+           >> song.m_id;
+        return in;
+    }
+
 signals:
     void filePathChanged();
     void titleChanged();

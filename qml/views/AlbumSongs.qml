@@ -22,58 +22,99 @@ Item {
 
             clip: true
 
-            ColumnLayout{
+            RowLayout{
                 spacing: 10
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                    top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+
+                Item{
+                    Layout.preferredWidth: parent.width * 0.25
+                    Layout.preferredHeight: childrenRect.height
+
+                    Image{
+                        id: albumCoverArt
+
+                        anchors {
+                            left: parent.left
+                            verticalCenter: parent.verticalCenter
+                        }
+
+                        source: "image://coverArt/" + GlobalSingleton.songManager.albumName + "/" + GlobalSingleton.songManager.albumArtists.join("++?")
+                        sourceSize.width: 150
+                        sourceSize.height: 150
+
+                    }
                 }
 
-                Image{
-                    id: albumCoverArt
-                    Layout.alignment: Qt.AlignHCenter
-                    source: "image://coverArt/" + GlobalSingleton.songManager.albumName + "/" + GlobalSingleton.songManager.albumArtists.join("++?")
-                    sourceSize.width: 250
-                    sourceSize.height: 250
+                Item{
+                    Layout.preferredWidth: parent.width * 0.5
+                    Layout.preferredHeight: childrenRect.height
 
+                    ColumnLayout{
+                        anchors{
+                            left: parent.left
+                            right: parent.right
+                            top: parent.top
+                        }
+
+                        Text{
+                            id: loadedAlbumName
+                            elide: Text.ElideRight
+                            Layout.alignment: Qt.AlignCenter
+                            Layout.fillWidth: true
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+
+                            text: GlobalSingleton.songManager.albumName
+                            color: "white"
+                            font.bold: true
+                            font.pointSize: 32
+                        }
+
+                        Text{
+                            id: loadedAlbumArtists
+                            Layout.alignment: Qt.AlignCenter
+                            text: GlobalSingleton.songManager.albumArtists.join(", ")
+                            color:"white"
+                            font.pointSize: 20
+                        }
+
+                    }
+                    
                 }
 
-                Text{
-                    id: loadedAlbumName
-                    color: "white"
-                    text: GlobalSingleton.songManager.albumName
-                    horizontalAlignment: Text.AlignHCenter
-                    Layout.fillWidth: true
-                    elide: Text.ElideRight
-                    font.bold: true
-                    font.pointSize: 32
+                
 
-                }
+                Item{
+                    Layout.preferredHeight: childrenRect.height
+                    Layout.preferredWidth: parent.width * 0.25
 
-                Text{
-                    id: loadedAlbumArtists
-                    Layout.alignment: Qt.AlignHCenter
-                    text: GlobalSingleton.songManager.albumArtists.join(", ")
-                    color:"white"
-                    font.pointSize: 20
-                }
 
-                Text{
-                    id: loadedAlbumGenre
-                    Layout.alignment: Qt.AlignHCenter
-                    text: GlobalSingleton.songManager.albumGenre
-                    color: "white"
-                    font.pointSize: 10
-                }
+                    ColumnLayout{
+                        anchors{
+                            top: parent.right
+                            right: parent.right
+                            rightMargin: 50
+                        }
 
-                Text{
-                    id: loadedAlbumYear
-                    Layout.alignment: Qt.AlignHCenter
-                    text: GlobalSingleton.songManager.albumYear
-                    color: "white"
-                    font.pointSize: 10
-                }
+                        Text{
+                            id: loadedAlbumGenre
+                            text: GlobalSingleton.songManager.albumGenre
+                            color: "white"
+                            font.pointSize: 18
+                        }
+
+                        Text{
+                            id: loadedAlbumYear
+                            text: GlobalSingleton.songManager.albumYear
+                            color: "white"
+                            font.pointSize: 18
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+                } 
+            }
+                
+                
 
             }
         }

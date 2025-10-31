@@ -50,11 +50,13 @@ public:
     void addCover(const QStringList &artists, const QString &albumName, QByteArray &coverArt);
     QByteArray getCover(const QStringList &artists, const QString &albumName) const;
     bool hasCover(const QStringList &artists, const QString &albumName) const;
+    bool coverExists(const QStringList &artists, const QString &albumName) const;
     void loadFromSettings();
     void saveCoverArts();
 
 private:
     QHash<CoverArtKey, QByteArray> coverArts;
+    QSet<CoverArtKey> covers;
 
 
 };

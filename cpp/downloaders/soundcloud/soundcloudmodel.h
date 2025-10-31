@@ -32,8 +32,8 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
 
-    // Custom methods
     void setResults(const std::vector<SoundcloudItem>& results);
+    QString cleanDisplayText(const QString &str) const;
     const SoundcloudItem& getItem(int index) const;
 
 signals:
@@ -59,7 +59,7 @@ private:
     QProcess *dlProcess;
     QThread *searchThread;
     SoundcloudWrapper *wrapper;
-    QString dlPath = R"(C:\Users\c\Music\scdl\)";
+    QString dlPath = R"(/Users/chids/Documents/music)";
     int currentDlIdx = -1;
 
     

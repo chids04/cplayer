@@ -30,6 +30,10 @@ QList<Song*> Album::getSongs() const
     return songList;
 }
 
+QString Album::getCoverPath() const {
+    return coverPath;
+}
+
 void Album::setName(const QString &newName) {
     if(name == newName){
         return;
@@ -63,6 +67,16 @@ void Album::setYear(int newYear) {
 
     year = newYear;
     emit yearChanged();
+}
+
+void Album::setCoverPath(const QString &newCoverPath) {
+    if(coverPath == newCoverPath){
+        return;
+    }
+
+    coverPath = newCoverPath;
+    emit coverPathChanged();
+
 }
 
 void Album::addSong(Song* song)

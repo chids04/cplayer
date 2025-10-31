@@ -31,13 +31,13 @@ QVariant SoundcloudModel::data(const QModelIndex &index, int role) const
     switch (role) {
     case Qt::DisplayRole:
     case TitleRole:
-        return QString::fromStdString(item.title);
+        return cleanDisplayText(QString::fromStdString(item.title));
 
     case ArtistRole:
-        return QString::fromStdString(item.artist);
+        return cleanDisplayText(QString::fromStdString(item.artist));
 
     case TypeRole:
-        return QString::fromStdString(item.type);
+        return cleanDisplayText(QString::fromStdString(item.type));
 
     case UrlRole:
         return QString::fromStdString(item.permalink_url);
@@ -80,6 +80,12 @@ void SoundcloudModel::setResults(const std::vector<SoundcloudItem>& results)
     beginResetModel();
     m_results = results;
     endResetModel();
+}
+
+QString SoundcloudModel::cleanDisplayText(const QString &str) const {
+    QString cleaned = str;
+    cleaned.remove(QRegularExpression(QStringLiteral("[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F\\x7F]")));
+    return cleaned; 
 }
 
 const SoundcloudItem& SoundcloudModel::getItem(int index) const
@@ -133,6 +139,7 @@ void SoundcloudModel::download(int index)
 
 
     if(dlProcess->state() == QProcess::Running) return;
+
     QStringList args;
 
     args << "-l" << QString::fromStdString(item.permalink_url) << "--path" << dlPath;
@@ -144,6 +151,7 @@ void SoundcloudModel::download(int index)
     QString type = QString::fromStdString(item.type);
     QString title = QString::fromStdString(item.title);
     QString msg = QString("downloading %1 <b>%2</b>").arg(type, title);
+
     emit showMsg(msg);
 }
 
@@ -161,6 +169,8 @@ void SoundcloudModel::onSongDlFinished(int exitCode, QProcess::ExitStatus exitSt
             QString msg = QString("downloaded %1 <b>%2</b>").arg(type, title);
 
             emit showMsg(msg);
+
+            
             
             QString folderPath = QDir(dlPath).filePath(title);
 
@@ -168,12 +178,12 @@ void SoundcloudModel::onSongDlFinished(int exitCode, QProcess::ExitStatus exitSt
             if (info.isDir()) {
                 emit scanForMusic(QUrl::fromLocalFile(path));
             }
-            //need to force a rescan of download directory
             
             
         }
         
     }
     else{
+        emit showMsg("failed to start download");
     }
 }

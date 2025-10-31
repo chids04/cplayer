@@ -56,6 +56,7 @@ Item{
             id: stackView
             Layout.fillHeight: true
             Layout.fillWidth: true
+            Layout.rightMargin: 5
             clip: true
 
 

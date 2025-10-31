@@ -61,6 +61,8 @@ public:
 
     // Stream URL (for playing without downloading)
     std::string getStreamUrl(const std::string& track_url);
+
+    std::string cleanDisplayText(const std::string &str);
 };
 
 

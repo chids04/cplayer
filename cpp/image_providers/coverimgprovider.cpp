@@ -86,6 +86,11 @@ bool CoverImgProvider::hasCover(const QStringList &artists, const QString &album
     return coverArts.contains(key);
 }
 
+bool CoverImgProvider::coverExists(const QStringList &artists, const QString &albumName) const {
+    CoverArtKey key = {artists, albumName};
+    return covers.contains(key);
+}
+
 void CoverImgProvider::loadFromSettings()
 {
     QSettings settings;

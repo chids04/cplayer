@@ -186,3 +186,4 @@ void SongListModel::saveSongs()
 
     settings.setValue("songs", QVariant::fromValue(songDataList));
 }
+

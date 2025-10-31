@@ -3,15 +3,9 @@
 #include <QFontDatabase>
 #include <QDebug>
 
-#include "globalsingleton.h"
-#include <pybind11/pybind11.h>
+#include "soundcloud.h"
 
-#if defined(Q_OS_WIN)
-#include <windows.h>
-#include <dwmapi.h>
-#include <QQuickWindow>
-#pragma comment(lib, "Dwmapi.lib")
-#endif
+#include "globalsingleton.h"
 
 int main(int argc, char *argv[])
 {
@@ -20,9 +14,6 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("cplayer");
 
     QSettings settings;
-
-    py::scoped_interpreter guard{};
-    pybind11::gil_scoped_release release;
 
     int fontId = QFontDatabase::addApplicationFont(":/resource/ui/fonts/Satoshi-Medium.otf");
 
@@ -48,25 +39,18 @@ int main(int argc, char *argv[])
     engine.addImageProvider(QLatin1String("coverArt"), coverProvider);
     engine.addImageProvider(QLatin1String("playlistCovers"), playlistProvider);
 
+    Soundcloud *soundcloud = new Soundcloud;
+    soundcloud->search("hello");
+
     globalSingleton->init(coverProvider, playlistProvider);
+    const QUrl url(QStringLiteral("qrc:/qt/qml/cplayer/Main.qml"));
     QObject::connect(
         &engine,
         &QQmlApplicationEngine::objectCreationFailed,
         &app,
         []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
-
-
-    engine.loadFromModule("cplayer", "Main");
-
-//changing color of titlebar on windows
-#if defined(Q_OS_WIN)
-    QQuickWindow *rootWindow = (QQuickWindow*)engine.rootObjects().first();
-    HWND hwnd = reinterpret_cast<HWND>(rootWindow->winId());
-    COLORREF titlebarColor = RGB(30, 30, 30); // Dark gray
-
-    DwmSetWindowAttribute(hwnd, DWMWA_CAPTION_COLOR, &titlebarColor, sizeof(titlebarColor));
-#endif
+    engine.load(url);
 
     return app.exec();
 }

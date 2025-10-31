@@ -63,43 +63,55 @@ void FolderManager::onFileChanged(const QString &path) {
 }
 
 void FolderManager::onDirectoryChanged(const QString &path) {
-    //need to rework this, good for now
-    //may move to queue based approach but i believe qt signal slots are already queued
-    //since the slot to this function is in a different thread
-    qDebug() << path;
+    qDebug() << "Directory changed:" << path;
 
     QDir directory(path);
-    QStringList updatedDir = directory.entryList(
-        QDir::Files | QDir::NoDotAndDotDot | QDir::Readable);
-
-    QStringList existingFiles = getFilesInFolder(path);
-    QStringList newFiles;
-
-    for (const QString &file : updatedDir) {
-        if (!existingFiles.contains(file)) {
-            newFiles.append(file);
-        }
+    if (!directory.exists()) {
+        qWarning() << "Directory does not exist or is not accessible:" << path;
+        return;
     }
 
-    if (!newFiles.isEmpty()) {
-        // start new scanning thread here
-        for (int i = 0; i < newFiles.size(); ++i) {
-            QString fullPath = directory.filePath(newFiles[i]);
-            // run in seperate thread
+    QStringList currentFilesInDirList = directory.entryList(
+        QDir::Files | QDir::NoDotAndDotDot | QDir::Readable);
+    QSet<QString> currentFilesInDirSet = QSet<QString>(currentFilesInDirList.begin(), currentFilesInDirList.end());
+
+    QStringList existingFilesList = getFilesInFolder(path); 
+    qDebug() << existingFilesList;
+    QSet<QString> existingFilesSet = QSet<QString>(existingFilesList.begin(), existingFilesList.end());
+
+    QSet<QString> newFilesSet = currentFilesInDirSet;
+    newFilesSet.subtract(existingFilesSet);
+
+    if (!newFilesSet.isEmpty()) {
+        QStringList newFilesList;
+        for(const QString& file : newFilesSet){
+            newFilesList.append(file);
+        }
+
+        qDebug() << "New files detected in" << path << ":" << newFilesList;
+        for (const QString &file : newFilesList) {
+            QString fullPath = directory.filePath(file);
             emit scanFile(fullPath);
         }
-
-        addFilesToFolder(path, newFiles);
+        addFilesToFolder(path, newFilesList);
     }
 
-    for (const QString &file : existingFiles) {
-        if (!updatedDir.contains(file)) {
-            removeFilesFromFolder(path, file);
+    QSet<QString> removedFilesSet = existingFilesSet;
+    removedFilesSet.subtract(currentFilesInDirSet);
+
+    if (!removedFilesSet.isEmpty()){
+        QStringList removedFilesList;
+         for(const QString& file : removedFilesSet){
+            removedFilesList.append(file);
+        }
+        qDebug() << "Removed files detected in" << path << ":" << removedFilesList;
+        
+        for (const QString &file : removedFilesList) {
+            removeFilesFromFolder(path, file); 
             QString fullPath = directory.filePath(file);
             songListModel->removeSong(fullPath);
         }
     }
-    
 }
 
 void FolderManager::onSaveID(int id)
