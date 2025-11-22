@@ -1,8 +1,13 @@
 todo:
+fix buiding
 revamp scanning into a simpler ui
 stop scanning whole directories and instead scan file system
-still parse metadata though 
+still parse metadata though
 
 started this in musicscanner.cpp
 bool checks if the album has a cover in the folder
 
+
+//  layout of the application
+
+a global singleton co ordinates actions between the application

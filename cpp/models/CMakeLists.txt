@@ -3,16 +3,16 @@ qt_add_library(cplayer_models STATIC
     # Song models
     song/songlistmodel.cpp
     song/songfilterproxymodel.cpp
-    
+
     # Album models
     album/albumlistmodel.cpp
     album/albumfilterproxymodel.cpp
     album/albumsearchfilter.cpp
-    
+
     # Playlist models
     playlist/playlistmodel.cpp
     playlist/playlistfilter.cpp
-    
+
     # Folder models
     folder/folderlistmodel.cpp
 )
@@ -21,25 +21,28 @@ set_target_properties(cplayer_models PROPERTIES
     AUTOMOC ON
 )
 
+
 qt_policy(SET QTP0001 NEW)
+qt_policy(SET QTP0004 NEW)
+qt_policy(SET QTP0005 NEW)
 
 qt_add_qml_module(cplayer_models
-    URI cplayer.models
+    URI cpp.models
     VERSION 1.0
     SOURCES
         # Song models
         song/songlistmodel.h song/songlistmodel.cpp
         song/songfilterproxymodel.h song/songfilterproxymodel.cpp
-        
+
         # Album models
         album/albumlistmodel.h album/albumlistmodel.cpp
         album/albumfilterproxymodel.h album/albumfilterproxymodel.cpp
         album/albumsearchfilter.h album/albumsearchfilter.cpp
-        
+
         # Playlist models
         playlist/playlistmodel.h playlist/playlistmodel.cpp
         playlist/playlistfilter.h playlist/playlistfilter.cpp
-        
+
         # Folder models
         folder/folderlistmodel.h folder/folderlistmodel.cpp
 

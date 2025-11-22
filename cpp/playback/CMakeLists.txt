@@ -10,13 +10,17 @@ qt_add_library(cplayer_playback STATIC
 )
 
 qt_policy(SET QTP0001 NEW)
+qt_policy(SET QTP0004 NEW)
+qt_policy(SET QTP0005 NEW)
+
+
 
 set_target_properties(cplayer_playback PROPERTIES
     AUTOMOC ON
 )
 
 qt_add_qml_module(cplayer_playback
-    URI cplayer.playback
+    URI cpp.playback
     VERSION 1.0
     SOURCES
         mediaplayercontroller.h mediaplayercontroller.cpp

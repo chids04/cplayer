@@ -13,9 +13,11 @@ set_target_properties(cplayer_managers PROPERTIES
 )
 
 qt_policy(SET QTP0001 NEW)
+qt_policy(SET QTP0004 NEW)
+qt_policy(SET QTP0005 NEW)
 
 qt_add_qml_module(cplayer_managers
-    URI cplayer.managers
+    URI cpp.managers
     VERSION 1.0
     SOURCES
         foldermanager.h foldermanager.cpp

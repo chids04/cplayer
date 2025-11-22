@@ -13,9 +13,11 @@ set_target_properties(cplayer_types PROPERTIES
 )
 
 qt_policy(SET QTP0001 NEW)
+qt_policy(SET QTP0004 NEW)
+qt_policy(SET QTP0005 NEW)
 
 qt_add_qml_module(cplayer_types
-    URI cplayer.types
+    URI cpp.types
     VERSION 1.0
     SOURCES
         song.h song.cpp
@@ -30,6 +32,7 @@ target_include_directories(cplayer_types PUBLIC
 )
 
 target_link_libraries(cplayer_types PUBLIC
+    TagLib::tag
     Qt6::Core
     Qt6::Qml
     Qt6::Gui

@@ -35,7 +35,7 @@ struct SoundcloudItem {
 
     //for playlist and albums
     std::vector<SoundcloudItem> playlist_tracks;
-    
+
 };
 
 class SoundcloudWrapper {
@@ -50,16 +50,16 @@ public:
     SoundcloudWrapper(const std::string& repo_path);
     ~SoundcloudWrapper();
 
-    // Search API with proper encoding
+    // search API with proper encoding
     std::vector<SoundcloudItem> search(const std::string& search_str, int limit = 10, int offset = 0);
 
-    // Resolve a URL to an item
+    // resolve a URL to an item
     std::optional<SoundcloudItem> resolve(const std::string& url);
 
-    // Download a track
+    // download a track
     bool downloadTrack(const std::string& track_url, const std::string& filename);
 
-    // Stream URL (for playing without downloading)
+    // stream URL (for playing without downloading) (not implemented yet)
     std::string getStreamUrl(const std::string& track_url);
 
     std::string cleanDisplayText(const std::string &str);

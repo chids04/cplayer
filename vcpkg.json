@@ -1,5 +1,3 @@
 {
-  "dependencies": [
-    "taglib"
-  ]
+    "dependencies": ["taglib"]
 }

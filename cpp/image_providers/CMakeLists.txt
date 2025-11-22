@@ -8,6 +8,10 @@ set_target_properties(cplayer_image_providers PROPERTIES
     AUTOMOC ON
 )
 
+qt_policy(SET QTP0001 NEW)
+qt_policy(SET QTP0004 NEW)
+qt_policy(SET QTP0005 NEW)
+
 target_include_directories(cplayer_image_providers PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
 )

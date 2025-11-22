@@ -1,34 +1,37 @@
 cmake_minimum_required(VERSION 3.29)
 
 project(cplayer VERSION 0.1 LANGUAGES CXX)
+set(QT_FORCE_CMP0156_TO_VALUE NEW)
 
+set(Qt6_DIR $HOME/Qt/6.10.0/gcc_64/lib/cmake/Qt6/Qt6Config.cmake)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
 set(PYBIND11_FINDPYTHON ON)
 set(SC_LIB_PATH "${CMAKE_SOURCE_DIR}/extern/sc-lib-fork")
-set(PY_LIB_PATH "${CMAKE_SOURCE_DIR}/extern/python-libs") 
+set(PY_LIB_PATH "${CMAKE_SOURCE_DIR}/extern/python-libs")
 set(QT_QML_GENERATE_QMLLS_INI ON)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	set(VCPKG_TARGET_TRIPLET "x64-windows")
+    set(VCPKG_TARGET_TRIPLET "x64-windows")
 
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin") # macOS
-	if(CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
-		set(VCPKG_TARGET_TRIPLET "arm64-osx")
+    if(CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
+        set(VCPKG_TARGET_TRIPLET "arm64-osx")
 
-	elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
-		set(VCPKG_TARGET_TRIPLET "x64-osx")
+    elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+        set(VCPKG_TARGET_TRIPLET "x64-osx")
 
-	else()
-		set(VCPKG_TARGET_TRIPLET "x64-osx")
-	endif()
+    else()
+        set(VCPKG_TARGET_TRIPLET "x64-osx")
+    endif()
 
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-   if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
-	   set(VCPKG_TARGET_TRIPLET "x64-linux")
-   else()
-	   set(VCPKG_TARGET_TRIPLET "x64-linux")
-   endif()
+    if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+        set(VCPKG_TARGET_TRIPLET "x64-linux")
+    else()
+        set(VCPKG_TARGET_TRIPLET "x64-linux")
+    endif()
 endif()
 
 
@@ -37,7 +40,7 @@ include("$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
 
 find_package(Qt6 REQUIRED COMPONENTS Multimedia Quick Widgets Core)
 find_package(ZLIB REQUIRED)
-find_package(TagLib REQUIRED)
+find_package(taglib CONFIG REQUIRED)
 find_package(Python COMPONENTS Interpreter Development REQUIRED)
 
 
@@ -49,10 +52,13 @@ add_subdirectory(cpp/playback)
 add_subdirectory(cpp/image_providers)
 add_subdirectory(cpp/background)
 add_subdirectory(cpp/managers)
+add_subdirectory(cpp/downloaders/soundcloud)
 
 qt_standard_project_setup()
+
 qt_policy(SET QTP0001 NEW)
 qt_policy(SET QTP0004 NEW)
+qt_policy(SET QTP0005 NEW)
 
 qt_add_executable(appcplayer
     cpp/main.cpp
@@ -62,81 +68,81 @@ qt_add_executable(appcplayer
 qt_add_qml_module(appcplayer
     URI cplayer
     VERSION 1.0
-	NO_CACHEGEN
+ NO_CACHEGEN
     QML_FILES
-	    qml/Main.qml
+     qml/Main.qml
 
     #QML Views
     QML_FILES
-	    qml/views/Songs.qml
-		qml/views/Albums.qml
-		qml/views/AlbumSongs.qml
-		qml/views/Folders.qml
-		qml/views/MainWindow.qml
-		qml/views/Playlists.qml
-		qml/views/PlaylistSongs.qml
-		qml/views/Settings.qml
-		qml/views/Sidebar.qml
-		qml/views/HomePage.qml
-		qml/views/CSidebar.qml
+     qml/views/Songs.qml
+  qml/views/Albums.qml
+  qml/views/AlbumSongs.qml
+  qml/views/Folders.qml
+  qml/views/MainWindow.qml
+  qml/views/Playlists.qml
+  qml/views/PlaylistSongs.qml
+  qml/views/Settings.qml
+  qml/views/Sidebar.qml
+  qml/views/HomePage.qml
+  qml/views/CSidebar.qml
         qml/views/Search.qml
 
-	#QML Delegates
-	QML_FILES
-	    qml/delegates/SongDelegate.qml
-		qml/delegates/FolderDelegate.qml
-		qml/delegates/SongViewDelegate.qml
-		qml/delegates/AlbumDelegate.qml
+  #QML Delegates
+ QML_FILES
+     qml/delegates/SongDelegate.qml
+  qml/delegates/FolderDelegate.qml
+  qml/delegates/SongViewDelegate.qml
+  qml/delegates/AlbumDelegate.qml
 
-		#QML Components
+   #QML Components
     QML_FILES
-	    qml/components/MediaSlider.qml
+     qml/components/MediaSlider.qml
         qml/components/CButton.qml
         qml/components/ErrorPopup.qml
         qml/components/SongContextMenu.qml
         qml/components/FolderDelPopUp.qml
         qml/components/PlaylistContextMenu.qml
-		qml/components/NowPlayingRect.qml
-		qml/components/MsgPopup.qml
-		qml/components/AudioDevicesPopup.qml
-		qml/components/EditPlaylist.qml
-		qml/components/EditSong.qml
+  qml/components/NowPlayingRect.qml
+  qml/components/MsgPopup.qml
+  qml/components/AudioDevicesPopup.qml
+  qml/components/EditPlaylist.qml
+  qml/components/EditSong.qml
         qml/components/loading/RectangleLoader.qml
-		qml/components/DlPopup.qml
-		qml/components/AlbumInfo.qml
+  qml/components/DlPopup.qml
+  qml/components/AlbumInfo.qml
 
 
 
-	# #Singleton
-	# SOURCES
-	#     cpp/globalsingleton.h
-	# 	cpp/globalsingleton.cpp
+  # #Singleton
+  # SOURCES
+  #     cpp/globalsingleton.h
+  # 	cpp/globalsingleton.cpp
 
 
-	# #C++ Types
-	# SOURCES
-	#     cpp/types/song.h
-	# 	cpp/types/song.cpp
+  # #C++ Types
+  # SOURCES
+  #     cpp/types/song.h
+  # 	cpp/types/song.cpp
 
-	# 	cpp/types/album.h
-	# 	cpp/types/album.cpp
+  # 	cpp/types/album.h
+  # 	cpp/types/album.cpp
 
-	# 	cpp/types/folder.h
-	# 	cpp/types/folder.cpp
+  # 	cpp/types/folder.h
+  # 	cpp/types/folder.cpp
 
-	# 	cpp/types/playlist.h
-	# 	cpp/types/playlist.cpp
+  # 	cpp/types/playlist.h
+  # 	cpp/types/playlist.cpp
 
     #     cpp/types/songdata.cpp
     #     cpp/types/songdata.h
 
-	# #C++ Models
+  # #C++ Models
     # SOURCES
 
-	# #C++ background tasks
-	# SOURCES
-	# 	cpp/background/musicscanner.h
-	# 	cpp/background/musicscanner.cpp
+  # #C++ background tasks
+  # SOURCES
+  # 	cpp/background/musicscanner.h
+  # 	cpp/background/musicscanner.cpp
 
     # #C++ Playback Control
     # SOURCES
@@ -149,66 +155,66 @@ qt_add_qml_module(appcplayer
     #     cpp/playback/queue.h
     #     cpp/playback/queue.cpp
 
-	# 	cpp/playback/models/queuemodel.h
-	# 	cpp/playback/models/queuemodel.cpp
+  # 	cpp/playback/models/queuemodel.h
+  # 	cpp/playback/models/queuemodel.cpp
 
-	# 	cpp/playback/models/queuemodelfilter.h
-	# 	cpp/playback/models/queuemodelfilter.cpp
+  # 	cpp/playback/models/queuemodelfilter.h
+  # 	cpp/playback/models/queuemodelfilter.cpp
 
-	# 	cpp/playback/models/audiodevicemodel.h
-	# 	cpp/playback/models/audiodevicemodel.cpp
+  # 	cpp/playback/models/audiodevicemodel.h
+  # 	cpp/playback/models/audiodevicemodel.cpp
 
     # #C++ Image Providers
     # SOURCES
     #     cpp/image_providers/playlistimageprovider.h
     #     cpp/image_providers/playlistimageprovider.cpp
 
-	# 	cpp/image_providers/coverimgprovider.h
-	# 	cpp/image_providers/coverimgprovider.cpp
+  # 	cpp/image_providers/coverimgprovider.h
+  # 	cpp/image_providers/coverimgprovider.cpp
 
     # #C++ QML Models
     # SOURCES
-	#     cpp/models/album/albumfilterproxymodel.h
-	# 	cpp/models/album/albumfilterproxymodel.cpp
+  #     cpp/models/album/albumfilterproxymodel.h
+  # 	cpp/models/album/albumfilterproxymodel.cpp
 
-	# 	cpp/models/album/albumlistmodel.h
-	# 	cpp/models/album/albumlistmodel.cpp
+  # 	cpp/models/album/albumlistmodel.h
+  # 	cpp/models/album/albumlistmodel.cpp
 
-	# 	cpp/models/album/albumsearchfilter.h
-	# 	cpp/models/album/albumsearchfilter.cpp
+  # 	cpp/models/album/albumsearchfilter.h
+  # 	cpp/models/album/albumsearchfilter.cpp
 
-	# 	cpp/models/song/songlistmodel.h
-	# 	cpp/models/song/songlistmodel.cpp
+  # 	cpp/models/song/songlistmodel.h
+  # 	cpp/models/song/songlistmodel.cpp
 
-	# 	cpp/models/song/songfilterproxymodel.h
-	# 	cpp/models/song/songfilterproxymodel.cpp
+  # 	cpp/models/song/songfilterproxymodel.h
+  # 	cpp/models/song/songfilterproxymodel.cpp
 
-	# 	cpp/models/playlist/playlistmodel.h
-	# 	cpp/models/playlist/playlistmodel.cpp
+  # 	cpp/models/playlist/playlistmodel.h
+  # 	cpp/models/playlist/playlistmodel.cpp
 
-	# 	cpp/models/playlist/playlistfilter.cpp
-	# 	cpp/models/playlist/playlistfilter.h
+  # 	cpp/models/playlist/playlistfilter.cpp
+  # 	cpp/models/playlist/playlistfilter.h
 
-	# 	cpp/models/folder/folderlistmodel.cpp
-	# 	cpp/models/folder/folderlistmodel.h
+  # 	cpp/models/folder/folderlistmodel.cpp
+  # 	cpp/models/folder/folderlistmodel.h
 
-	# #QML View Managers
+  # #QML View Managers
     # SOURCES
 
-	# 	cpp/managers/foldermanager.h
-	# 	cpp/managers/foldermanager.cpp
+  # 	cpp/managers/foldermanager.h
+  # 	cpp/managers/foldermanager.cpp
 
-	# 	cpp/managers/viewcontroller.h
-	# 	cpp/managers/viewcontroller.cpp
+  # 	cpp/managers/viewcontroller.h
+  # 	cpp/managers/viewcontroller.cpp
 
-	# 	cpp/managers/playlistmanager.h
-	# 	cpp/managers/playlistmanager.cpp
+  # 	cpp/managers/playlistmanager.h
+  # 	cpp/managers/playlistmanager.cpp
 
-	# 	cpp/managers/songmanager.h
-	# 	cpp/managers/songmanager.cpp
+  # 	cpp/managers/songmanager.h
+  # 	cpp/managers/songmanager.cpp
 
-	# 	cpp/managers/playbackmanager.h
-	# 	cpp/managers/playbackmanager.cpp
+  # 	cpp/managers/playbackmanager.h
+  # 	cpp/managers/playbackmanager.cpp
 
     #     cpp/managers/downloadmanager.h
     #     cpp/managers/downloadmanager.cpp
@@ -221,8 +227,8 @@ qt_add_qml_module(appcplayer
     # cpp/downloaders/soundcloud/soundcloudmodel.h
     # cpp/downloaders/soundcloud/soundcloudmodel.cpp
     # cpp/downloaders/soundcloud/soundcloudsearchworker.h
-	# cpp/downloaders/soundcloud/scplaylist.h
-	# cpp/downloaders/soundcloud/scplaylist.cpp
+  # cpp/downloaders/soundcloud/scplaylist.h
+  # cpp/downloaders/soundcloud/scplaylist.cpp
 
 
 )
@@ -241,21 +247,22 @@ endif()
 add_dependencies(appcplayer kill_appcplayer)
 
 
-target_compile_definitions(appcplayer PRIVATE
+target_compile_definitions(appcplayer PUBLIC
     SC_LIB_PATH="${SC_LIB_PATH}"
-	PY_LIB_PATH="${PY_LIB_PATH}"
+ PY_LIB_PATH="${PY_LIB_PATH}"
     TAGLIB_STATIC
 )
 
 target_link_libraries(appcplayer
-        PRIVATE Qt6::Quick Qt6::Multimedia Qt6::Widgets Qt6::Core
-		rapidfuzz::rapidfuzz TagLib::tag pybind11::embed
-		cplayer_types
-    cplayer_models
-    cplayer_playback
-    cplayer_background
-    cplayer_managers
-    cplayer_image_providers
+        PUBLIC Qt6::Quick Qt6::Multimedia Qt6::Widgets Qt6::Core
+  rapidfuzz::rapidfuzz TagLib::tag pybind11::embed
+  cplayer_types
+        cplayer_models
+        cplayer_playback
+        cplayer_background
+        cplayer_managers
+        cplayer_image_providers
+        cplayer_soundcloud
     )
 
 # target_include_directories(appcplayer PRIVATE
